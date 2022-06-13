@@ -26,7 +26,7 @@ class UselessPrivatePropertyNullabilityRule implements Rule
     private ReadWritePropertiesExtensionProvider $extensionProvider;
 
     public function __construct(
-        ReadWritePropertiesExtensionProvider $extensionProvider,
+        ReadWritePropertiesExtensionProvider $extensionProvider
     )
     {
         $this->extensionProvider = $extensionProvider;
