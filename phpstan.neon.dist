@@ -12,7 +12,7 @@ parameters:
     excludePaths:
         analyseAndScan:
             - tests/Rule/data/*
-    tmpDir: %rootDir%/cache/phpstan/
+    tmpDir: cache/phpstan/
     checkMissingCallableSignature: true
     checkUninitializedProperties: true
     checkTooWideReturnTypesInProtectedAndPublicMethods: true
