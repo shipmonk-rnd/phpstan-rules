@@ -20,14 +20,14 @@ Rarely, some rules are reliable only when some other rule is enabled.
 - Requires `TopLevelConstructorPropertyFetchMarkingVisitor` to work
 - Should be used together with `ForbidReturnInConstructorRule` to avoid false positives when return statement is used in constructor
 ```neon
-    rules:
-        - ShipMonk\PHPStan\Rule\UselessPrivatePropertyDefaultValueRule
-        - ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule
-    services:
-        -
-        class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
-        tags:
-            - phpstan.parser.richParserNodeVisitor
+rules:
+    - ShipMonk\PHPStan\Rule\UselessPrivatePropertyDefaultValueRule
+    - ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule
+services:
+    -
+    class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
+    tags:
+        - phpstan.parser.richParserNodeVisitor
 ```
 ```php
 class Example
@@ -46,13 +46,13 @@ class Example
 - Requires `ClassPropertyAssignmentVisitor` to work
 - Recommended to be used with `UselessPrivatePropertyNullabilityRule` as removing useless default value may cause useless nullability to be detected
 ```neon
-    rules:
-        - ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule
-    services:
-        -
-        class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
-        tags:
-            - phpstan.parser.richParserNodeVisitor
+rules:
+    - ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule
+services:
+    -
+    class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
+    tags:
+        - phpstan.parser.richParserNodeVisitor
 ```
 ```php
 class Example
