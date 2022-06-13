@@ -1,0 +1,47 @@
+{
+    "name": "shipmonk/phpstan-rules",
+    "description": "Various PHPStan rules we found useful in ShipMonk.",
+    "license": ["MIT"],
+    "require": {
+        "phpstan/phpstan": "^1.5.6"
+    },
+    "require-dev": {
+        "editorconfig-checker/editorconfig-checker": "^10.3.0",
+        "phpstan/phpstan-phpunit": "^1.1.1",
+        "phpstan/phpstan-strict-rules": "^1.2.3",
+        "phpunit/phpunit": "^9.5.20",
+        "slevomat/coding-standard": "^7.2.1"
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "ShipMonk\\PHPStan\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ShipMonk\\PHPStan\\": "tests/"
+        },
+        "classmap": [
+            "tests/Rule/data"
+        ]
+    },
+    "scripts": {
+        "check": [
+            "@check:ec",
+            "@check:cs",
+            "@check:types",
+            "@check:tests"
+        ],
+        "check:ec": "ec src tests",
+        "check:cs": "phpcs",
+        "check:types": "phpstan analyse -vvv",
+        "check:tests": "phpunit -vvv tests",
+        "fix:cs": "phpcbf"
+    }
+}

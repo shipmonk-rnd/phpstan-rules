@@ -1,0 +1,5 @@
+services:
+    -
+        class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
