@@ -1,0 +1,30 @@
+name: Checks
+on:
+    pull_request:
+    push:
+        branches:
+            - "master"
+            - "v[0-9]"
+jobs:
+    checks:
+        runs-on: ubuntu-latest
+        strategy:
+            fail-fast: false
+            matrix:
+                php-version: [ '7.4', '8.0', '8.1' ]
+                dependency-version: [ prefer-lowest, prefer-stable ]
+        steps:
+            -
+                name: Checkout code
+                uses: actions/checkout@v2
+            -
+                name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: ${{ matrix.php-version }}
+            -
+                name: Install dependencies
+                run: composer update --no-progress --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+            -
+                name: Run checks and tests
+                run: composer check
