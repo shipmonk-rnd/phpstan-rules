@@ -1,5 +1,5 @@
 rules:
-    - ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRuleTest
+    - ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule
     - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
     - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
     - ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule
