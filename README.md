@@ -20,13 +20,13 @@ All you need to enable most of the rules is to register them [as documented in p
 Some of them need some specific [rich parser node visitor](https://phpstan.org/blog/preprocessing-ast-for-custom-rules) to be registered as well.
 Rarely, some rules are reliable only when some other rule is enabled.
 
-### AllowNamedArgumentOnlyInAttributesRuleTest
-- Allowes usage of named arguments only in native attributes
+### AllowNamedArgumentOnlyInAttributesRule
+- Allows usage of named arguments only in native attributes
 - Before native attributes, we used [DisallowNamedArguments](https://github.com/slevomat/coding-standard#slevomatcodingstandardfunctionsdisallownamedarguments). But we used Doctrine annotations, which almost "require" named arguments when converted to native attributes.
 - Requires NamedArgumentSourceVisitor to work
 ```neon
 rules:
-    - ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRuleTest
+    - ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule
 services:
     -
     class: ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor
@@ -47,6 +47,7 @@ class User {
 ### ForbidFetchOnMixedRule
 - Denies property fetch on unknown type.
 - Any property fetch assumes the caller is an object with such property and therefore, the typehint/phpdoc should be fixed.
+- Similar to `ForbidMethodCallOnMixedRule`
 ```neon
 rules:
     - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
@@ -75,6 +76,7 @@ match ($enum) {
 ### ForbidMethodCallOnMixedRule
 - Denies calling methods on unknown type.
 - Any method call assumes the caller is an object with such method and therefore, the typehint/phpdoc should be fixed.
+- Similar to `ForbidFetchOnMixedRule`
 ```neon
 rules:
     - ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule
@@ -111,19 +113,6 @@ function example(int $foo): ?int { // null never returned
         return 0;
     }
     return $foo;
-}
-```
-
-### ForbidUnsetClassFieldRule
-- Denies calling `unset` over class field as it causes un-initialization, see https://3v4l.org/V8uuP
-- Null assignment should be used instead
-```neon
-rules:
-    - ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule
-```
-```php
-function example(MyClass $class) {
-    unset($class->field); // denied
 }
 ```
 
