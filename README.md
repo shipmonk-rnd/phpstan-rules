@@ -26,6 +26,21 @@ function example($unknown) {
 }
 ```
 
+### ForbidMatchDefaultArmForEnumsRule
+- Denies using default arm in `match()` construct when native enum is passed as subject
+- This rules makes sense only as a complement of [native phpstan rule](https://github.com/phpstan/phpstan-src/blob/1.7.x/src/Rules/Comparison/MatchExpressionRule.php#L94) that guards that all enum cases are present in match expression
+- As a result, you are forced to add new arm when new enum case is added
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
+```
+```php
+match ($enum) {
+    MyEnum::Case: 1;
+    default: 2; // default arm forbidden
+}
+```
+
 ### ForbidMethodCallOnMixedRule
 - Denies calling methods on unknown type.
 - Any method call assumes the caller is an object with such method and therefore, the typehint/phpdoc should be fixed.
@@ -49,6 +64,24 @@ rules:
 ```php
 function example(MyClass $class) {
     unset($class->field); // denied
+}
+```
+
+### UnusedExceptionRule
+- Reports forgotten exception throw (created or returned from function, but not used in any way)
+- Requires `UnusedExceptionVisitor` to work
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\UnusedExceptionRule
+services:
+    -
+    class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor
+    tags:
+        - phpstan.parser.richParserNodeVisitor
+```
+```php
+function validate(): void {
+    new Exception(); // forgotten throw
 }
 ```
 
