@@ -19,7 +19,7 @@ use function is_a;
 /**
  * @implements Rule<Expr>
  */
-class UnusedExceptionRule implements Rule
+class ForbidUnusedExceptionRule implements Rule
 {
 
     private Standard $printer;

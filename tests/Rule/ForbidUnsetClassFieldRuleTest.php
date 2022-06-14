@@ -6,19 +6,19 @@ use PHPStan\Rules\Rule;
 use ShipMonk\PHPStan\RuleTestCase;
 
 /**
- * @extends RuleTestCase<UnsetClassFieldRule>
+ * @extends RuleTestCase<ForbidUnsetClassFieldRule>
  */
-class UnsetClassFieldRuleTest extends RuleTestCase
+class ForbidUnsetClassFieldRuleTest extends RuleTestCase
 {
 
     protected function getRule(): Rule
     {
-        return new UnsetClassFieldRule();
+        return new ForbidUnsetClassFieldRule();
     }
 
     public function test(): void
     {
-        $this->analyseFile(__DIR__ . '/data/UnsetClassFieldRule/code.php');
+        $this->analyseFile(__DIR__ . '/data/ForbidUnsetClassFieldRule/code.php');
     }
 
 }

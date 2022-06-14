@@ -93,12 +93,12 @@ function example(int $foo): ?int { // null never returned
 }
 ```
 
-### UnsetClassFieldRule
+### ForbidUnsetClassFieldRule
 - Denies calling `unset` over class field as it causes un-initialization, see https://3v4l.org/V8uuP
 - Null assignment should be used instead
 ```neon
 rules:
-    - ShipMonk\PHPStan\Rule\UnsetClassFieldRule
+    - ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule
 ```
 ```php
 function example(MyClass $class) {
@@ -106,12 +106,12 @@ function example(MyClass $class) {
 }
 ```
 
-### UnusedExceptionRule
+### ForbidUnusedExceptionRule
 - Reports forgotten exception throw (created or returned from function, but not used in any way)
 - Requires `UnusedExceptionVisitor` to work
 ```neon
 rules:
-    - ShipMonk\PHPStan\Rule\UnusedExceptionRule
+    - ShipMonk\PHPStan\Rule\ForbidUnusedExceptionRule
 services:
     -
     class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor

@@ -11,7 +11,7 @@ use PHPStan\Rules\Rule;
 /**
  * @implements Rule<Unset_>
  */
-class UnsetClassFieldRule implements Rule
+class ForbidUnsetClassFieldRule implements Rule
 {
 
     public function getNodeType(): string

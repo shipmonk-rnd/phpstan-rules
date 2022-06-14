@@ -8,14 +8,14 @@ use ShipMonk\PHPStan\RuleTestCase;
 use function array_merge;
 
 /**
- * @extends RuleTestCase<UnusedExceptionRule>
+ * @extends RuleTestCase<ForbidUnusedExceptionRule>
  */
-class UnusedExceptionRuleTest extends RuleTestCase
+class ForbidUnusedExceptionRuleTest extends RuleTestCase
 {
 
     protected function getRule(): Rule
     {
-        return new UnusedExceptionRule(new Standard());
+        return new ForbidUnusedExceptionRule(new Standard());
     }
 
     /**
@@ -25,13 +25,13 @@ class UnusedExceptionRuleTest extends RuleTestCase
     {
         return array_merge(
             parent::getAdditionalConfigFiles(),
-            [__DIR__ . '/data/UnusedExceptionRule/unused-exception-visitor.neon'],
+            [__DIR__ . '/data/ForbidUnusedExceptionRule/unused-exception-visitor.neon'],
         );
     }
 
     public function testClass(): void
     {
-        $this->analyseFile(__DIR__ . '/data/UnusedExceptionRule/code.php');
+        $this->analyseFile(__DIR__ . '/data/ForbidUnusedExceptionRule/code.php');
     }
 
 }
