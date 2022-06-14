@@ -52,7 +52,7 @@ function example($unknown) {
 
 ### ForbidMatchDefaultArmForEnumsRule
 - Denies using default arm in `match()` construct when native enum is passed as subject
-- This rules makes sense only as a complement of [native phpstan rule](https://github.com/phpstan/phpstan-src/blob/1.7.x/src/Rules/Comparison/MatchExpressionRule.php#L94) that guards that all enum cases are present in match expression
+- This rules makes sense only as a complement of [native phpstan rule](https://github.com/phpstan/phpstan-src/blob/1.7.x/src/Rules/Comparison/MatchExpressionRule.php#L94) that guards that all enum cases are handled in match arms
 - As a result, you are forced to add new arm when new enum case is added
 ```neon
 rules:
@@ -92,7 +92,8 @@ function example(MyClass $class) {
 ```
 
 ### ForbidUselessNullableReturnRule
-- Denies marking function as nullable when null is never returned
+- Denies marking function return type as nullable when null is never returned
+- Recommended to be used together with `UselessPrivatePropertyDefaultValueRule` and `UselessPrivatePropertyNullabilityRule`
 ```neon
 rules:
     - ShipMonk\PHPStan\Rule\ForbidUselessNullableReturnRule
@@ -140,7 +141,7 @@ function validate(): void {
 ### RequirePreviousExceptionPassRule
 
 - Detects forgotten exception pass-as-previous when re-throwing
-- Checks if caught exception can be passed as argument to the call (including constructor call) after `throw` node inside the catch block
+- Checks if caught exception can be passed as argument to the call (including constructor call) in `throw` node inside the catch block
 - You may encounter false-positives in some edge-cases, where you do not want to pass exception as previous, feel free to ignore those
 
 ```neon
@@ -161,6 +162,8 @@ try {
 - Cannot handle conditions or private method calls within constructor.
 - Requires `TopLevelConstructorPropertyFetchMarkingVisitor` to work
 - Should be used together with `ForbidReturnInConstructorRule` to avoid false positives when return statement is used in constructor
+- Recommended to be used with `UselessPrivatePropertyNullabilityRule` and `ForbidUselessNullableReturnRule`
+
 ```neon
 rules:
     - ShipMonk\PHPStan\Rule\UselessPrivatePropertyDefaultValueRule
@@ -186,7 +189,7 @@ class Example
 ### UselessPrivatePropertyNullabilityRule:
 - Detects useless nullability of a private property by checking type of all assignments.
 - Requires `ClassPropertyAssignmentVisitor` to work
-- Recommended to be used with `UselessPrivatePropertyNullabilityRule` as removing useless default value may cause useless nullability to be detected
+- Recommended to be used with `UselessPrivatePropertyNullabilityRule` and `ForbidUselessNullableReturnRule` as removing useless default value may cause useless nullability to be detected
 ```neon
 rules:
     - ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule
