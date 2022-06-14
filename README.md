@@ -78,6 +78,19 @@ function example($unknown) {
 }
 ```
 
+### ForbidUnsetClassFieldRule
+- Denies calling `unset` over class field as it causes un-initialization, see https://3v4l.org/V8uuP
+- Null assignment should be used instead
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\UnsetClassFieldRule
+```
+```php
+function example(MyClass $class) {
+    unset($class->field); // denied
+}
+```
+
 ### ForbidUselessNullableReturnRule
 - Denies marking function as nullable when null is never returned
 ```neon
@@ -121,6 +134,24 @@ services:
 ```php
 function validate(): void {
     new Exception(); // forgotten throw
+}
+```
+
+### RequirePreviousExceptionPassRule
+
+- Detects forgotten exception pass-as-previous when re-throwing
+- Checks if caught exception can be passed as argument to the call (including constructor call) after `throw` node inside the catch block
+- You may encounter false-positives in some edge-cases, where you do not want to pass exception as previous, feel free to ignore those
+
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule
+```
+```php
+try {
+    // some code
+} catch (RuntimeException $e) {
+    throw new LogicException('Cannot happen'); // $e not passed as previous
 }
 ```
 
