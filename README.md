@@ -1,5 +1,12 @@
 # ShipMonk PHPStan rules
-Various rules we found useful in ShipMonk. You may found some of them opinionated, so we recommend picking only those fitting your needs.
+Various rules we found useful in ShipMonk.
+You may found some of them opinionated, so we recommend picking only those fitting your needs.
+If you would like to use all of them anyway, use:
+
+```neon
+includes:
+    - vendor/shipmonk/phpstan-rules/rules.neon
+```
 
 ## Installation:
 
@@ -83,7 +90,7 @@ function example($unknown) {
 - Null assignment should be used instead
 ```neon
 rules:
-    - ShipMonk\PHPStan\Rule\UnsetClassFieldRule
+    - ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule
 ```
 ```php
 function example(MyClass $class) {
