@@ -1,0 +1,34 @@
+rules:
+    - ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRuleTest
+    - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
+    - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
+    - ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule
+    - ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule
+    - ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule
+    - ShipMonk\PHPStan\Rule\ForbidUselessNullableReturnRule
+    - ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule
+    - ShipMonk\PHPStan\Rule\ForbidUnusedExceptionRule
+    - ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule
+    - ShipMonk\PHPStan\Rule\UselessPrivatePropertyDefaultValueRule
+    - ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule
+
+services:
+    -
+        class: ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
+
+    -
+        class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
+
+    -
+        class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
+
+    -
+        class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
