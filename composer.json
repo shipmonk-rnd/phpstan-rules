@@ -3,7 +3,8 @@
     "description": "Various PHPStan rules we found useful in ShipMonk.",
     "license": ["MIT"],
     "require": {
-        "phpstan/phpstan": "^1.5.6"
+        "phpstan/phpstan": "^1.5.6",
+        "nikic/php-parser": "^4.13.2"
     },
     "require-dev": {
         "editorconfig-checker/editorconfig-checker": "^10.3.0",
