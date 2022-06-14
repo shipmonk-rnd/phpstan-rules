@@ -4,6 +4,7 @@ namespace ShipMonk\PHPStan\Rule;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
@@ -51,9 +52,10 @@ class UnusedExceptionRule implements Rule
     }
 
     /**
+     * @param MethodCall|StaticCall $node
      * @return string[]
      */
-    private function processCall(MethodCall|StaticCall $node, Scope $scope): array
+    private function processCall(CallLike $node, Scope $scope): array
     {
         if (!$this->isException($node, $scope)) {
             return [];
