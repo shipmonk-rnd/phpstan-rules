@@ -1,5 +1,5 @@
 # ShipMonk PHPStan rules
-Various rules we found useful in ShipMonk.
+Various rules we found useful in ShipMonk. You may found some of them opinionated, so we recommend picking only those fitting your needs.
 
 ## Installation:
 
@@ -12,6 +12,30 @@ composer require shipmonk/phpstan-rules
 All you need to enable most of the rules is to register them [as documented in phpstan/phpstan](https://phpstan.org/developing-extensions/rules#registering-the-rule-in-the-configuration).
 Some of them need some specific [rich parser node visitor](https://phpstan.org/blog/preprocessing-ast-for-custom-rules) to be registered as well.
 Rarely, some rules are reliable only when some other rule is enabled.
+
+### AllowNamedArgumentOnlyInAttributesRuleTest
+- Allowes usage of named arguments only in native attributes
+- Before native attributes, we used [DisallowNamedArguments](https://github.com/slevomat/coding-standard#slevomatcodingstandardfunctionsdisallownamedarguments). But we used Doctrine annotations, which almost "require" named arguments when converted to native attributes.
+- Requires NamedArgumentSourceVisitor to work
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRuleTest
+services:
+    -
+    class: ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor
+    tags:
+        - phpstan.parser.richParserNodeVisitor
+```
+```php
+class User {
+    #[Column(type: Types::STRING, nullable: false)] // allowed
+    private string $email;
+
+    public function __construct(string $email) {
+        $this->setEmail(email: $email); // forbidden
+    }
+}
+```
 
 ### ForbidFetchOnMixedRule
 - Denies property fetch on unknown type.
