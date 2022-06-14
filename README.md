@@ -1,5 +1,5 @@
 # ShipMonk PHPStan rules
-Various rules we found useful in ShipMonk.
+Various rules we found useful in ShipMonk. You may found some of them opinionated, so we recommend picking only those fitting your needs.
 
 ## Installation:
 
@@ -12,6 +12,148 @@ composer require shipmonk/phpstan-rules
 All you need to enable most of the rules is to register them [as documented in phpstan/phpstan](https://phpstan.org/developing-extensions/rules#registering-the-rule-in-the-configuration).
 Some of them need some specific [rich parser node visitor](https://phpstan.org/blog/preprocessing-ast-for-custom-rules) to be registered as well.
 Rarely, some rules are reliable only when some other rule is enabled.
+
+### AllowNamedArgumentOnlyInAttributesRuleTest
+- Allowes usage of named arguments only in native attributes
+- Before native attributes, we used [DisallowNamedArguments](https://github.com/slevomat/coding-standard#slevomatcodingstandardfunctionsdisallownamedarguments). But we used Doctrine annotations, which almost "require" named arguments when converted to native attributes.
+- Requires NamedArgumentSourceVisitor to work
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRuleTest
+services:
+    -
+    class: ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor
+    tags:
+        - phpstan.parser.richParserNodeVisitor
+```
+```php
+class User {
+    #[Column(type: Types::STRING, nullable: false)] // allowed
+    private string $email;
+
+    public function __construct(string $email) {
+        $this->setEmail(email: $email); // forbidden
+    }
+}
+```
+
+### ForbidFetchOnMixedRule
+- Denies property fetch on unknown type.
+- Any property fetch assumes the caller is an object with such property and therefore, the typehint/phpdoc should be fixed.
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
+```
+```php
+function example($unknown) {
+    $unknown->property; // cannot fetch property on mixed
+}
+```
+
+### ForbidMatchDefaultArmForEnumsRule
+- Denies using default arm in `match()` construct when native enum is passed as subject
+- This rules makes sense only as a complement of [native phpstan rule](https://github.com/phpstan/phpstan-src/blob/1.7.x/src/Rules/Comparison/MatchExpressionRule.php#L94) that guards that all enum cases are present in match expression
+- As a result, you are forced to add new arm when new enum case is added
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
+```
+```php
+match ($enum) {
+    MyEnum::Case: 1;
+    default: 2; // default arm forbidden
+}
+```
+
+### ForbidMethodCallOnMixedRule
+- Denies calling methods on unknown type.
+- Any method call assumes the caller is an object with such method and therefore, the typehint/phpdoc should be fixed.
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule
+```
+```php
+function example($unknown) {
+    $unknown->call(); // cannot call method on mixed
+}
+```
+
+### ForbidUnsetClassFieldRule
+- Denies calling `unset` over class field as it causes un-initialization, see https://3v4l.org/V8uuP
+- Null assignment should be used instead
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\UnsetClassFieldRule
+```
+```php
+function example(MyClass $class) {
+    unset($class->field); // denied
+}
+```
+
+### ForbidUselessNullableReturnRule
+- Denies marking function as nullable when null is never returned
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\ForbidUselessNullableReturnRule
+```
+```php
+function example(int $foo): ?int { // null never returned
+    if ($foo < 0) {
+        return 0;
+    }
+    return $foo;
+}
+```
+
+### ForbidUnsetClassFieldRule
+- Denies calling `unset` over class field as it causes un-initialization, see https://3v4l.org/V8uuP
+- Null assignment should be used instead
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule
+```
+```php
+function example(MyClass $class) {
+    unset($class->field); // denied
+}
+```
+
+### ForbidUnusedExceptionRule
+- Reports forgotten exception throw (created or returned from function, but not used in any way)
+- Requires `UnusedExceptionVisitor` to work
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\ForbidUnusedExceptionRule
+services:
+    -
+    class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor
+    tags:
+        - phpstan.parser.richParserNodeVisitor
+```
+```php
+function validate(): void {
+    new Exception(); // forgotten throw
+}
+```
+
+### RequirePreviousExceptionPassRule
+
+- Detects forgotten exception pass-as-previous when re-throwing
+- Checks if caught exception can be passed as argument to the call (including constructor call) after `throw` node inside the catch block
+- You may encounter false-positives in some edge-cases, where you do not want to pass exception as previous, feel free to ignore those
+
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule
+```
+```php
+try {
+    // some code
+} catch (RuntimeException $e) {
+    throw new LogicException('Cannot happen'); // $e not passed as previous
+}
+```
 
 ### UselessPrivatePropertyDefaultValueRule:
 

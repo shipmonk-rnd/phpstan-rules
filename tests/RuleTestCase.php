@@ -40,7 +40,7 @@ abstract class RuleTestCase extends OriginalRuleTestCase
 
         foreach ($fileData as $line => $row) {
             $matches = [];
-            $matched = preg_match_all('#// error:([^$]+)#', $row, $matches);
+            $matched = preg_match_all('#// error:(.+)#', $row, $matches);
 
             if ($matched === false) {
                 throw new LogicException('Error while matching errors');

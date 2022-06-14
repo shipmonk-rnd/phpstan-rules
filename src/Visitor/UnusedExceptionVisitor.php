@@ -1,0 +1,96 @@
+<?php declare(strict_types = 1);
+
+namespace ShipMonk\PHPStan\Visitor;
+
+use PhpParser\Node;
+use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\BinaryOp\Coalesce;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Expr\NullsafeMethodCall;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\Throw_ as ThrowExpr;
+use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Stmt\Throw_;
+use PhpParser\NodeVisitorAbstract;
+use function array_pop;
+use function count;
+
+class UnusedExceptionVisitor extends NodeVisitorAbstract
+{
+
+    public const RESULT_USED = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'resultUsed';
+
+    /**
+     * @var Node[]
+     */
+    private array $stack = [];
+
+    /**
+     * @param Node[] $nodes
+     * @return Node[]
+     */
+    public function beforeTraverse(array $nodes): ?array
+    {
+        $this->stack = [];
+        return null;
+    }
+
+    public function enterNode(Node $node): ?Node
+    {
+        if ($this->stack !== []) {
+            $parent = $this->stack[count($this->stack) - 1];
+
+            if ($this->isNodeInInterest($node) && $this->isUsed($parent)) {
+                $node->setAttribute(self::RESULT_USED, true);
+            }
+        }
+
+        if ($this->shouldBuildStack($node)) {
+            $this->stack[] = $node;
+        }
+
+        return null;
+    }
+
+    public function leaveNode(Node $node): ?Node
+    {
+        array_pop($this->stack);
+        return null;
+    }
+
+    /**
+     * Those nodes *may* return exception
+     * - should match those in UnusedExceptionRule
+     */
+    private function isNodeInInterest(Node $node): bool
+    {
+        return $node instanceof New_
+            || $node instanceof MethodCall
+            || $node instanceof StaticCall;
+    }
+
+    private function shouldBuildStack(Node $node): bool
+    {
+        return $this->stack !== [] || $this->isUsed($node);
+    }
+
+    /**
+     * Those parent nodes are marking the exception as used
+     */
+    private function isUsed(Node $parent): bool
+    {
+        return $parent instanceof Throw_
+            || $parent instanceof Assign
+            || $parent instanceof MethodCall
+            || $parent instanceof Return_
+            || $parent instanceof Arg
+            || $parent instanceof Coalesce
+            || $parent instanceof ArrayItem
+            || $parent instanceof NullsafeMethodCall
+            || $parent instanceof ThrowExpr;
+    }
+
+}

@@ -1,0 +1,5 @@
+services:
+    -
+        class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
