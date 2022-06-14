@@ -78,6 +78,21 @@ function example($unknown) {
 }
 ```
 
+### ForbidUselessNullableReturnRule
+- Denies marking function as nullable when null is never returned
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\ForbidUselessNullableReturnRule
+```
+```php
+function example(int $foo): ?int { // null never returned
+    if ($foo < 0) {
+        return 0;
+    }
+    return $foo;
+}
+```
+
 ### UnsetClassFieldRule
 - Denies calling `unset` over class field as it causes un-initialization, see https://3v4l.org/V8uuP
 - Null assignment should be used instead
