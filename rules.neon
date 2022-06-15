@@ -1,7 +1,6 @@
 rules:
     - ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule
     - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
-    - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
     - ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule
     - ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule
     - ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule
