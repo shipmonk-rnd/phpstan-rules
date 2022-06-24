@@ -101,18 +101,20 @@ function example(MyClass $class) {
 ```
 
 ### ForbidUselessNullableReturnRule
-- Denies marking function return type as nullable when null is never returned
+- Denies marking method return type as nullable when null is never returned
 - Recommended to be used together with `UselessPrivatePropertyDefaultValueRule` and `UselessPrivatePropertyNullabilityRule`
 ```neon
 rules:
     - ShipMonk\PHPStan\Rule\ForbidUselessNullableReturnRule
 ```
 ```php
-function example(int $foo): ?int { // null never returned
-    if ($foo < 0) {
-        return 0;
+class Example {
+    public function example(int $foo): ?int { // null never returned
+        if ($foo < 0) {
+            return 0;
+        }
+        return $foo;
     }
-    return $foo;
 }
 ```
 
