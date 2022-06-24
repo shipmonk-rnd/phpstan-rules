@@ -144,13 +144,33 @@ function validate(): void {
 
 ```neon
 rules:
-    - ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule
+    - ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule(
+        checkRethrownExceptionAcceptsCaughtOne: true
+    )
 ```
 ```php
 try {
     // some code
 } catch (RuntimeException $e) {
     throw new LogicException('Cannot happen'); // $e not passed as previous
+}
+```
+
+- If you want to be even stricter, you can set up `checkRethrownExceptionAcceptsCaughtOne` to `false` and the rule will start reporting even cases where the thrown exception does not have parameter matching the caught exception
+  - That will force you to add the parameter to be able to pass it as previous
+  - Usable only if you do not throw exceptions from libraries, which is a good practice anyway
+
+```php
+class MyException extends RuntimeException {
+    public function __construct() {
+        parent::__construct('My error');
+    }
+}
+
+try {
+    // some code
+} catch (RuntimeException $e) {
+    throw new MyException(); // reported even though MyException cannot accept it yet
 }
 ```
 
