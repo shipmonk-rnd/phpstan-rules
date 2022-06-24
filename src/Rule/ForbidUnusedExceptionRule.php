@@ -14,7 +14,6 @@ use PHPStan\Rules\Rule;
 use PHPStan\Type\TypeWithClassName;
 use ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor;
 use Throwable;
-use function is_a;
 
 /**
  * @implements Rule<Expr>
@@ -88,7 +87,9 @@ class ForbidUnusedExceptionRule implements Rule
     {
         $type = $scope->getType($node);
 
-        return $type instanceof TypeWithClassName && is_a($type->getClassName(), Throwable::class, true);
+        return $type instanceof TypeWithClassName
+            && $type->getClassReflection() !== null
+            && $type->getClassReflection()->isSubclassOf(Throwable::class);
     }
 
     private function isUsed(Expr $node): bool
