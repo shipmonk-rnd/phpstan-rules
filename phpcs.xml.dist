@@ -253,6 +253,7 @@
         <properties>
             <property name="groups" type="array">
                 <element value="uses"/>
+                <element value="enum cases"/>
                 <element value="constants"/>
                 <element value="properties"/>
                 <element value="constructor"/>
@@ -268,6 +269,7 @@
     <rule ref="SlevomatCodingStandard.Classes.MethodSpacing" />
     <rule ref="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces"/>
     <rule ref="SlevomatCodingStandard.Classes.TraitUseDeclaration" />
+    <rule ref="SlevomatCodingStandard.Classes.PropertyDeclaration" />
     <rule ref="SlevomatCodingStandard.Classes.TraitUseSpacing" />
     <rule ref="SlevomatCodingStandard.Classes.DisallowConstructorPropertyPromotion" />
     <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing">
