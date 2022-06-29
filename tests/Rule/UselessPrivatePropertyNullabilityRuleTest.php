@@ -15,7 +15,8 @@ class UselessPrivatePropertyNullabilityRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new UselessPrivatePropertyNullabilityRule(self::getContainer()->getByType(ReadWritePropertiesExtensionProvider::class));
+        $extensionProvider = self::getContainer()->getByType(ReadWritePropertiesExtensionProvider::class); // @phpstan-ignore-line ignore bc promise
+        return new UselessPrivatePropertyNullabilityRule($extensionProvider);
     }
 
     /**
