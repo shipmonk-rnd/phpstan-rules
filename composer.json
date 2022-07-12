@@ -6,7 +6,7 @@
     ],
     "require": {
         "nikic/php-parser": "^4.13.2",
-        "phpstan/phpstan": "^1.5.6"
+        "phpstan/phpstan": "1.8.x-dev"
     },
     "require-dev": {
         "editorconfig-checker/editorconfig-checker": "^10.3.0",

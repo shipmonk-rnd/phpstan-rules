@@ -10,7 +10,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClassPropertiesNode;
 use PHPStan\Node\Property\PropertyWrite;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Rules\Properties\ReadWritePropertiesExtensionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -22,15 +21,6 @@ use ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor;
  */
 class UselessPrivatePropertyNullabilityRule implements Rule
 {
-
-    private ReadWritePropertiesExtensionProvider $extensionProvider;
-
-    public function __construct(
-        ReadWritePropertiesExtensionProvider $extensionProvider
-    )
-    {
-        $this->extensionProvider = $extensionProvider;
-    }
 
     public function getNodeType(): string
     {
@@ -80,7 +70,7 @@ class UselessPrivatePropertyNullabilityRule implements Rule
             }
         }
 
-        [$uninitializedProperties] = $node->getUninitializedProperties($scope, $this->getConstructors($classReflection), $this->extensionProvider->getExtensions()); // @phpstan-ignore-line ignore bc promise
+        [$uninitializedProperties] = $node->getUninitializedProperties($scope, $this->getConstructors($classReflection));
 
         $errors = [];
 

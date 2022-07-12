@@ -2,7 +2,6 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
-use PHPStan\Rules\Properties\ReadWritePropertiesExtensionProvider;
 use PHPStan\Rules\Rule;
 use ShipMonk\PHPStan\RuleTestCase;
 use function array_merge;
@@ -15,7 +14,7 @@ class UselessPrivatePropertyNullabilityRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new UselessPrivatePropertyNullabilityRule(self::getContainer()->getByType(ReadWritePropertiesExtensionProvider::class));
+        return new UselessPrivatePropertyNullabilityRule();
     }
 
     /**
