@@ -87,6 +87,20 @@ function example($unknown) {
 }
 ```
 
+### ForbidTrickyComparisonRule
+- Denies using comparison operators `>,<,<=,>=,<=>` over anything other than int|string|float|DateTimeInterface
+- Mainly targets to accidental comparisons of objects, enums or arrays which is valid in PHP, but very tricky
+
+```neon
+rules:
+- ShipMonk\PHPStan\Rule\ForbidTrickyComparisonRule
+```
+```php
+function example(Money $fee1, Money $fee2) {
+    if ($fee1 > $fee2) {} // comparing objects is denied
+}
+```
+
 ### ForbidUnsetClassFieldRule
 - Denies calling `unset` over class field as it causes un-initialization, see https://3v4l.org/V8uuP
 - Null assignment should be used instead
