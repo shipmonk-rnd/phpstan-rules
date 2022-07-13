@@ -20,6 +20,23 @@ All you need to enable most of the rules is to register them [as documented in p
 Some of them need some specific [rich parser node visitor](https://phpstan.org/blog/preprocessing-ast-for-custom-rules) to be registered as well.
 Rarely, some rules are reliable only when some other rule is enabled.
 
+### AllowComparingOnlyComparableTypesRule
+- Denies using comparison operators `>,<,<=,>=,<=>` over anything other than int|string|float|DateTimeInterface. Null is not allowed.
+- Mixing different types in those operators is also forbidden, only exception is comparing floats with integers
+- Mainly targets to accidental comparisons of objects, enums or arrays which is valid in PHP, but very tricky
+
+```neon
+rules:
+- ShipMonk\PHPStan\Rule\ForbidTrickyComparisonRule
+```
+```php
+function example1(Money $fee1, Money $fee2) {
+    if ($fee1 > $fee2) {} // comparing objects is denied
+}
+
+new DateTime() > '2040-01-02'; // comparing different types is denied
+```
+
 ### AllowNamedArgumentOnlyInAttributesRule
 - Allows usage of named arguments only in native attributes
 - Before native attributes, we used [DisallowNamedArguments](https://github.com/slevomat/coding-standard#slevomatcodingstandardfunctionsdisallownamedarguments). But we used Doctrine annotations, which almost "require" named arguments when converted to native attributes.
