@@ -10,18 +10,19 @@ $fn = function (
     array $foos,
     Foo $foo,
     Foo $foo2,
-    ?Foo $nullableFoo,
     Foo|Bar $fooOrBar,
     Foo&Bar $fooAndBar,
     DateTime $dateTime,
     DateTimeImmutable $dateTimeImmutable,
     string $string,
     int $int,
+    ?int $nullableInt,
     float $float,
     bool $bool,
 ) {
     $foos > $foo; // error: Comparison array > Foo contains non-comparable type, only int|float|string|DateTimeInterface is allowed.
-    $nullableFoo > $foo; // error: Comparison Foo|null > Foo contains non-comparable type, only int|float|string|DateTimeInterface is allowed.
+    $nullableInt > $int; // error: Comparison int|null > int contains non-comparable type, only int|float|string|DateTimeInterface is allowed.
+    null > $int; // error: Comparison null > int contains non-comparable type, only int|float|string|DateTimeInterface is allowed.
     $foo > $foo2; // error: Comparison Foo > Foo contains non-comparable type, only int|float|string|DateTimeInterface is allowed.
     $foo > $fooOrBar; // error: Comparison Foo > Bar|Foo contains non-comparable type, only int|float|string|DateTimeInterface is allowed.
     $foo > $fooAndBar; // error: Comparison Foo > Bar&Foo contains non-comparable type, only int|float|string|DateTimeInterface is allowed.

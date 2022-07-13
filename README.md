@@ -21,7 +21,7 @@ Some of them need some specific [rich parser node visitor](https://phpstan.org/b
 Rarely, some rules are reliable only when some other rule is enabled.
 
 ### AllowComparingOnlyComparableTypesRule
-- Denies using comparison operators `>,<,<=,>=,<=>` over anything other than int|string|float|DateTimeInterface
+- Denies using comparison operators `>,<,<=,>=,<=>` over anything other than int|string|float|DateTimeInterface. Null is not allowed.
 - Mixing different types in those operators is also forbidden, only exception is comparing floats with integers
 - Mainly targets to accidental comparisons of objects, enums or arrays which is valid in PHP, but very tricky
 
