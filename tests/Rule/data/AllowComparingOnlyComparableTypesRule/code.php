@@ -31,5 +31,8 @@ $fn = function (
     $bool > true; // error: Comparison bool > true contains non-comparable type, only int|float|string|DateTimeInterface is allowed.
     $dateTime > $dateTimeImmutable;
     $dateTime > $foo; // error: Comparison DateTime > Foo contains non-comparable type, only int|float|string|DateTimeInterface is allowed.
-    $string > $int;
+
+    $string > $int; // error: Cannot compare different types in string > int.
+    $float > $int;
+    $dateTime > $string; // error: Cannot compare different types in DateTime > string.
 };

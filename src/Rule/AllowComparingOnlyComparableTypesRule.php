@@ -22,7 +22,7 @@ use PHPStan\Type\VerbosityLevel;
 /**
  * @implements Rule<BinaryOp>
  */
-class ForbidTrickyComparisonRule implements Rule
+class AllowComparingOnlyComparableTypesRule implements Rule
 {
 
     public function getNodeType(): string
@@ -56,6 +56,10 @@ class ForbidTrickyComparisonRule implements Rule
             return ["Comparison {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed} contains non-comparable type, only int|float|string|DateTimeInterface is allowed."];
         }
 
+        if (!$this->isComparableTogether($leftType, $rightType)) {
+            return ["Cannot compare different types in {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed}."];
+        }
+
         return [];
     }
 
@@ -70,6 +74,31 @@ class ForbidTrickyComparisonRule implements Rule
             || $floatType->isSuperTypeOf($type)->yes()
             || $stringType->isSuperTypeOf($type)->yes()
             || $dateTimeType->isSuperTypeOf($type)->yes();
+    }
+
+    private function isComparableTogether(Type $leftType, Type $rightType): bool
+    {
+        $intType = new IntegerType();
+        $floatType = new FloatType();
+        $stringType = new StringType();
+        $dateTimeType = new ObjectType(DateTimeInterface::class);
+
+        $leftIsInt = $intType->isSuperTypeOf($leftType)->yes();
+        $leftIsFloat = $floatType->isSuperTypeOf($leftType)->yes();
+        $leftIsString = $stringType->isSuperTypeOf($leftType)->yes();
+        $leftIsDateTime = $dateTimeType->isSuperTypeOf($leftType)->yes();
+
+        $rightIsInt = $intType->isSuperTypeOf($rightType)->yes();
+        $rightIsFloat = $floatType->isSuperTypeOf($rightType)->yes();
+        $rightIsString = $stringType->isSuperTypeOf($rightType)->yes();
+        $rightIsDateTime = $dateTimeType->isSuperTypeOf($rightType)->yes();
+
+        return ($leftIsDateTime && $rightIsDateTime)
+            || ($leftIsInt && $rightIsInt)
+            || ($leftIsFloat && $rightIsFloat)
+            || ($leftIsInt && $rightIsFloat) // allow mixing int vs float
+            || ($leftIsFloat && $rightIsInt) // allow mixing int vs float
+            || ($leftIsString && $rightIsString);
     }
 
 }
