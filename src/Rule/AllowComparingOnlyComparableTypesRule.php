@@ -17,6 +17,7 @@ use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
+use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
 /**
@@ -65,6 +66,16 @@ class AllowComparingOnlyComparableTypesRule implements Rule
 
     private function isComparable(Type $type): bool
     {
+        if ($type instanceof UnionType) {
+            foreach ($type->getTypes() as $innerType) {
+                if (!$this->isComparable($innerType)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         $intType = new IntegerType();
         $floatType = new FloatType();
         $stringType = new StringType();
@@ -76,7 +87,7 @@ class AllowComparingOnlyComparableTypesRule implements Rule
             || $dateTimeType->isSuperTypeOf($type)->yes();
     }
 
-    private function isComparableTogether(Type $leftType, Type $rightType): bool
+    private function isComparableTogether(Type $leftType, Type $rightType): bool // TODO handle unions
     {
         $intType = new IntegerType();
         $floatType = new FloatType();

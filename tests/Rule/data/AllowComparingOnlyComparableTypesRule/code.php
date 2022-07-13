@@ -17,6 +17,7 @@ $fn = function (
     string $string,
     int $int,
     ?int $nullableInt,
+    int|float $intOrFloat,
     float $float,
     bool $bool,
 ) {
@@ -29,6 +30,7 @@ $fn = function (
     $string > 'foo';
     $int > 2;
     $float > 2;
+    $int > $intOrFloat;
     $bool > true; // error: Comparison bool > true contains non-comparable type, only int|float|string|DateTimeInterface is allowed.
     $dateTime > $dateTimeImmutable;
     $dateTime > $foo; // error: Comparison DateTime > Foo contains non-comparable type, only int|float|string|DateTimeInterface is allowed.
