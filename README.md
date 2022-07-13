@@ -61,6 +61,23 @@ class User {
 }
 ```
 
+### ForbidEnumInFunctionArgumentsRule
+- Guards passing native enums to native functions where it fails / produces warning or does unexpected behaviour
+- Most of the array manipulation functions does not work with enums as they do implicit __toString conversion inside, but that is not possible to do with enums
+- [See test](https://github.com/shipmonk-rnd/phpstan-rules/blob/master/tests/Rule/data/ForbidEnumInFunctionArgumentsRule/code.php) for all functions and their problems
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\ForbidEnumInFunctionArgumentsRule
+```
+```php
+enum MyEnum: string {
+    case MyCase = 'case1';
+}
+
+implode('', [MyEnum::MyCase]); // denied, would fail on implicit toString conversion
+```
+
+
 ### ForbidFetchOnMixedRule
 - Denies property fetch on unknown type.
 - Any property fetch assumes the caller is an object with such property and therefore, the typehint/phpdoc should be fixed.
