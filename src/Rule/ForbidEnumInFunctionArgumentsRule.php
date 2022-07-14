@@ -83,7 +83,7 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
         if ($wrongArguments !== []) {
             $plural = count($wrongArguments) > 1 ? 's' : '';
             $wrongArgumentsString = implode(', ', $wrongArguments);
-            return ["Argument{$plural} {$wrongArgumentsString} in {$node->name->toString()}() cannot be enum {$reason}"];
+            return ["Argument{$plural} {$wrongArgumentsString} in {$node->name->toString()}() cannot contain enum {$reason}"];
         }
 
         return [];
