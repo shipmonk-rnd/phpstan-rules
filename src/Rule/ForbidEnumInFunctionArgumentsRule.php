@@ -55,13 +55,13 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
     public function processNode(Node $node, Scope $scope): array
     {
         if (!$node->name instanceof Name) {
-            return ['Not a Name'];
+            return [];
         }
 
         $functionName = $node->name->toLowerString();
 
         if (!array_key_exists($functionName, self::FUNCTION_MAP)) {
-            return ['Different function'];
+            return [];
         }
 
         [$forbiddenArgumentPosition, $reason] = self::FUNCTION_MAP[$functionName];
@@ -86,7 +86,7 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
             return ["Argument{$plural} {$wrongArgumentsString} in {$node->name->toString()}() cannot be enum {$reason}"];
         }
 
-        return ['Error'];
+        return [];
     }
 
     private function matchesPosition(int $position, int $forbiddenArgumentPosition): bool

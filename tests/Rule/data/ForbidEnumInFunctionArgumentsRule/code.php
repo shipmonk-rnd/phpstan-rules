@@ -1,13 +1,13 @@
 <?php declare(strict_types = 1);
 
-enum Foo: string {
+enum SomeEnum: string {
     case Bar = 'bar';
     case Baz = 'baz';
 }
 
-$enums1 = [Foo::Bar, Foo::Baz];
-$enums2 = [Foo::Bar];
-$enums3 = [Foo::Baz];
+$enums1 = [SomeEnum::Bar, SomeEnum::Baz];
+$enums2 = [SomeEnum::Bar];
+$enums3 = [SomeEnum::Baz];
 
 array_intersect($enums1, $enums2, $enums3); // error: Arguments 1, 2, 3 in array_intersect() cannot be enum as the function causes implicit __toString conversion which is not supported for enums
 array_intersect_assoc($enums1, $enums2, $enums3); // error: Arguments 1, 2, 3 in array_intersect_assoc() cannot be enum as the function causes implicit __toString conversion which is not supported for enums
@@ -25,4 +25,4 @@ array_flip($enums1); // error: Argument 1 in array_flip() cannot be enum as the 
 array_product($enums1); // error: Argument 1 in array_product() cannot be enum as the function causes unexpected results
 array_sum($enums1); // error: Argument 1 in array_sum() cannot be enum as the function causes unexpected results
 implode('', $enums1); // error: Argument 2 in implode() cannot be enum as the function causes implicit __toString conversion which is not supported for enums
-in_array(Foo::Bar, $enums1);
+in_array(SomeEnum::Bar, $enums1);
