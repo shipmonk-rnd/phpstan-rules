@@ -54,6 +54,8 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
+        return ["Error"];
+
         if (!$node->name instanceof Name) {
             return [];
         }
