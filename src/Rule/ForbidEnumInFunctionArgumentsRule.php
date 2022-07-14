@@ -76,14 +76,14 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
             $argumentType = $scope->getType($argument->value);
 
             if (EnumTypeHelper::containsEnum($argumentType)) {
-                $wrongArguments[] = '#' . ($position + 1);
+                $wrongArguments[] = $position + 1;
             }
         }
 
         if ($wrongArguments !== []) {
             $plural = count($wrongArguments) > 1 ? 's' : '';
             $wrongArgumentsString = implode(', ', $wrongArguments);
-            return ["Argument{$plural} {$wrongArgumentsString} to {$node->name->toString()}() cannot be enum {$reason}"];
+            return ["Argument{$plural} {$wrongArgumentsString} in {$node->name->toString()}() cannot be enum {$reason}"];
         }
 
         return [];
