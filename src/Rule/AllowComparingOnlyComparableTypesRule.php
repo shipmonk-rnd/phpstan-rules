@@ -17,6 +17,7 @@ use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
+use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
 /**
@@ -70,10 +71,7 @@ class AllowComparingOnlyComparableTypesRule implements Rule
         $stringType = new StringType();
         $dateTimeType = new ObjectType(DateTimeInterface::class);
 
-        return $intType->isSuperTypeOf($type)->yes()
-            || $floatType->isSuperTypeOf($type)->yes()
-            || $stringType->isSuperTypeOf($type)->yes()
-            || $dateTimeType->isSuperTypeOf($type)->yes();
+        return $this->containsOnlyTypes($type, [$intType, $floatType, $stringType, $dateTimeType]);
     }
 
     private function isComparableTogether(Type $leftType, Type $rightType): bool
@@ -83,22 +81,36 @@ class AllowComparingOnlyComparableTypesRule implements Rule
         $stringType = new StringType();
         $dateTimeType = new ObjectType(DateTimeInterface::class);
 
-        $leftIsInt = $intType->isSuperTypeOf($leftType)->yes();
-        $leftIsFloat = $floatType->isSuperTypeOf($leftType)->yes();
-        $leftIsString = $stringType->isSuperTypeOf($leftType)->yes();
-        $leftIsDateTime = $dateTimeType->isSuperTypeOf($leftType)->yes();
+        return ($this->containsOnlyTypes($leftType, [$intType, $floatType]) && $this->containsOnlyTypes($rightType, [$intType, $floatType]))
+            || ($this->containsOnlyTypes($leftType, [$stringType]) && $this->containsOnlyTypes($rightType, [$stringType]))
+            || ($this->containsOnlyTypes($leftType, [$dateTimeType]) && $this->containsOnlyTypes($rightType, [$dateTimeType]));
+    }
 
-        $rightIsInt = $intType->isSuperTypeOf($rightType)->yes();
-        $rightIsFloat = $floatType->isSuperTypeOf($rightType)->yes();
-        $rightIsString = $stringType->isSuperTypeOf($rightType)->yes();
-        $rightIsDateTime = $dateTimeType->isSuperTypeOf($rightType)->yes();
+    /**
+     * @param Type[] $allowedTypes
+     */
+    private function containsOnlyTypes(Type $checkedType, array $allowedTypes): bool
+    {
+        $typesToCheck = $checkedType instanceof UnionType
+            ? $checkedType->getTypes()
+            : [$checkedType];
 
-        return ($leftIsDateTime && $rightIsDateTime)
-            || ($leftIsInt && $rightIsInt)
-            || ($leftIsFloat && $rightIsFloat)
-            || ($leftIsInt && $rightIsFloat) // allow mixing int vs float
-            || ($leftIsFloat && $rightIsInt) // allow mixing int vs float
-            || ($leftIsString && $rightIsString);
+        foreach ($typesToCheck as $typeToCheck) {
+            $isWithinAllowed = false;
+
+            foreach ($allowedTypes as $allowedType) {
+                if ($allowedType->isSuperTypeOf($typeToCheck)->yes()) {
+                    $isWithinAllowed = true;
+                    break;
+                }
+            }
+
+            if (!$isWithinAllowed) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }
