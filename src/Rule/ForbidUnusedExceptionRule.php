@@ -87,9 +87,12 @@ class ForbidUnusedExceptionRule implements Rule
     {
         $type = $scope->getType($node);
 
-        return $type instanceof TypeWithClassName
-            && $type->getClassReflection() !== null
-            && $type->getClassReflection()->isSubclassOf(Throwable::class);
+        if (!$type instanceof TypeWithClassName) {
+            return false;
+        }
+
+        $classReflection = $type->getClassReflection();
+        return $classReflection !== null && $classReflection->isSubclassOf(Throwable::class);
     }
 
     private function isUsed(Expr $node): bool
