@@ -27,7 +27,7 @@ Rarely, some rules are reliable only when some other rule is enabled.
 
 ```neon
 rules:
-- ShipMonk\PHPStan\Rule\ForbidTrickyComparisonRule
+- ShipMonk\PHPStan\Rule\AllowComparingOnlyComparableTypesRule
 ```
 ```php
 function example1(Money $fee1, Money $fee2) {
@@ -35,6 +35,7 @@ function example1(Money $fee1, Money $fee2) {
 }
 
 new DateTime() > '2040-01-02'; // comparing different types is denied
+200 > '1e2'; // comparing different types is denied
 ```
 
 ### AllowNamedArgumentOnlyInAttributesRule
