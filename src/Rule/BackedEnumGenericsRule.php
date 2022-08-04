@@ -2,7 +2,6 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
-use BackedEnum;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassNode;
@@ -39,7 +38,7 @@ class BackedEnumGenericsRule implements Rule
         }
 
         $expectedType = $backedEnumType->describe(VerbosityLevel::typeOnly());
-        $expectedTag = BackedEnum::class . "<$expectedType>";
+        $expectedTag = "BackedEnum<$expectedType>";
 
         foreach ($classReflection->getAncestors() as $interface) {
             if ($this->hasGenericsTag($interface, $expectedTag)) {
@@ -74,7 +73,7 @@ class BackedEnumGenericsRule implements Rule
     private function isGenericBackedEnum(ClassReflection $classReflection): bool
     {
         foreach ($classReflection->getAncestors() as $ancestor) {
-            if ($ancestor->getName() === BackedEnum::class && $ancestor->isGeneric()) {
+            if ($ancestor->getName() === 'BackedEnum' && $ancestor->isGeneric()) {
                 return true;
             }
         }
