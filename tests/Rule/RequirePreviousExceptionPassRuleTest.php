@@ -13,29 +13,29 @@ use ShipMonk\PHPStan\RuleTestCase;
 class RequirePreviousExceptionPassRuleTest extends RuleTestCase
 {
 
-    private ?bool $checkRethrownExceptionAcceptsCaughtOne = null;
+    private ?bool $reportEvenIfExceptionIsNotAcceptableByRethrownOne = null;
 
     protected function getRule(): Rule
     {
-        if ($this->checkRethrownExceptionAcceptsCaughtOne === null) {
+        if ($this->reportEvenIfExceptionIsNotAcceptableByRethrownOne === null) {
             throw new LogicException('Testcase need to initialize this');
         }
 
         return new RequirePreviousExceptionPassRule(
             self::getContainer()->getByType(Standard::class),
-            $this->checkRethrownExceptionAcceptsCaughtOne,
+            $this->reportEvenIfExceptionIsNotAcceptableByRethrownOne,
         );
     }
 
     public function testWithAcceptCheck(): void
     {
-        $this->checkRethrownExceptionAcceptsCaughtOne = true;
+        $this->reportEvenIfExceptionIsNotAcceptableByRethrownOne = false;
         $this->analyseFile(__DIR__ . '/data/RequirePreviousExceptionPassRule/with-accept-check.php');
     }
 
     public function testWithoutAcceptCheck(): void
     {
-        $this->checkRethrownExceptionAcceptsCaughtOne = false;
+        $this->reportEvenIfExceptionIsNotAcceptableByRethrownOne = true;
         $this->analyseFile(__DIR__ . '/data/RequirePreviousExceptionPassRule/without-accept-check.php');
     }
 
