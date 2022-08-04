@@ -62,6 +62,24 @@ class User {
 }
 ```
 
+### BackedEnumGenericsRule
+- Ensures that every BackedEnum child defines generic type
+- This makes sense only when BackedEnum was hacked to be generic as described in [this article](https://rnd.shipmonk.com/hacking-generics-into-backedenum-in-php-81/)
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\BackedEnumGenericsRule
+parameters:
+    stubFiles:
+        - BackedEnum.php.stub # see article or BackedEnumGenericsRuleTest
+    ignoreErrors:
+        - '#^Enum .*? has @implements tag, but does not implement any interface.$#'
+```
+```php
+enum MyEnum: string { // missing @implements tag
+    case MyCase = 'case1';
+}
+```
+
 ### ForbidEnumInFunctionArgumentsRule
 - Guards passing native enums to native functions where it fails / produces warning or does unexpected behaviour
 - Most of the array manipulation functions does not work with enums as they do implicit __toString conversion inside, but that is not possible to do with enums
