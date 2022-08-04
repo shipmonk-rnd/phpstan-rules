@@ -192,7 +192,7 @@ function validate(): void {
 ```neon
 rules:
     - ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule(
-        ignoreIfExceptionIsNotAcceptableByRethrownOne: true
+        reportEvenIfExceptionIsNotAcceptableByRethrownOne: false
     )
 ```
 ```php
@@ -203,7 +203,7 @@ try {
 }
 ```
 
-- If you want to be even stricter, you can set up `ignoreIfExceptionIsNotAcceptableByRethrownOne` to `false` and the rule will start reporting even cases where the thrown exception does not have parameter matching the caught exception
+- If you want to be even stricter, you can set up `reportEvenIfExceptionIsNotAcceptableByRethrownOne` to `true` and the rule will start reporting even cases where the thrown exception does not have parameter matching the caught exception
   - That will force you to add the parameter to be able to pass it as previous
   - Usable only if you do not throw exceptions from libraries, which is a good practice anyway
 

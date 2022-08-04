@@ -37,12 +37,12 @@ class RequirePreviousExceptionPassRule implements Rule
 
     private Standard $printer;
 
-    private bool $ignoreIfExceptionIsNotAcceptableByRethrownOne;
+    private bool $reportEvenIfExceptionIsNotAcceptableByRethrownOne;
 
-    public function __construct(Standard $printer, bool $ignoreIfExceptionIsNotAcceptableByRethrownOne = true)
+    public function __construct(Standard $printer, bool $reportEvenIfExceptionIsNotAcceptableByRethrownOne = false)
     {
         $this->printer = $printer;
-        $this->ignoreIfExceptionIsNotAcceptableByRethrownOne = $ignoreIfExceptionIsNotAcceptableByRethrownOne;
+        $this->reportEvenIfExceptionIsNotAcceptableByRethrownOne = $reportEvenIfExceptionIsNotAcceptableByRethrownOne;
     }
 
     public function getNodeType(): string
@@ -121,7 +121,7 @@ class RequirePreviousExceptionPassRule implements Rule
             }
         }
 
-        if ($this->ignoreIfExceptionIsNotAcceptableByRethrownOne) {
+        if (!$this->reportEvenIfExceptionIsNotAcceptableByRethrownOne) {
             $accepts = false;
 
             foreach ($this->getCallLikeParameters($node, $scope) as $parameter) {
