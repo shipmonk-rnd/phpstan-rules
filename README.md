@@ -74,6 +74,29 @@ enum MyEnum: string { // missing @implements tag
 }
 ```
 
+### ForbidCustomFunctionsRule
+- Allows you to easily deny some approaches within your codebase by denying classes, methods and functions
+- Configuration syntax is array where key is method name and value is reason used in error message
+- Works even with interfaces, constructors and some dynamic class/method names like `$fn = 'sleep'; $fn();`
+```neon
+parametersSchema:
+    forbiddenFunctions: arrayOf(string())
+parameters:
+    forbiddenFunctions:
+        'Namespace\SomeClass::*': 'Please use different class' # deny all methods by using * (including constructor)
+        'Namespace\AnotherClass::someMethod': 'Please use anotherMethod' # deny single method
+        'sleep': 'Plese use usleep only' # deny function
+services:
+    -
+        factory: ShipMonk\PHPStan\Rule\ForbidCustomFunctionsRule(%forbiddenFunctions%)
+        tags:
+            - phpstan.rules.rule
+```
+```php
+new SomeClass(); // Class SomeClass is forbidden. Please use different class
+(new AnotherClass())->someMethod(); // Method AnotherClass::someMethod() is forbidden. Please use anotherMethod
+```
+
 ### ForbidEnumInFunctionArgumentsRule
 - Guards passing native enums to native functions where it fails / produces warning or does unexpected behaviour
 - Most of the array manipulation functions does not work with enums as they do implicit __toString conversion inside, but that is not possible to do with enums
