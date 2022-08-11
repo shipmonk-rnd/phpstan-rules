@@ -83,7 +83,7 @@ parametersSchema:
     forbiddenFunctions: arrayOf(string())
 parameters:
     forbiddenFunctions:
-        'Namespace\SomeClass::*': 'Please use different class' # deny all methods by *
+        'Namespace\SomeClass::*': 'Please use different class' # deny all methods by using * (including constructor)
         'Namespace\AnotherClass::someMethod': 'Please use anotherMethod' # deny single method
         'sleep': 'Plese use usleep only' # deny function
 services:
