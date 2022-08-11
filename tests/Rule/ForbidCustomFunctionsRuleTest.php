@@ -24,6 +24,7 @@ class ForbidCustomFunctionsRuleTest extends RuleTestCase
                 'ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod' => 'Description 5',
                 'ForbidCustomFunctionsRule\SomeInterface::forbiddenInterfaceMethod' => 'Description 6',
                 'ForbidCustomFunctionsRule\SomeInterface::forbiddenInterfaceStaticMethod' => 'Description 7',
+                'ForbidCustomFunctionsRule\SomeParent::forbiddenMethodOfParent' => 'Description 8',
             ],
             self::getContainer()->getByType(ReflectionProvider::class),
         );

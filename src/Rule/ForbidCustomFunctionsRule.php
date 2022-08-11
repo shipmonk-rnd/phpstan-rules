@@ -141,19 +141,15 @@ class ForbidCustomFunctionsRule implements Rule
      */
     private function validateMethod(string $methodName, string $className): array
     {
-        if (isset($this->forbiddenFunctions[$className][$methodName])) {
-            return [sprintf('Method %s::%s() is forbidden. %s', $className, $methodName, $this->forbiddenFunctions[$className][$methodName])];
-        }
-
-        if (isset($this->forbiddenFunctions[$className][self::ANY_METHOD])) {
-            return [sprintf('Class %s is forbidden. %s', $className, $this->forbiddenFunctions[$className]['*'])];
-        }
-
         foreach ($this->reflectionProvider->getClass($className)->getAncestors() as $ancestor) {
-            $className = $ancestor->getName();
+            $ancestorClassName = $ancestor->getName();
 
-            if (isset($this->forbiddenFunctions[$className][$methodName])) {
-                return [sprintf('Method %s::%s() is forbidden. %s', $className, $methodName, $this->forbiddenFunctions[$className][$methodName])];
+            if (isset($this->forbiddenFunctions[$ancestorClassName][self::ANY_METHOD])) {
+                return [sprintf('Class %s is forbidden. %s', $ancestorClassName, $this->forbiddenFunctions[$ancestorClassName][self::ANY_METHOD])];
+            }
+
+            if (isset($this->forbiddenFunctions[$ancestorClassName][$methodName])) {
+                return [sprintf('Method %s::%s() is forbidden. %s', $ancestorClassName, $methodName, $this->forbiddenFunctions[$ancestorClassName][$methodName])];
             }
         }
 
@@ -196,7 +192,7 @@ class ForbidCustomFunctionsRule implements Rule
     private function getMethodName(Node $name, Scope $scope): ?string
     {
         if ($name instanceof Name) {
-            return $scope->resolveName($name);
+            return $name->toString();
         }
 
         if ($name instanceof Identifier) {
