@@ -137,7 +137,7 @@ class ForbidCustomFunctionsRule implements Rule
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     private function validateMethod(string $methodName, string $className): array
     {
@@ -161,7 +161,7 @@ class ForbidCustomFunctionsRule implements Rule
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     private function validateFunction(string $functionName): array
     {
