@@ -1,5 +1,7 @@
 <?php declare(strict_types = 1);
 
+namespace ForbidEnumInFunctionArgumentsRule;
+
 enum SomeEnum: string {
     case Bar = 'bar';
     case Baz = 'baz';

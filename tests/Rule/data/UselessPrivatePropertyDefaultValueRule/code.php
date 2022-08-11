@@ -1,12 +1,14 @@
 <?php declare(strict_types = 1);
 
-class UselessPrivatePropertyDefaultValueRuleExampleClass
+namespace UselessPrivatePropertyDefaultValueRule;
+
+class ExampleClass
 {
     public int $isPublic = 0;
 
     protected int $isProtected = 0;
 
-    private int $isPrivate = 0; // error: Property UselessPrivatePropertyDefaultValueRuleExampleClass::isPrivate has useless default value (overwritten in constructor)
+    private int $isPrivate = 0; // error: Property UselessPrivatePropertyDefaultValueRule\ExampleClass::isPrivate has useless default value (overwritten in constructor)
 
     private int $isPrivateWithConditionalAssignment = 0; // not detected due to condition used in ctor
 
