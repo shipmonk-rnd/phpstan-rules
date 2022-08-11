@@ -5,6 +5,7 @@ namespace ShipMonk\PHPStan\Rule;
 use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
@@ -15,6 +16,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\TypeUtils;
 use function count;
 use function explode;
@@ -22,7 +24,7 @@ use function is_string;
 use function sprintf;
 
 /**
- * @implements Rule<Expr>
+ * @implements Rule<CallLike>
  */
 class ForbidCustomFunctionsRule implements Rule
 {
@@ -67,11 +69,11 @@ class ForbidCustomFunctionsRule implements Rule
 
     public function getNodeType(): string
     {
-        return Expr::class;
+        return CallLike::class;
     }
 
     /**
-     * @param Expr $node
+     * @param CallLike $node
      * @return string[]
      */
     public function processNode(Node $node, Scope $scope): array
@@ -83,18 +85,7 @@ class ForbidCustomFunctionsRule implements Rule
                 return [];
             }
 
-            $classType = $scope->getType($node->var);
-            $classNames = TypeUtils::getDirectClassNames($classType);
-            $errors = [];
-
-            foreach ($classNames as $className) {
-                $errors = [
-                    ...$errors,
-                    ...$this->validateMethod($methodName, $className),
-                ];
-            }
-
-            return $errors;
+            return $this->validateCallOverExpr($methodName, $node->var, $scope);
         }
 
         if ($node instanceof StaticCall) {
@@ -106,11 +97,11 @@ class ForbidCustomFunctionsRule implements Rule
 
             $classNode = $node->class;
 
-            if (!$classNode instanceof Name) {
-                return [];
+            if ($classNode instanceof Name) {
+                return $this->validateMethod($methodName, $scope->resolveName($classNode));
             }
 
-            return $this->validateMethod($methodName, $scope->resolveName($classNode));
+            return $this->validateCallOverExpr($methodName, $classNode, $scope);
         }
 
         if ($node instanceof FuncCall) {
@@ -124,16 +115,58 @@ class ForbidCustomFunctionsRule implements Rule
         }
 
         if ($node instanceof New_) {
-            $className = $node->class;
+            $classNode = $node->class;
 
-            if (!$className instanceof Name) {
-                return [];
+            if ($classNode instanceof Name) {
+                return $this->validateMethod('__construct', $scope->resolveName($classNode));
             }
 
-            return $this->validateMethod('__construct', $scope->resolveName($className));
+            if ($classNode instanceof Expr) {
+                return $this->validateConstructorWithDynamicString($classNode, $scope);
+            }
+
+            return [];
         }
 
         return [];
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function validateConstructorWithDynamicString(Expr $expr, Scope $scope): array
+    {
+        $type = $scope->getType($expr);
+
+        if ($type instanceof ConstantStringType) {
+            return $this->validateMethod('__construct', $type->getValue());
+        }
+
+        return [];
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function validateCallOverExpr(string $methodName, Expr $expr, Scope $scope): array
+    {
+        $classType = $scope->getType($expr);
+
+        if ($classType instanceof GenericClassStringType) {
+            $classType = $classType->getGenericType();
+        }
+
+        $classNames = TypeUtils::getDirectClassNames($classType);
+        $errors = [];
+
+        foreach ($classNames as $className) {
+            $errors = [
+                ...$errors,
+                ...$this->validateMethod($methodName, $className),
+            ];
+        }
+
+        return $errors;
     }
 
     /**
