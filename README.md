@@ -77,7 +77,7 @@ enum MyEnum: string { // missing @implements tag
 ### ForbidCustomFunctionsRule
 - Allows you to easily deny some approaches within your codebase by denying classes, methods and functions
 - Configuration syntax is array where key is method name and value is reason used in error message
-- Works even with interfaces, constructors and some dynamic method names like `$fn = 'sleep'; $fn();`
+- Works even with interfaces, constructors and some dynamic class/method names like `$fn = 'sleep'; $fn();`
 ```neon
 parametersSchema:
     forbiddenFunctions: arrayOf(string())
