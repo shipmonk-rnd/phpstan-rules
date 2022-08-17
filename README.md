@@ -58,7 +58,7 @@ class User {
 
 ### BackedEnumGenericsRule
 - Ensures that every BackedEnum child defines generic type
-- This makes sense only when BackedEnum was hacked to be generic as described in [this article](https://rnd.shipmonk.com/hacking-generics-into-backedenum-in-php-81/)
+- This makes sense only when BackedEnum was hacked to be generic as described in [this article](https://rnd.shipmonk.com/hacking-generics-into-backedenum-in-php-8-1/)
 ```neon
 rules:
     - ShipMonk\PHPStan\Rule\BackedEnumGenericsRule
