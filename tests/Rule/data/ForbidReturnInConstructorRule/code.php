@@ -1,5 +1,7 @@
 <?php declare(strict_types = 1);
 
+namespace ForbidReturnInConstructorRule;
+
 class WithReturn {
 
     public function __construct()

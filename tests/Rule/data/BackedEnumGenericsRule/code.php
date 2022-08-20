@@ -1,5 +1,9 @@
 <?php
 
+namespace BackedEnumGenericsRule;
+
+use BackedEnum;
+
 /**
  * @implements BackedEnum<string>
  */
@@ -19,7 +23,7 @@ interface MyBackedEnum extends BackedEnum {
 
 }
 
-enum MyIntEnumWithoutImplements: int { // error: Class MyIntEnumWithoutImplements extends generic BackedEnum, but does not specify its type. Use @implements BackedEnum<int>
+enum MyIntEnumWithoutImplements: int { // error: Class BackedEnumGenericsRule\MyIntEnumWithoutImplements extends generic BackedEnum, but does not specify its type. Use @implements BackedEnum<int>
 }
 
 enum MyIntEnumWithImplementsInParent: int implements MyBackedEnum {

@@ -1,5 +1,12 @@
 <?php
 
+namespace RequirePreviousExceptionPassRule;
+
+use Exception;
+use LogicException;
+use RuntimeException;
+use Throwable;
+
 class MyException extends RuntimeException {
 
     public static function createForAnyPrevious(?Throwable $previous = null): self
@@ -35,12 +42,12 @@ try {
 
 try {
 } catch (LogicException $e) {
-    throw MyException::createForAnyPrevious(); // error: Exception $e not passed as previous to \MyException::createForAnyPrevious()
+    throw MyException::createForAnyPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForAnyPrevious()
 }
 
 try {
 } catch (RuntimeException $e) {
-    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \MyException::createForSpecificPrevious()
+    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForSpecificPrevious()
 }
 
 try {
@@ -61,5 +68,5 @@ try {
 try {
 } catch (LogicException $e) {
 } catch (LogicException|RuntimeException $e) { // Logic can never occur here, so Runtime must be passed
-    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \MyException::createForSpecificPrevious()
+    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForSpecificPrevious()
 }

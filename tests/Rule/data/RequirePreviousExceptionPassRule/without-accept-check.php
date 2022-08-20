@@ -1,5 +1,12 @@
 <?php
 
+namespace RequirePreviousExceptionPassRule;
+
+use Exception;
+use LogicException;
+use RuntimeException;
+use Throwable;
+
 class MyException extends RuntimeException {
 
     public static function createForAnyPrevious(?Throwable $previous = null): self
@@ -35,26 +42,26 @@ try {
 
 try {
 } catch (LogicException $e) {
-    throw MyException::createForAnyPrevious(); // error: Exception $e not passed as previous to \MyException::createForAnyPrevious()
+    throw MyException::createForAnyPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForAnyPrevious()
 }
 
 try {
 } catch (RuntimeException $e) {
-    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \MyException::createForSpecificPrevious()
+    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForSpecificPrevious()
 }
 
 try {
 } catch (Throwable $e) {
-    throw MyException::createWithoutPrevious(); // error: Exception $e not passed as previous to \MyException::createWithoutPrevious()
+    throw MyException::createWithoutPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createWithoutPrevious()
 }
 
 try {
 } catch (LogicException $e) {
-    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \MyException::createForSpecificPrevious()
+    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForSpecificPrevious()
 }
 
 try {
 } catch (LogicException|RuntimeException $e) {
-    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \MyException::createForSpecificPrevious()
+    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForSpecificPrevious()
 }
 

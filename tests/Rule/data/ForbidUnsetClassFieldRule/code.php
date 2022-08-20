@@ -1,5 +1,7 @@
 <?php
 
+namespace ForbidUnsetClassFieldRule;
+
 class Clazz {
 
     public ?int $foo;

@@ -1,5 +1,7 @@
 <?php
 
+namespace ForbidUselessNullableReturnRule;
+
 class ExampleClass {
 
     private ?int $foo;

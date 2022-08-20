@@ -1,7 +1,10 @@
 <?php declare(strict_types = 1);
 
+namespace AllowNamedArgumentOnlyInAttributesRule;
 
-#[\Attribute(flags: \Attribute::TARGET_ALL)]
+use Attribute;
+
+#[Attribute(flags: Attribute::TARGET_ALL)]
 class UniversalAttribute
 {
     public function __construct(int $argument)

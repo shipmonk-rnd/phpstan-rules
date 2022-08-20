@@ -1,5 +1,7 @@
 <?php declare(strict_types = 1);
 
+namespace ForbidMatchDefaultArmForEnumsRule;
+
 enum MyEnum: string {
     case MyCase1 = 'MyCase1';
     case MyCase2 = 'MyCase2';
