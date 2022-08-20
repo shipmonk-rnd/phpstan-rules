@@ -5,7 +5,6 @@ rules:
     - ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule
     - ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule
     - ShipMonk\PHPStan\Rule\ForbidUselessNullableReturnRule
-    - ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule
     - ShipMonk\PHPStan\Rule\ForbidUnusedExceptionRule
     - ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule
     - ShipMonk\PHPStan\Rule\UselessPrivatePropertyDefaultValueRule
