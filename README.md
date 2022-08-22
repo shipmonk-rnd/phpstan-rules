@@ -15,7 +15,7 @@ Some of them need some specific [rich parser node visitor](https://phpstan.org/b
 Rarely, some rules are reliable only when some other rule is enabled.
 
 ### AllowComparingOnlyComparableTypesRule
-- Denies using comparison operators `>,<,<=,>=,<=>` over anything other than int|string|float|DateTimeInterface. Null is not allowed.
+- Denies using comparison operators `>,<,<=,>=,<=>` over anything other than `int|string|float|DateTimeInterface`. Null is not allowed.
 - Mixing different types in those operators is also forbidden, only exception is comparing floats with integers
 - Mainly targets to accidental comparisons of objects, enums or arrays which is valid in PHP, but very tricky
 
@@ -131,7 +131,7 @@ function example($unknown) {
 ### ForbidMatchDefaultArmForEnumsRule
 - Denies using default arm in `match()` construct when native enum is passed as subject
 - This rules makes sense only as a complement of [native phpstan rule](https://github.com/phpstan/phpstan-src/blob/1.7.x/src/Rules/Comparison/MatchExpressionRule.php#L94) that guards that all enum cases are handled in match arms
-- As a result, you are forced to add new arm when new enum case is added
+- As a result, you are forced to add new arm when new enum case is added. That brings up all the places in your codebase that needs new handling.
 ```neon
 rules:
     - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
