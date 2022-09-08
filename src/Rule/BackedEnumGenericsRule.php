@@ -8,6 +8,10 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassNode;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\Type;
 use PHPStan\Type\VerbosityLevel;
 
 /**
@@ -23,7 +27,7 @@ class BackedEnumGenericsRule implements Rule
 
     /**
      * @param InClassNode $node
-     * @return string[]
+     * @return RuleError[]
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -38,37 +42,61 @@ class BackedEnumGenericsRule implements Rule
             return [];
         }
 
-        $expectedType = $backedEnumType->describe(VerbosityLevel::typeOnly());
-        $expectedTag = BackedEnum::class . "<$expectedType>";
+        $declaredBackingType = $this->getDeclaredEnumBackingType($classReflection, $backedEnumType);
 
-        foreach ($classReflection->getAncestors() as $interface) {
-            if ($this->hasGenericsTag($interface, $expectedTag)) {
-                return [];
+        if ($declaredBackingType === null) {
+            $expectedTypeString = $backedEnumType->describe(VerbosityLevel::typeOnly());
+            $expectedTag = BackedEnum::class . "<$expectedTypeString>";
+
+            return [RuleErrorBuilder::message("Class {$classReflection->getName()} extends generic BackedEnum, but does not specify its type. Use @implements {$expectedTag}")->build()];
+        }
+
+        $errors = [];
+
+        foreach ($classReflection->getEnumCases() as $enumCase) {
+            if (
+                $enumCase->getBackingValueType() !== null
+                && !$declaredBackingType->accepts($enumCase->getBackingValueType(), $scope->isDeclareStrictTypes())->yes()
+            ) {
+                $enumValue = $enumCase->getBackingValueType()->describe(VerbosityLevel::precise());
+                $declaredBackingTypeString = $declaredBackingType->describe(VerbosityLevel::precise());
+
+                $errors[] = RuleErrorBuilder::message("Enum case {$enumCase->getName()} ({$enumValue}) does not match declared type {$declaredBackingTypeString}")->build();
+                // TODO wrong line reported
             }
         }
 
-        return ["Class {$classReflection->getName()} extends generic BackedEnum, but does not specify its type. Use @implements $expectedTag"];
+        return $errors;
     }
 
-    private function hasGenericsTag(ClassReflection $classReflection, string $expectedTag): bool
+    private function getDeclaredEnumBackingType(ClassReflection $classReflection, Type $enumBackingType): ?Type
     {
-        if ($classReflection->isBackedEnum()) {
-            $tags = $classReflection->getImplementsTags();
-        } elseif ($classReflection->isInterface()) {
-            $tags = $classReflection->getExtendsTags();
-        } else {
-            $tags = [];
-        }
+        foreach ($classReflection->getAncestors() as $ancestor) {
+            if ($ancestor->isBackedEnum()) {
+                $tags = $ancestor->getImplementsTags();
+            } elseif ($ancestor->isInterface()) {
+                $tags = $ancestor->getExtendsTags();
+            } else {
+                $tags = [];
+            }
 
-        foreach ($tags as $tag) {
-            $implementsTagType = $tag->getType();
+            foreach ($tags as $tag) {
+                $implementsTagType = $tag->getType();
 
-            if ($implementsTagType->describe(VerbosityLevel::typeOnly()) === $expectedTag) {
-                return true;
+                if (
+                    $implementsTagType instanceof GenericObjectType
+                    && $implementsTagType->getClassReflection()?->getName() === BackedEnum::class
+                ) {
+                    foreach ($implementsTagType->getTypes() as $type) {
+                        if ($enumBackingType->isSuperTypeOf($type)->yes()) {
+                            return $type;
+                        } // TODO else error
+                    }
+                }
             }
         }
 
-        return false;
+        return null;
     }
 
     private function isGenericBackedEnum(ClassReflection $classReflection): bool
