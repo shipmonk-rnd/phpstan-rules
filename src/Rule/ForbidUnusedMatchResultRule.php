@@ -29,18 +29,18 @@ class ForbidUnusedMatchResultRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        $someArmReturns = new NeverType();
+        $returnedTypes = [];
 
         foreach ($node->arms as $arm) {
             $armType = $scope->getType($arm->body);
 
             if (!$armType instanceof VoidType && !$armType instanceof NeverType) {
-                $someArmReturns = TypeCombinator::union($someArmReturns, $armType);
+                $returnedTypes[] = $armType;
             }
         }
 
-        if (!$someArmReturns instanceof NeverType && $node->getAttribute(UnusedMatchVisitor::MATCH_RESULT_USED) === null) {
-            return ['Unused match result detected, possible returns: ' . $someArmReturns->describe(VerbosityLevel::typeOnly())];
+        if ($returnedTypes !== [] && $node->getAttribute(UnusedMatchVisitor::MATCH_RESULT_USED) === null) {
+            return ['Unused match result detected, possible returns: ' . TypeCombinator::union(...$returnedTypes)->describe(VerbosityLevel::typeOnly())];
         }
 
         return [];
