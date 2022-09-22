@@ -74,6 +74,20 @@ enum MyEnum: string { // missing @implements tag
 }
 ```
 
+### EnforceReadonlyPublicPropertyRule
+- Ensures immutability of all public properties by enforcing `readonly` modifier
+- No modifier needed for readonly classes in PHP 8.2
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\EnforceReadonlyPublicPropertyRule
+```
+```php
+class EnforceReadonlyPublicPropertyRule {
+    public int $foo; // fails, no readonly modifier
+    public readonly int $bar;
+}
+```
+
 
 ### ForbidAssignmentNotMatchingVarDocRule
 - Verifies if defined type in `@var` phpdoc accepts the assigned type during assignment
