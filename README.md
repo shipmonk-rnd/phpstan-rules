@@ -128,6 +128,28 @@ function example($unknown) {
 }
 ```
 
+### ForbidInvalidInlineVarPhpDocRule
+- Verifies if defined type in `@var` phpdoc accepts the assigned type during assignment
+- No other places except assignment are checked
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\ForbidInvalidInlineVarPhpDocRule
+```
+```php
+/** @var string $foo */
+$foo = $this->methodReturningInt(); // invalid var phpdoc
+```
+
+- For reasons of imperfect implementation of [type infering in phpstan-doctrine](https://github.com/phpstan/phpstan-doctrine#query-type-inference), there is an option to check only array-shapes and forget all other types by using `check-shape-only`
+- This is helpful for cases where field nullability is eliminated by WHERE field IS NOT NULL which is not propagated to the inferred types
+```php
+/** @var array{id: int} $result check-shape-only */
+$result = $queryBuilder->select('t.id')
+    ->from(Table::class, 't')
+    ->andWhere('t.id IS NOT NULL')
+    ->getResult();
+```
+
 ### ForbidMatchDefaultArmForEnumsRule
 - Denies using default arm in `match()` construct when native enum is passed as subject
 - This rules makes sense only as a complement of [native phpstan rule](https://github.com/phpstan/phpstan-src/blob/1.7.x/src/Rules/Comparison/MatchExpressionRule.php#L94) that guards that all enum cases are handled in match arms
