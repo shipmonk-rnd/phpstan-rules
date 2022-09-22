@@ -74,6 +74,30 @@ enum MyEnum: string { // missing @implements tag
 }
 ```
 
+
+### ForbidAssignmentNotMatchingVarDocRule
+- Verifies if defined type in `@var` phpdoc accepts the assigned type during assignment
+- No other places except assignment are checked
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule
+```
+```php
+/** @var string $foo */
+$foo = $this->methodReturningInt(); // invalid var phpdoc
+```
+
+- For reasons of imperfect implementation of [type infering in phpstan-doctrine](https://github.com/phpstan/phpstan-doctrine#query-type-inference), there is an option to check only array-shapes and forget all other types by using `check-shape-only`
+- This is helpful for cases where field nullability is eliminated by WHERE field IS NOT NULL which is not propagated to the inferred types
+```php
+/** @var array<array{id: int}> $result check-shape-only */
+$result = $queryBuilder->select('t.id')
+    ->from(Table::class, 't')
+    ->andWhere('t.id IS NOT NULL')
+    ->getResult();
+```
+
+
 ### ForbidCustomFunctionsRule
 - Allows you to easily deny some approaches within your codebase by denying classes, methods and functions
 - Configuration syntax is array where key is method name and value is reason used in error message
@@ -126,28 +150,6 @@ rules:
 function example($unknown) {
     $unknown->property; // cannot fetch property on mixed
 }
-```
-
-### ForbidInvalidInlineVarPhpDocRule
-- Verifies if defined type in `@var` phpdoc accepts the assigned type during assignment
-- No other places except assignment are checked
-```neon
-rules:
-    - ShipMonk\PHPStan\Rule\ForbidInvalidInlineVarPhpDocRule
-```
-```php
-/** @var string $foo */
-$foo = $this->methodReturningInt(); // invalid var phpdoc
-```
-
-- For reasons of imperfect implementation of [type infering in phpstan-doctrine](https://github.com/phpstan/phpstan-doctrine#query-type-inference), there is an option to check only array-shapes and forget all other types by using `check-shape-only`
-- This is helpful for cases where field nullability is eliminated by WHERE field IS NOT NULL which is not propagated to the inferred types
-```php
-/** @var array<array{id: int}> $result check-shape-only */
-$result = $queryBuilder->select('t.id')
-    ->from(Table::class, 't')
-    ->andWhere('t.id IS NOT NULL')
-    ->getResult();
 ```
 
 ### ForbidMatchDefaultArmForEnumsRule

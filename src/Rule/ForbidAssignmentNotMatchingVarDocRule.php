@@ -20,7 +20,7 @@ use function mb_strpos;
 /**
  * @implements Rule<Assign>
  */
-class ForbidInvalidInlineVarPhpDocRule implements Rule
+class ForbidAssignmentNotMatchingVarDocRule implements Rule
 {
 
     private FileTypeMapper $fileTypeMapper;

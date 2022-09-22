@@ -1,11 +1,11 @@
 <?php declare(strict_types = 1);
 
-namespace ForbidInvalidInlineVarPhpDocRule;
+namespace ForbidAssignmentNotMatchingVarDocRule;
 
 use Exception;
 use LogicException;
 use RuntimeException;
-use ShipMonk\PHPStan\Rule\ForbidInvalidInlineVarPhpDocRule;
+use ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule;
 use Throwable;
 
 class AnotherClass {
@@ -67,7 +67,7 @@ class ExampleClass extends ExampleClassParent
         $var = $this->returnSelf();
 
         /** @var AnotherClass $var */
-        $var = $this->returnSelf(); // error: Invalid var phpdoc of $var. Cannot assign ForbidInvalidInlineVarPhpDocRule\ExampleClass to ForbidInvalidInlineVarPhpDocRule\AnotherClass
+        $var = $this->returnSelf(); // error: Invalid var phpdoc of $var. Cannot assign ForbidAssignmentNotMatchingVarDocRule\ExampleClass to ForbidAssignmentNotMatchingVarDocRule\AnotherClass
 
 
         /** @var int $var */
@@ -107,7 +107,7 @@ class ExampleClass extends ExampleClassParent
         $var = $this->returnListOfSelf();
 
         /** @var array<int> $var */
-        $var = $this->returnListOfSelf(); // error: Invalid var phpdoc of $var. Cannot assign array<int, ForbidInvalidInlineVarPhpDocRule\ExampleClass> to array<int>
+        $var = $this->returnListOfSelf(); // error: Invalid var phpdoc of $var. Cannot assign array<int, ForbidAssignmentNotMatchingVarDocRule\ExampleClass> to array<int>
     }
 
     /**
