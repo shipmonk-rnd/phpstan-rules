@@ -244,6 +244,27 @@ function validate(): void {
 }
 ```
 
+
+### ForbidUnusedMatchResultRule
+- Reports forgotten usage of match result
+- Any `match` with at least one arm returning a value is checked
+- Requires `UnusedMatchVisitor` to work
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\ForbidUnusedMatchResultRule
+services:
+    -
+    class: ShipMonk\PHPStan\Visitor\UnusedMatchVisitor
+    tags:
+        - phpstan.parser.richParserNodeVisitor
+```
+```php
+match ($foo) { // unused match result
+    case 'foo' => 1;
+}
+```
+
+
 ### RequirePreviousExceptionPassRule
 
 - Detects forgotten exception pass-as-previous when re-throwing
