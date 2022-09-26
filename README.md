@@ -195,6 +195,21 @@ function example($unknown) {
 }
 ```
 
+### ForbidNullInBinaryOperationsRule
+- Denies using binary operators if null is involved on either side
+- You can configure which operators are ignored in rule constructor; by default, it ignores those:
+  - `===, !==, ??` - those are valid to be used with null
+  - `>, >=, <, <=, <=>` - those are checked by AllowComparingOnlyComparableTypesRule
+```neon
+rules:
+    - ShipMonk\PHPStan\Rule\ForbidNullInBinaryOperationsRule
+```
+```php
+function getFullName(?string $firstName, string $lastName): string {
+    return $firstName . ' ' . $lastName; // denied, null involved in binary operation
+}
+```
+
 ### ForbidUnsetClassFieldRule
 - Denies calling `unset` over class field as it causes un-initialization, see https://3v4l.org/V8uuP
 - Null assignment should be used instead
