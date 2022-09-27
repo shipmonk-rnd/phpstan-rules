@@ -16,10 +16,7 @@ use function in_array;
 class ForbidNullInBinaryOperationsRule implements Rule
 {
 
-    private const DEFAULT_BLACKLIST = [
-        '===', '!==', '??', // null makes sense
-        '>', '>=', '<', '<=', '<=>', // covered by AllowComparingOnlyComparableTypesRule
-    ];
+    private const DEFAULT_BLACKLIST = ['===', '!==', '??'];
 
     /**
      * @var list<string>
@@ -27,11 +24,11 @@ class ForbidNullInBinaryOperationsRule implements Rule
     private array $blacklist;
 
     /**
-     * @param list<string>|null $blacklist
+     * @param list<string> $blacklist
      */
-    public function __construct(?array $blacklist = null)
+    public function __construct(array $blacklist = self::DEFAULT_BLACKLIST)
     {
-        $this->blacklist = $blacklist ?? self::DEFAULT_BLACKLIST;
+        $this->blacklist = $blacklist;
     }
 
     public function getNodeType(): string

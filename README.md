@@ -197,12 +197,20 @@ function example($unknown) {
 
 ### ForbidNullInBinaryOperationsRule
 - Denies using binary operators if null is involved on either side
-- You can configure which operators are ignored in rule constructor; by default, it ignores those:
-  - `===, !==, ??` - those are valid to be used with null
-  - `>, >=, <, <=, <=>` - those are checked by AllowComparingOnlyComparableTypesRule
+- You can configure which operators are ignored in rule constructor
+- Following setup is recommended when using latest [phpstan-strict-rules](https://github.com/phpstan/phpstan-strict-rules) and `AllowComparingOnlyComparableTypesRule`
 ```neon
-rules:
-    - ShipMonk\PHPStan\Rule\ForbidNullInBinaryOperationsRule
+services:
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidNullInBinaryOperationsRule
+        tags:
+            - phpstan.rules.rule
+        arguments:
+            blacklist: [
+                '**', '!=', '==', '+', 'and', 'or', '&&', '||', '%', '-', '/', '*', # checked by phpstan-strict-rules
+                '>', '>=', '<', '<=', '<=>', # checked by AllowComparingOnlyComparableTypesRule
+                '===', '!==', '??' # valid with null involved
+            ]
 ```
 ```php
 function getFullName(?string $firstName, string $lastName): string {

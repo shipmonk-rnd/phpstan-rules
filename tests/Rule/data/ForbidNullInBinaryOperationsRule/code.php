@@ -20,11 +20,11 @@ function test(
     $int ?? $nullableInt;
     $int === $nullableInt;
     $int !== $nullableInt;
-    $int <=> $nullableInt;
-    $int <= $nullableInt;
-    $int >= $nullableInt;
-    $int < $nullableInt;
-    $int > $nullableInt;
+    $int <=> $nullableInt; // error: Null value involved in binary operation: int <=> int|null
+    $int <= $nullableInt; // error: Null value involved in binary operation: int <= int|null
+    $int >= $nullableInt; // error: Null value involved in binary operation: int >= int|null
+    $int < $nullableInt; // error: Null value involved in binary operation: int < int|null
+    $int > $nullableInt; // error: Null value involved in binary operation: int > int|null
     $int + $nullableInt; // error: Null value involved in binary operation: int + int|null
     $bool and $nullableBool; // error: Null value involved in binary operation: bool and bool|null
     $bool or $nullableBool; // error: Null value involved in binary operation: bool or bool|null
