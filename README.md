@@ -226,7 +226,8 @@ function getFullName(?string $firstName, string $lastName): string {
 
 ### ForbidVariableTypeOverwritingRule
 - Restricts variable assignment to those that does not change its type
-- Null and mixed are not taken into account, advanced phpstan types like non-empty-x etc are trimmed before comparison
+  - Array append `$array[] = 1;` not yet supported
+- Null and mixed are not taken into account, advanced phpstan types like non-empty-X are trimmed before comparison
 - Rule allows type generalization and type narrowing (parent <-> child)
 ```neon
 rules:
