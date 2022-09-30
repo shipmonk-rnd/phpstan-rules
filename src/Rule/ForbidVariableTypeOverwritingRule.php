@@ -9,7 +9,6 @@ use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\Accessory\AccessoryType;
-use PHPStan\Type\ArrayType;
 use PHPStan\Type\ConstantType;
 use PHPStan\Type\Enum\EnumCaseObjectType;
 use PHPStan\Type\GeneralizePrecision;
@@ -80,13 +79,6 @@ class ForbidVariableTypeOverwritingRule implements Rule
             || $type instanceof UnionType // e.g. 'foo'|'bar' -> string or int<min, -1>|int<1, max> -> int
         ) {
             $type = $type->generalize(GeneralizePrecision::lessSpecific());
-        }
-
-        if ($type instanceof ArrayType) {
-            $type = new ArrayType(
-                $this->generalize($type->getKeyType()),
-                $this->generalize($type->getItemType()),
-            );
         }
 
         if ($type instanceof NullType) {
