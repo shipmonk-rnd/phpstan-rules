@@ -224,6 +224,21 @@ function getFullName(?string $firstName, string $lastName): string {
 }
 ```
 
+### ForbidVariableTypeOverwritingRule
+- Restricts variable assignment to those that does not change its type
+  - Array append `$array[] = 1;` not yet supported
+- Null and mixed are not taken into account, advanced phpstan types like non-empty-X are trimmed before comparison
+- Rule allows type generalization and type narrowing (parent <-> child)
+```neon
+rules:
+- ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule
+```
+```php
+function example(OrderId $id) {
+    $id = $id->getStringValue(); // denied, type changed from object to string
+}
+```
+
 ### ForbidUnsetClassFieldRule
 - Denies calling `unset` over class field as it causes un-initialization, see https://3v4l.org/V8uuP
 - Null assignment should be used instead
