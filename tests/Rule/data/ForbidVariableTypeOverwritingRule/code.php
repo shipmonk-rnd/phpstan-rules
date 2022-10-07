@@ -2,6 +2,9 @@
 
 namespace ForbidVariableTypeOverwritingRule;
 
+use Fulfillment\CommonBundle\Exception\LogicException;
+use Fulfillment\CommonBundle\Utils\Strings;
+
 interface SomeInterface {
 
 }
@@ -119,8 +122,15 @@ function testAdvancedTypesAreIgnored(
     $strictArray = ['string' => 'string'];
 }
 
-function testSubtractedTypeNotKept(ParentClass $someClass) {
+/**
+ * @param ParentClass $someClass
+ * @param mixed[] $strings
+ */
+function testSubtractedTypeNotKept(ParentClass $someClass, array $strings) {
     if (!$someClass instanceof ChildClass1) {
         $someClass = new ChildClass1();
     }
+
+    unset($strings[0]);
+    $strings = array_values($strings);
 }

@@ -16,9 +16,10 @@ use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NullType;
-use PHPStan\Type\ObjectType;
+use PHPStan\Type\SubtractableType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
@@ -53,8 +54,8 @@ class ForbidVariableTypeOverwritingRule implements Rule
             return [];
         }
 
-        $previousVariableType = $this->generalize($scope->getVariableType($variableName));
-        $newVariableType = $this->generalize($scope->getType($node->expr));
+        $previousVariableType = $this->generalizeDeeply($scope->getVariableType($variableName));
+        $newVariableType = $this->generalizeDeeply($scope->getType($node->expr));
 
         if ($this->isTypeToIgnore($previousVariableType) || $this->isTypeToIgnore($newVariableType)) {
             return [];
@@ -68,6 +69,13 @@ class ForbidVariableTypeOverwritingRule implements Rule
         }
 
         return [];
+    }
+
+    private function generalizeDeeply(Type $type): Type
+    {
+        return TypeTraverser::map($type, function (Type $traversedTyped, callable $traverse): Type {
+            return $traverse($this->generalize($traversedTyped));
+        });
     }
 
     private function generalize(Type $type): Type
@@ -113,8 +121,8 @@ class ForbidVariableTypeOverwritingRule implements Rule
             $type = TypeCombinator::intersect(...$newInnerTypes);
         }
 
-        if ($type instanceof ObjectType) {
-            $type = $type->changeSubtractedType(null);
+        if ($type instanceof SubtractableType) { // @phpstan-ignore-line ignore bc promise
+            $type = $type->getTypeWithoutSubtractedType(); // @phpstan-ignore-line ignore bc promise
         }
 
         return TypeCombinator::removeNull($type);
