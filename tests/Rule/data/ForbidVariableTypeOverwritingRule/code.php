@@ -2,9 +2,6 @@
 
 namespace ForbidVariableTypeOverwritingRule;
 
-use Fulfillment\CommonBundle\Exception\LogicException;
-use Fulfillment\CommonBundle\Utils\Strings;
-
 interface SomeInterface {
 
 }
