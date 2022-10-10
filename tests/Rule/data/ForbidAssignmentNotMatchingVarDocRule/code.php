@@ -126,6 +126,14 @@ class ExampleClass extends ExampleClassParent
         return ['id' => 1, 'value' => 'foo'];
     }
 
+    /**
+     * @return iterable{ id: int, value: string }
+     */
+    public function returnIterableWithShape(): iterable
+    {
+        return ['id' => 1, 'value' => 'foo'];
+    }
+
     public function returnInt(): int
     {
         return 0;
