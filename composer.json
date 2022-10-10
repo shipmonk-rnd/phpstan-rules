@@ -1,6 +1,7 @@
 {
     "name": "shipmonk/phpstan-rules",
     "description": "Various PHPStan rules we found useful in ShipMonk.",
+    "keywords": [ "phpstan", "static analysis" ],
     "license": [
         "MIT"
     ],

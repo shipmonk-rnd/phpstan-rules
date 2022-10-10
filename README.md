@@ -5,7 +5,7 @@ You may find some of them opinionated, so we recommend picking only those fittin
 ## Installation:
 
 ```sh
-composer require shipmonk/phpstan-rules
+composer require --dev shipmonk/phpstan-rules
 ```
 
 ## Rules:
