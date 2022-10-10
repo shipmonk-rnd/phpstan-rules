@@ -14,6 +14,7 @@ includes:
     - vendor/shipmonk/phpstan-rules/strict-rules.neon
 ```
 
+Please be aware that some rules are configurable and the default setup used in that file might not fit your needs.
 This repository contains several more rules not included in `strict-rules.neon` which are more opinionated or need custom setup - those are marked by `*`.
 
 Or you can use them individually - each rule documentation contains a neon snippet how to enable & configure it.
