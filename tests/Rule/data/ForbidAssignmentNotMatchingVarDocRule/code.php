@@ -53,6 +53,9 @@ class ExampleClass extends ExampleClassParent
         /** @var array{id: string, value: string} $var check-shape-only */
         $var = $this->returnArrayShape();
 
+        /** @var iterable<array{invalid: string}> $var check-shape-only */
+        $var = $this->returnIterableWithArrayShape(); // error: Invalid var phpdoc of $var. Cannot assign iterable<array{id: mixed, value: mixed}> to iterable<array{invalid: string}>
+
 
         /** @var self $var */
         $var = $this->returnSelf();
@@ -127,11 +130,11 @@ class ExampleClass extends ExampleClassParent
     }
 
     /**
-     * @return iterable{ id: int, value: string }
+     * @return iterable<array{ id: int, value: string }>
      */
-    public function returnIterableWithShape(): iterable
+    public function returnIterableWithArrayShape(): iterable
     {
-        return ['id' => 1, 'value' => 'foo'];
+        return [['id' => 1, 'value' => 'foo']];
     }
 
     public function returnInt(): int
