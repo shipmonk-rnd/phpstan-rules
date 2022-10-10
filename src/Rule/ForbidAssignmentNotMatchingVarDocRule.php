@@ -10,6 +10,7 @@ use PHPStan\PhpDoc\Tag\VarTag;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\FileTypeMapper;
+use PHPStan\Type\IterableType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
@@ -102,7 +103,7 @@ class ForbidAssignmentNotMatchingVarDocRule implements Rule
     private function weakenTypeToKeepShapeOnly(Type $type): Type
     {
         return TypeTraverser::map($type, static function (Type $type, callable $traverse): Type {
-            if ($type instanceof ArrayType) {
+            if ($type instanceof ArrayType || $type instanceof IterableType) {
                 return $traverse($type); // keep array shapes, but forget all inner types
             }
 
