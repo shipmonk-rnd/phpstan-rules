@@ -14,7 +14,10 @@ class ForbidFetchOnMixedRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new ForbidFetchOnMixedRule(new Standard());
+        return new ForbidFetchOnMixedRule(
+            self::getContainer()->getByType(Standard::class),
+            (bool) self::getContainer()->getParameter('checkExplicitMixed'),
+        );
     }
 
     public function testClass(): void

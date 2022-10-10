@@ -176,8 +176,12 @@ services:
         class: ShipMonk\PHPStan\Rule\ForbidEnumInFunctionArgumentsRule
     -
         class: ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
+        arguments:
+            checkExplicitMixed: %checkExplicitMixed%
     -
         class: ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule
+        arguments:
+            checkExplicitMixed: %checkExplicitMixed%
     -
         class: ShipMonk\PHPStan\Rule\ForbidMatchDefaultArmForEnumsRule
     -
