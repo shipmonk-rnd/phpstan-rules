@@ -34,11 +34,11 @@ abstract class RuleTestCase extends OriginalRuleTestCase
             throw new LogicException('Error while reading data from ' . $file);
         }
 
-        $fileData = explode("\n", $fileData);
+        $fileDataLines = explode("\n", $fileData);
 
         $expectedErrors = [];
 
-        foreach ($fileData as $line => $row) {
+        foreach ($fileDataLines as $line => $row) {
             $matches = [];
             $matched = preg_match_all('#// error:(.+)#', $row, $matches);
 

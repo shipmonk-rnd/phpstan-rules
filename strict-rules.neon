@@ -1,0 +1,42 @@
+rules:
+    - ShipMonk\PHPStan\Rule\AllowComparingOnlyComparableTypesRule
+    - ShipMonk\PHPStan\Rule\EnforceReadonlyPublicPropertyRule
+    - ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule
+    - ShipMonk\PHPStan\Rule\ForbidEnumInFunctionArgumentsRule
+    - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
+    - ShipMonk\PHPStan\Rule\ForbidMatchDefaultArmForEnumsRule
+    - ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule
+    - ShipMonk\PHPStan\Rule\ForbidNullInBinaryOperationsRule
+    - ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule
+    - ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule
+    - ShipMonk\PHPStan\Rule\ForbidUselessNullableReturnRule
+    - ShipMonk\PHPStan\Rule\ForbidUnusedExceptionRule
+    - ShipMonk\PHPStan\Rule\ForbidUnusedMatchResultRule
+    - ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule
+    - ShipMonk\PHPStan\Rule\UselessPrivatePropertyDefaultValueRule
+    - ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule
+
+services:
+    -
+        class: ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule
+        tags:
+            - phpstan.rules.rule
+        arguments:
+            reportEvenIfExceptionIsNotAcceptableByRethrownOne: true
+
+    -
+        class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
+    -
+        class: ShipMonk\PHPStan\Visitor\UnusedMatchVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
+    -
+        class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
+    -
+        class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
