@@ -4,7 +4,6 @@ namespace ShipMonk\PHPStan\Rule;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\ConstFetch;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClassPropertiesNode;
@@ -56,14 +55,14 @@ class UselessPrivatePropertyNullabilityRule implements Rule
 
             $propertyName = $fetch->name->toString();
 
-            /** @var Assign|null $assignment */
-            $assignment = $fetch->getAttribute(ClassPropertyAssignmentVisitor::ASSIGNMENT);
+            /** @var Expr|null $assignedExpr */
+            $assignedExpr = $fetch->getAttribute(ClassPropertyAssignmentVisitor::ASSIGNED_EXPR);
 
-            if ($assignment === null) { // cases like object->array[] = value etc
+            if ($assignedExpr === null) { // cases like object->array[] = value etc
                 continue;
             }
 
-            $assignedType = $propertyUsage->getScope()->getType($assignment->expr);
+            $assignedType = $propertyUsage->getScope()->getType($assignedExpr);
 
             if (TypeCombinator::containsNull($assignedType)) {
                 $nullabilityNeeded[$propertyName] = true;
