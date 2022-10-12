@@ -13,7 +13,7 @@ use function count;
 class ClassPropertyAssignmentVisitor extends NodeVisitorAbstract
 {
 
-    public const ASSIGNMENT = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'assignment';
+    public const ASSIGNED_EXPR = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'assignment';
 
     /**
      * @var Node[]
@@ -39,7 +39,7 @@ class ClassPropertyAssignmentVisitor extends NodeVisitorAbstract
                 $parent instanceof Assign
                 && ($node instanceof PropertyFetch || $node instanceof StaticPropertyFetch)
             ) {
-                $node->setAttribute(self::ASSIGNMENT, $parent);
+                $node->setAttribute(self::ASSIGNED_EXPR, $parent->expr);
             }
 
             $this->stack[] = $node;
