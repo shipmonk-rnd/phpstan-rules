@@ -1,9 +1,12 @@
 {
     "name": "shipmonk/phpstan-rules",
     "description": "Various PHPStan rules we found useful in ShipMonk.",
-    "keywords": [ "phpstan", "static analysis" ],
     "license": [
         "MIT"
+    ],
+    "keywords": [
+        "phpstan",
+        "static analysis"
     ],
     "require": {
         "nikic/php-parser": "^4.13.2",
