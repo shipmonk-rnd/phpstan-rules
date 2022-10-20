@@ -5,7 +5,7 @@ You may find some of them opinionated, so we recommend picking only those fittin
 ## Installation:
 
 ```sh
-composer require shipmonk/phpstan-rules
+composer require shipmonk/phpstan-rules --dev
 ```
 
 ## Rules:
@@ -21,7 +21,7 @@ Rarely, some rules are reliable only when some other rule is enabled.
 
 ```neon
 rules:
-- ShipMonk\PHPStan\Rule\AllowComparingOnlyComparableTypesRule
+    - ShipMonk\PHPStan\Rule\AllowComparingOnlyComparableTypesRule
 ```
 ```php
 function example1(Money $fee1, Money $fee2) {
@@ -41,9 +41,9 @@ rules:
     - ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule
 services:
     -
-    class: ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor
-    tags:
-        - phpstan.parser.richParserNodeVisitor
+        class: ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
 ```
 ```php
 class User {
@@ -231,7 +231,7 @@ function getFullName(?string $firstName, string $lastName): string {
 - Rule allows type generalization and type narrowing (parent <-> child)
 ```neon
 rules:
-- ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule
+    - ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule
 ```
 ```php
 function example(OrderId $id) {
@@ -278,9 +278,9 @@ rules:
     - ShipMonk\PHPStan\Rule\ForbidUnusedExceptionRule
 services:
     -
-    class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor
-    tags:
-        - phpstan.parser.richParserNodeVisitor
+        class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
 ```
 ```php
 function validate(): void {
@@ -298,9 +298,9 @@ rules:
     - ShipMonk\PHPStan\Rule\ForbidUnusedMatchResultRule
 services:
     -
-    class: ShipMonk\PHPStan\Visitor\UnusedMatchVisitor
-    tags:
-        - phpstan.parser.richParserNodeVisitor
+        class: ShipMonk\PHPStan\Visitor\UnusedMatchVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
 ```
 ```php
 match ($foo) { // unused match result
@@ -361,9 +361,9 @@ rules:
     - ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule
 services:
     -
-    class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
-    tags:
-        - phpstan.parser.richParserNodeVisitor
+        class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
 ```
 ```php
 class Example
@@ -386,9 +386,9 @@ rules:
     - ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule
 services:
     -
-    class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
-    tags:
-        - phpstan.parser.richParserNodeVisitor
+        class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
 ```
 ```php
 class Example
