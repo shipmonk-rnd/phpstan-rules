@@ -4,6 +4,10 @@
     "license": [
         "MIT"
     ],
+    "keywords": [
+        "phpstan",
+        "static analysis"
+    ],
     "require": {
         "nikic/php-parser": "^4.13.2",
         "phpstan/phpstan": "^1.8.1"
