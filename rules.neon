@@ -1,3 +1,5 @@
+# deprecated, you probably want to use strict-rules.neon, see README
+
 rules:
     - ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule
     - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule

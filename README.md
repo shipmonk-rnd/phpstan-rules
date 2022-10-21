@@ -8,11 +8,16 @@ You may find some of them opinionated, so we recommend picking only those fittin
 composer require --dev shipmonk/phpstan-rules
 ```
 
-## Rules:
+For a quick start, you can enable all generally usable rules by:
+```neon
+includes:
+    - vendor/shipmonk/phpstan-rules/strict-rules.neon
+```
 
-All you need to enable most of the rules is to register them [as documented in phpstan/phpstan](https://phpstan.org/developing-extensions/rules#registering-the-rule-in-the-configuration).
-Some of them need some specific [rich parser node visitor](https://phpstan.org/blog/preprocessing-ast-for-custom-rules) to be registered as well.
-Rarely, some rules are reliable only when some other rule is enabled.
+Please be aware that some rules are configurable and the default setup used in that file might not fit your needs.
+This repository contains several more rules not included in `strict-rules.neon` which are more opinionated or need custom setup - those are marked by `*`.
+
+Or you can use them individually - each rule documentation contains a neon snippet how to enable & configure it.
 
 ### AllowComparingOnlyComparableTypesRule
 - Denies using comparison operators `>,<,<=,>=,<=>` over anything other than `int|string|float|DateTimeInterface`. Null is not allowed.
@@ -21,7 +26,7 @@ Rarely, some rules are reliable only when some other rule is enabled.
 
 ```neon
 rules:
-- ShipMonk\PHPStan\Rule\AllowComparingOnlyComparableTypesRule
+    - ShipMonk\PHPStan\Rule\AllowComparingOnlyComparableTypesRule
 ```
 ```php
 function example1(Money $fee1, Money $fee2) {
@@ -32,7 +37,7 @@ new DateTime() > '2040-01-02'; // comparing different types is denied
 200 > '1e2'; // comparing different types is denied
 ```
 
-### AllowNamedArgumentOnlyInAttributesRule
+### AllowNamedArgumentOnlyInAttributesRule *
 - Allows usage of named arguments only in native attributes
 - Before native attributes, we used [DisallowNamedArguments](https://github.com/slevomat/coding-standard#slevomatcodingstandardfunctionsdisallownamedarguments). But we used Doctrine annotations, which almost "require" named arguments when converted to native attributes.
 - Requires NamedArgumentSourceVisitor to work
@@ -41,9 +46,9 @@ rules:
     - ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule
 services:
     -
-    class: ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor
-    tags:
-        - phpstan.parser.richParserNodeVisitor
+        class: ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
 ```
 ```php
 class User {
@@ -56,7 +61,7 @@ class User {
 }
 ```
 
-### BackedEnumGenericsRule
+### BackedEnumGenericsRule *
 - Ensures that every BackedEnum child defines generic type
 - This makes sense only when BackedEnum was hacked to be generic as described in [this article](https://rnd.shipmonk.com/hacking-generics-into-backedenum-in-php-8-1/)
 ```neon
@@ -112,7 +117,7 @@ $result = $queryBuilder->select('t.id')
 ```
 
 
-### ForbidCustomFunctionsRule
+### ForbidCustomFunctionsRule *
 - Allows you to easily deny some approaches within your codebase by denying classes, methods and functions
 - Configuration syntax is array where key is method name and value is reason used in error message
 - Works even with interfaces, constructors and some dynamic class/method names like `$fn = 'sleep'; $fn();`
@@ -156,6 +161,7 @@ implode('', [MyEnum::MyCase]); // denied, would fail on implicit toString conver
 - Denies property fetch on unknown type.
 - Any property fetch assumes the caller is an object with such property and therefore, the typehint/phpdoc should be fixed.
 - Similar to `ForbidMethodCallOnMixedRule`
+- Makes sense only on PHPStan level 8 or below
 ```neon
 rules:
     - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
@@ -185,6 +191,7 @@ match ($enum) {
 - Denies calling methods on unknown type.
 - Any method call assumes the caller is an object with such method and therefore, the typehint/phpdoc should be fixed.
 - Similar to `ForbidFetchOnMixedRule`
+- Makes sense only on PHPStan level 8 or below
 ```neon
 rules:
     - ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule
@@ -231,7 +238,7 @@ function getFullName(?string $firstName, string $lastName): string {
 - Rule allows type generalization and type narrowing (parent <-> child)
 ```neon
 rules:
-- ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule
+    - ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule
 ```
 ```php
 function example(OrderId $id) {
@@ -278,9 +285,9 @@ rules:
     - ShipMonk\PHPStan\Rule\ForbidUnusedExceptionRule
 services:
     -
-    class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor
-    tags:
-        - phpstan.parser.richParserNodeVisitor
+        class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
 ```
 ```php
 function validate(): void {
@@ -298,9 +305,9 @@ rules:
     - ShipMonk\PHPStan\Rule\ForbidUnusedMatchResultRule
 services:
     -
-    class: ShipMonk\PHPStan\Visitor\UnusedMatchVisitor
-    tags:
-        - phpstan.parser.richParserNodeVisitor
+        class: ShipMonk\PHPStan\Visitor\UnusedMatchVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
 ```
 ```php
 match ($foo) { // unused match result
@@ -317,9 +324,7 @@ match ($foo) { // unused match result
 
 ```neon
 rules:
-    - ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule(
-        reportEvenIfExceptionIsNotAcceptableByRethrownOne: false
-    )
+    - ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule
 ```
 ```php
 try {
@@ -333,6 +338,15 @@ try {
   - That will force you to add the parameter to be able to pass it as previous
   - Usable only if you do not throw exceptions from libraries, which is a good practice anyway
 
+```neon
+services:
+    -
+        class: ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule
+        tags:
+            - phpstan.rules.rule
+        arguments:
+            reportEvenIfExceptionIsNotAcceptableByRethrownOne: false
+```
 ```php
 class MyException extends RuntimeException {
     public function __construct() {
@@ -361,9 +375,9 @@ rules:
     - ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule
 services:
     -
-    class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
-    tags:
-        - phpstan.parser.richParserNodeVisitor
+        class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
 ```
 ```php
 class Example
@@ -386,9 +400,9 @@ rules:
     - ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule
 services:
     -
-    class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
-    tags:
-        - phpstan.parser.richParserNodeVisitor
+        class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
+        tags:
+            - phpstan.parser.richParserNodeVisitor
 ```
 ```php
 class Example
