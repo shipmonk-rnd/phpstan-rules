@@ -1,34 +1,208 @@
-# deprecated, you probably want to use strict-rules.neon, see README
+parameters:
+    shipmonkRules:
+        allowComparingOnlyComparableTypes:
+            enabled: true
+        allowNamedArgumentOnlyInAttributes:
+            enabled: true # TODO drop?
+        backedEnumGenerics:
+            enabled: true # TODO
+        enforceReadonlyPublicProperty:
+            enabled: true
+        forbidAssignmentNotMatchingVarDoc:
+            enabled: true
+        forbidCustomFunctions:
+            enabled: true
+            list: []
+        forbidEnumInFunctionArguments:
+            enabled: true
+        forbidFetchOnMixed:
+            enabled: true
+        forbidMatchDefaultArmForEnums:
+            enabled: true
+        forbidMethodCallOnMixed:
+            enabled: true
+        forbidNullInBinaryOperations:
+            enabled: true
+            blacklist: ['===', '!==', '??']
+        forbidVariableTypeOverwriting:
+            enabled: true
+        forbidUnsetClassField:
+            enabled: true
+        forbidUselessNullableReturn:
+            enabled: true
+        forbidUnusedException:
+            enabled: true
+        forbidUnusedMatchResult:
+            enabled: true
+        requirePreviousExceptionPass:
+            enabled: true
+            reportEvenIfExceptionIsNotAcceptableByRethrownOne: true
+        uselessPrivatePropertyDefaultValue:
+            enabled: true
+        uselessPrivatePropertyNullability:
+            enabled: true
 
-rules:
-    - ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule
-    - ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
-    - ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule
-    - ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule
-    - ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule
-    - ShipMonk\PHPStan\Rule\ForbidUselessNullableReturnRule
-    - ShipMonk\PHPStan\Rule\ForbidUnusedExceptionRule
-    - ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule
-    - ShipMonk\PHPStan\Rule\UselessPrivatePropertyDefaultValueRule
-    - ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule
+parametersSchema:
+    shipmonkRules: structure([
+        allowComparingOnlyComparableTypes: structure([
+            enabled: bool()
+        ])
+        allowNamedArgumentOnlyInAttributes: structure([
+            enabled: bool()
+        ])
+        backedEnumGenerics: structure([
+            enabled: bool()
+        ])
+        enforceReadonlyPublicProperty: structure([
+            enabled: bool()
+        ])
+        forbidAssignmentNotMatchingVarDoc: structure([
+            enabled: bool()
+        ])
+        forbidCustomFunctions: structure([
+            enabled: bool()
+            list: arrayOf(string())
+        ])
+        forbidEnumInFunctionArguments: structure([
+            enabled: bool()
+        ])
+        forbidFetchOnMixed: structure([
+            enabled: bool()
+        ])
+        forbidMatchDefaultArmForEnums: structure([
+            enabled: bool()
+        ])
+        forbidMethodCallOnMixed: structure([
+            enabled: bool()
+        ])
+        forbidNullInBinaryOperations: structure([
+            enabled: bool()
+            blacklist: arrayOf(string())
+        ])
+        forbidVariableTypeOverwriting: structure([
+            enabled: bool()
+        ])
+        forbidUnsetClassField: structure([
+            enabled: bool()
+        ])
+        forbidUselessNullableReturn: structure([
+            enabled: bool()
+        ])
+        forbidUnusedException: structure([
+            enabled: bool()
+        ])
+        forbidUnusedMatchResult: structure([
+            enabled: bool()
+        ])
+        requirePreviousExceptionPass: structure([
+            enabled: bool()
+            reportEvenIfExceptionIsNotAcceptableByRethrownOne: bool()
+        ])
+        uselessPrivatePropertyDefaultValue: structure([
+            enabled: bool()
+        ])
+        uselessPrivatePropertyNullability: structure([
+            enabled: bool()
+        ])
+    ])
+
+conditionalTags:
+    ShipMonk\PHPStan\Rule\AllowComparingOnlyComparableTypesRule:
+        phpstan.rules.rule: %shipmonkRules.allowComparingOnlyComparableTypes.enabled%
+    ShipMonk\PHPStan\Rule\EnforceReadonlyPublicPropertyRule:
+        phpstan.rules.rule: %shipmonkRules.enforceReadonlyPublicProperty.enabled%
+    ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule:
+        phpstan.rules.rule: %shipmonkRules.forbidAssignmentNotMatchingVarDoc.enabled%
+    ShipMonk\PHPStan\Rule\ForbidCustomFunctionsRule:
+        phpstan.rules.rule: %shipmonkRules.forbidCustomFunctions.enabled%
+    ShipMonk\PHPStan\Rule\ForbidEnumInFunctionArgumentsRule:
+        phpstan.rules.rule: %shipmonkRules.forbidEnumInFunctionArguments.enabled%
+    ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule:
+        phpstan.rules.rule: %shipmonkRules.forbidFetchOnMixed.enabled%
+    ShipMonk\PHPStan\Rule\ForbidMatchDefaultArmForEnumsRule:
+        phpstan.rules.rule: %shipmonkRules.forbidMatchDefaultArmForEnums.enabled%
+    ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule:
+        phpstan.rules.rule: %shipmonkRules.forbidMethodCallOnMixed.enabled%
+    ShipMonk\PHPStan\Rule\ForbidNullInBinaryOperationsRule:
+        phpstan.rules.rule: %shipmonkRules.forbidNullInBinaryOperations.enabled%
+    ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule:
+        phpstan.rules.rule: %shipmonkRules.forbidVariableTypeOverwriting.enabled%
+    ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule:
+        phpstan.rules.rule: %shipmonkRules.forbidUnsetClassField.enabled%
+    ShipMonk\PHPStan\Rule\ForbidUselessNullableReturnRule:
+        phpstan.rules.rule: %shipmonkRules.forbidUselessNullableReturn.enabled%
+    ShipMonk\PHPStan\Rule\ForbidUnusedExceptionRule:
+        phpstan.rules.rule: %shipmonkRules.forbidUnusedException.enabled%
+    ShipMonk\PHPStan\Rule\ForbidUnusedMatchResultRule:
+        phpstan.rules.rule: %shipmonkRules.forbidUnusedMatchResult.enabled%
+    ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule:
+        phpstan.rules.rule: %shipmonkRules.uselessPrivatePropertyDefaultValue.enabled%
+    ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule:
+        phpstan.rules.rule: %shipmonkRules.requirePreviousExceptionPass.enabled%
+    ShipMonk\PHPStan\Rule\UselessPrivatePropertyDefaultValueRule:
+        phpstan.rules.rule: %shipmonkRules.uselessPrivatePropertyDefaultValue.enabled%
+    ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule:
+        phpstan.rules.rule: %shipmonkRules.uselessPrivatePropertyNullability.enabled%
+
+    ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor:
+        phpstan.parser.richParserNodeVisitor: %shipmonkRules.forbidUnusedException.enabled%
+    ShipMonk\PHPStan\Visitor\UnusedMatchVisitor:
+        phpstan.parser.richParserNodeVisitor: %shipmonkRules.forbidUnusedMatchResult.enabled%
+    ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor:
+        phpstan.parser.richParserNodeVisitor: %shipmonkRules.uselessPrivatePropertyDefaultValue.enabled%
+    ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor:
+        phpstan.parser.richParserNodeVisitor: %shipmonkRules.uselessPrivatePropertyNullability.enabled%
 
 services:
     -
-        class: ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor
-        tags:
-            - phpstan.parser.richParserNodeVisitor
+        class: ShipMonk\PHPStan\Rule\AllowComparingOnlyComparableTypesRule
+    -
+        class: ShipMonk\PHPStan\Rule\EnforceReadonlyPublicPropertyRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidCustomFunctionsRule
+        arguments:
+            forbiddenFunctions: %shipmonkRules.forbidCustomFunctions.list%
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidEnumInFunctionArgumentsRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidMatchDefaultArmForEnumsRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidNullInBinaryOperationsRule
+        arguments:
+            blacklist: %shipmonkRules.forbidNullInBinaryOperations.blacklist%
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidUselessNullableReturnRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidUnusedExceptionRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidUnusedMatchResultRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule
+    -
+        class: ShipMonk\PHPStan\Rule\UselessPrivatePropertyDefaultValueRule
+    -
+        class: ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule
 
     -
-        class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
-        tags:
-            - phpstan.parser.richParserNodeVisitor
-
-    -
-        class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
-        tags:
-            - phpstan.parser.richParserNodeVisitor
+        class: ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule
+        arguments:
+            reportEvenIfExceptionIsNotAcceptableByRethrownOne: %shipmonkRules.requirePreviousExceptionPass.reportEvenIfExceptionIsNotAcceptableByRethrownOne%
 
     -
         class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor
-        tags:
-            - phpstan.parser.richParserNodeVisitor
+    -
+        class: ShipMonk\PHPStan\Visitor\UnusedMatchVisitor
+    -
+        class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
+    -
+        class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
