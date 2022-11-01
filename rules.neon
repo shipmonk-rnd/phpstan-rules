@@ -3,9 +3,9 @@ parameters:
         allowComparingOnlyComparableTypes:
             enabled: true
         allowNamedArgumentOnlyInAttributes:
-            enabled: true # TODO drop?
+            enabled: true
         backedEnumGenerics:
-            enabled: true # TODO
+            enabled: true
         enforceReadonlyPublicProperty:
             enabled: true
         forbidAssignmentNotMatchingVarDoc:
@@ -109,6 +109,10 @@ parametersSchema:
 conditionalTags:
     ShipMonk\PHPStan\Rule\AllowComparingOnlyComparableTypesRule:
         phpstan.rules.rule: %shipmonkRules.allowComparingOnlyComparableTypes.enabled%
+    ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule:
+        phpstan.rules.rule: %shipmonkRules.allowNamedArgumentOnlyInAttributes.enabled%
+    ShipMonk\PHPStan\Rule\BackedEnumGenericsRule:
+        phpstan.rules.rule: %shipmonkRules.backedEnumGenerics.enabled%
     ShipMonk\PHPStan\Rule\EnforceReadonlyPublicPropertyRule:
         phpstan.rules.rule: %shipmonkRules.enforceReadonlyPublicProperty.enabled%
     ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule:
@@ -156,6 +160,10 @@ conditionalTags:
 services:
     -
         class: ShipMonk\PHPStan\Rule\AllowComparingOnlyComparableTypesRule
+    -
+        class: ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule
+    -
+        class: ShipMonk\PHPStan\Rule\BackedEnumGenericsRule
     -
         class: ShipMonk\PHPStan\Rule\EnforceReadonlyPublicPropertyRule
     -

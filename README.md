@@ -8,18 +8,57 @@ You may find some of them opinionated, so we recommend picking only those fittin
 composer require --dev shipmonk/phpstan-rules
 ```
 
-Enable all rules by:
+Enable all rules:
 ```neon
 includes:
     - vendor/shipmonk/phpstan-rules/rules.neon
 ```
 
-You can easily disable any rule you dont like by passing false to its `enabled` config option:
+You can easily disable or reconfigure any rule. Here is a default setup used in `rules.neon` you can change:
 ```neon
 parameters:
     shipmonkRules:
+        allowComparingOnlyComparableTypes:
+            enabled: true
         allowNamedArgumentOnlyInAttributes:
-            enabled: false
+            enabled: true
+        backedEnumGenerics:
+            enabled: true
+        enforceReadonlyPublicProperty:
+            enabled: true
+        forbidAssignmentNotMatchingVarDoc:
+            enabled: true
+        forbidCustomFunctions:
+            enabled: true
+            list: []
+        forbidEnumInFunctionArguments:
+            enabled: true
+        forbidFetchOnMixed:
+            enabled: true
+        forbidMatchDefaultArmForEnums:
+            enabled: true
+        forbidMethodCallOnMixed:
+            enabled: true
+        forbidNullInBinaryOperations:
+            enabled: true
+            blacklist: ['===', '!==', '??']
+        forbidVariableTypeOverwriting:
+            enabled: true
+        forbidUnsetClassField:
+            enabled: true
+        forbidUselessNullableReturn:
+            enabled: true
+        forbidUnusedException:
+            enabled: true
+        forbidUnusedMatchResult:
+            enabled: true
+        requirePreviousExceptionPass:
+            enabled: true
+            reportEvenIfExceptionIsNotAcceptableByRethrownOne: true
+        uselessPrivatePropertyDefaultValue:
+            enabled: true
+        uselessPrivatePropertyNullability:
+            enabled: true
 ```
 
 ### AllowComparingOnlyComparableTypesRule
@@ -36,10 +75,10 @@ new DateTime() > '2040-01-02'; // comparing different types is denied
 200 > '1e2'; // comparing different types is denied
 ```
 
-### AllowNamedArgumentOnlyInAttributesRule *
+### AllowNamedArgumentOnlyInAttributesRule
 - Allows usage of named arguments only in native attributes
 - Before native attributes, we used [DisallowNamedArguments](https://github.com/slevomat/coding-standard#slevomatcodingstandardfunctionsdisallownamedarguments). But we used Doctrine annotations, which almost "require" named arguments when converted to native attributes.
-- Requires NamedArgumentSourceVisitor to work
+- This one is highly opinionated, you can easily disable it as described above
 ```php
 class User {
     #[Column(type: Types::STRING, nullable: false)] // allowed
@@ -51,12 +90,11 @@ class User {
 }
 ```
 
-### BackedEnumGenericsRule *
+### BackedEnumGenericsRule
 - Ensures that every BackedEnum child defines generic type
-- This makes sense only when BackedEnum was hacked to be generic as described in [this article](https://rnd.shipmonk.com/hacking-generics-into-backedenum-in-php-8-1/)
+- This rule makes sense only when BackedEnum was hacked to be generic by stub as described in [this article](https://rnd.shipmonk.com/hacking-generics-into-backedenum-in-php-8-1/)
+  - This rule does nothing if BackedEnum is not set to be generic, which is a default setup. Use following config to really start using it:
 ```neon
-rules:
-    - ShipMonk\PHPStan\Rule\BackedEnumGenericsRule
 parameters:
     stubFiles:
         - BackedEnum.php.stub # see article or BackedEnumGenericsRuleTest
@@ -100,7 +138,7 @@ $result = $queryBuilder->select('t.id')
 ```
 
 
-### ForbidCustomFunctionsRule *
+### ForbidCustomFunctionsRule
 - Allows you to easily deny some approaches within your codebase by denying classes, methods and functions
 - Configuration syntax is array where key is method name and value is reason used in error message
 - Works even with interfaces, constructors and some dynamic class/method names like `$fn = 'sleep'; $fn();`
@@ -167,7 +205,7 @@ function example($unknown) {
 ### ForbidNullInBinaryOperationsRule
 - Denies using binary operators if null is involved on either side
 - You can configure which operators are ignored in rule constructor. Default ignore is excluding only `===, !==, ??`
-- Following custom setup is recommended when using latest [phpstan-strict-rules](https://github.com/phpstan/phpstan-strict-rules) and `AllowComparingOnlyComparableTypesRule`
+- Following custom setup is recommended when using latest [phpstan-strict-rules](https://github.com/phpstan/phpstan-strict-rules) and `AllowComparingOnlyComparableTypesRule` is enabled
 ```neon
 parameters:
     shipmonkRules:
