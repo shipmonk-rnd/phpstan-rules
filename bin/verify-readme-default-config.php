@@ -4,7 +4,7 @@ $readmeContents = file_get_contents(__DIR__ . '/../README.md');
 $configContents = file_get_contents(__DIR__ . '/../rules.neon');
 $defaultConfig = trim(explode("parametersSchema", $configContents)[0]);
 
-if (!str_contains($readmeContents, $defaultConfig)) {
+if (mb_strpos($readmeContents, $defaultConfig) === false) {
     echo "README.md does not contain default config used in rules.neon\n";
     exit(1);
 }
