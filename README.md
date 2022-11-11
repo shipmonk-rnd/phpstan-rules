@@ -175,7 +175,7 @@ implode('', [MyEnum::MyCase]); // denied, would fail on implicit toString conver
 - Denies property fetch on unknown type.
 - Any property fetch assumes the caller is an object with such property and therefore, the typehint/phpdoc should be fixed.
 - Similar to `ForbidMethodCallOnMixedRule`
-- Makes sense only on PHPStan level 8 or below
+- Makes sense only on PHPStan level 8 or below, gets autodisabled on level 9
 ```php
 function example($unknown) {
     $unknown->property; // cannot fetch property on mixed
@@ -197,7 +197,7 @@ match ($enum) {
 - Denies calling methods on unknown type.
 - Any method call assumes the caller is an object with such method and therefore, the typehint/phpdoc should be fixed.
 - Similar to `ForbidFetchOnMixedRule`
-- Makes sense only on PHPStan level 8 or below
+- Makes sense only on PHPStan level 8 or below, gets autodisabled on level 9
 ```php
 function example($unknown) {
     $unknown->call(); // cannot call method on mixed

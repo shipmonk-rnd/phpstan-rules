@@ -19,9 +19,12 @@ class ForbidFetchOnMixedRule implements Rule
 
     private Standard $printer;
 
-    public function __construct(Standard $printer)
+    private bool $checkExplicitMixed;
+
+    public function __construct(Standard $printer, bool $checkExplicitMixed)
     {
         $this->printer = $printer;
+        $this->checkExplicitMixed = $checkExplicitMixed;
     }
 
     public function getNodeType(): string
@@ -35,6 +38,10 @@ class ForbidFetchOnMixedRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
+        if ($this->checkExplicitMixed) {
+            return []; // already checked by native PHPStan
+        }
+
         $caller = $node->var;
         $callerType = $scope->getType($caller);
 

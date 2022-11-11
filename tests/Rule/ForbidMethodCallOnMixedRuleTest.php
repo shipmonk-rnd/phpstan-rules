@@ -14,7 +14,10 @@ class ForbidMethodCallOnMixedRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new ForbidMethodCallOnMixedRule(new Standard());
+        return new ForbidMethodCallOnMixedRule(
+            self::getContainer()->getByType(Standard::class),
+            (bool) self::getContainer()->getParameter('checkExplicitMixed'),
+        );
     }
 
     public function testClass(): void
