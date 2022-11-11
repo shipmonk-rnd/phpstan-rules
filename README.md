@@ -61,6 +61,8 @@ parameters:
             enabled: true
 ```
 
+Few rules are enabled, but do nothing unless configured, those are marked with `*`.
+
 ### AllowComparingOnlyComparableTypesRule
 - Denies using comparison operators `>,<,<=,>=,<=>` over anything other than `int|string|float|DateTimeInterface`. Null is not allowed.
 - Mixing different types in those operators is also forbidden, only exception is comparing floats with integers
@@ -90,7 +92,7 @@ class User {
 }
 ```
 
-### BackedEnumGenericsRule
+### BackedEnumGenericsRule *
 - Ensures that every BackedEnum child defines generic type
 - This rule makes sense only when BackedEnum was hacked to be generic by stub as described in [this article](https://rnd.shipmonk.com/hacking-generics-into-backedenum-in-php-8-1/)
   - This rule does nothing if BackedEnum is not set to be generic, which is a default setup. Use following config to really start using it:
@@ -138,7 +140,7 @@ $result = $queryBuilder->select('t.id')
 ```
 
 
-### ForbidCustomFunctionsRule
+### ForbidCustomFunctionsRule *
 - Allows you to easily deny some approaches within your codebase by denying classes, methods and functions
 - Configuration syntax is array where key is method name and value is reason used in error message
 - Works even with interfaces, constructors and some dynamic class/method names like `$fn = 'sleep'; $fn();`
@@ -149,7 +151,7 @@ parameters:
             list:
                 'Namespace\SomeClass::*': 'Please use different class' # deny all methods by using * (including constructor)
                 'Namespace\AnotherClass::someMethod': 'Please use anotherMethod' # deny single method
-                'sleep': 'Plese use usleep only' # deny function
+                'var_dump': 'Please remove debug code' # deny function
 ```
 ```php
 new SomeClass(); // Class SomeClass is forbidden. Please use different class
