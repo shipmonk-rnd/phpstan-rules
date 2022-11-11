@@ -98,25 +98,25 @@ class ExampleClass extends ExampleClassParent
 
 
         /** @var array<ExampleInterface> $var */
-        $var = $this->returnListOfSelf();
+        $var = $this->returnArrayOfSelf();
 
         /** @var array<self> $var */
-        $var = $this->returnListOfSelf();
+        $var = $this->returnArrayOfSelf();
 
         /** @var array<object> $var */
-        $var = $this->returnListOfSelf();
+        $var = $this->returnArrayOfSelf();
 
         /** @var array<mixed> $var */
-        $var = $this->returnListOfSelf();
+        $var = $this->returnArrayOfSelf();
 
         /** @var array<int> $var */
-        $var = $this->returnListOfSelf(); // error: Invalid var phpdoc of $var. Cannot assign array<int, ForbidAssignmentNotMatchingVarDocRule\ExampleClass> to array<int>
+        $var = $this->returnArrayOfSelf(); // error: Invalid var phpdoc of $var. Cannot assign array<ForbidAssignmentNotMatchingVarDocRule\ExampleClass> to array<int>
     }
 
     /**
-     * @return list<self>
+     * @return array<self>
      */
-    public function returnListOfSelf(): array
+    public function returnArrayOfSelf(): array
     {
         return [];
     }
