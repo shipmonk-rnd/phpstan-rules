@@ -148,6 +148,8 @@ conditionalTags:
     ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule:
         phpstan.rules.rule: %shipmonkRules.uselessPrivatePropertyNullability.enabled%
 
+    ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor:
+        phpstan.parser.richParserNodeVisitor: %shipmonkRules.allowNamedArgumentOnlyInAttributes.enabled%
     ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.forbidUnusedException.enabled%
     ShipMonk\PHPStan\Visitor\UnusedMatchVisitor:
@@ -210,6 +212,8 @@ services:
         arguments:
             reportEvenIfExceptionIsNotAcceptableByRethrownOne: %shipmonkRules.requirePreviousExceptionPass.reportEvenIfExceptionIsNotAcceptableByRethrownOne%
 
+    -
+        class: ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor
     -
         class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor
     -
