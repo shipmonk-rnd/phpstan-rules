@@ -45,6 +45,7 @@ class ForbidAssignmentNotMatchingVarDocRule implements Rule
     public function processNode(Node $node, Scope $scope): array
     {
         $checkShapeOnly = false;
+        $allowNarrowing = false;
         $phpDoc = $node->getDocComment();
 
         if ($phpDoc === null) {
@@ -53,6 +54,10 @@ class ForbidAssignmentNotMatchingVarDocRule implements Rule
 
         if (mb_strpos($phpDoc->getText(), 'check-shape-only') !== false) {
             $checkShapeOnly = true; // this is needed for example when phpstan-doctrine deduces nullable field, but you added WHERE IS NOT NULL
+        }
+
+        if (mb_strpos($phpDoc->getText(), 'allow-narrowing') !== false) {
+            $allowNarrowing = true;
         }
 
         $phpDocBlock = $this->fileTypeMapper->getResolvedPhpDoc(
@@ -94,6 +99,16 @@ class ForbidAssignmentNotMatchingVarDocRule implements Rule
 
         $valueTypeString = $valueType->describe(VerbosityLevel::precise());
         $varPhpDocTypeString = $variableType->describe(VerbosityLevel::precise());
+
+        if ($valueType->accepts($variableType, $scope->isDeclareStrictTypes())->yes() && $variableType->isArray()->no()) {
+            if ($allowNarrowing) {
+                return [];
+            }
+
+            return [
+                "Invalid var phpdoc of \${$variableName}. Cannot narrow {$valueTypeString} to {$varPhpDocTypeString}",
+            ];
+        }
 
         return [
             "Invalid var phpdoc of \${$variableName}. Cannot assign {$valueTypeString} to {$varPhpDocTypeString}",

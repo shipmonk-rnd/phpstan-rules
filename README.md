@@ -139,6 +139,11 @@ $result = $queryBuilder->select('t.id')
     ->getResult();
 ```
 
+- It is possible to explicitly allow narrowing of types by `@var` phpdoc by using `allow-narrowing`
+```php
+/** @var SomeClass $result allow-narrowing */
+$result = $service->getSomeClassOrNull();
+```
 
 ### ForbidCustomFunctionsRule *
 - Allows you to easily deny some approaches within your codebase by denying classes, methods and functions

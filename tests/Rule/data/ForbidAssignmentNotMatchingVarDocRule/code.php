@@ -72,6 +72,15 @@ class ExampleClass extends ExampleClassParent
         /** @var AnotherClass $var */
         $var = $this->returnSelf(); // error: Invalid var phpdoc of $var. Cannot assign ForbidAssignmentNotMatchingVarDocRule\ExampleClass to ForbidAssignmentNotMatchingVarDocRule\AnotherClass
 
+        /** @var ExampleInterface $var */
+        $var = $this->returnInterface();
+
+        /** @var ExampleClass $var */
+        $var = $this->returnInterface(); // error: Invalid var phpdoc of $var. Cannot narrow ForbidAssignmentNotMatchingVarDocRule\ExampleInterface to ForbidAssignmentNotMatchingVarDocRule\ExampleClass
+
+        /** @var ExampleClass $var allow-narrowing */
+        $var = $this->returnInterface();
+
 
         /** @var int $var */
         $var = $this->returnInt();
@@ -87,11 +96,16 @@ class ExampleClass extends ExampleClassParent
         $var = $this->returnString();
 
         /** @var class-string $var */
-        $var = $this->returnString(); // error: Invalid var phpdoc of $var. Cannot assign string to class-string
+        $var = $this->returnString(); // error: Invalid var phpdoc of $var. Cannot narrow string to class-string
 
+        /** @var class-string $var allow-narrowing */
+        $var = $this->returnString();
 
         /** @var string $var */
-        $var = $this->returnNullableString(); // error: Invalid var phpdoc of $var. Cannot assign string|null to string
+        $var = $this->returnNullableString(); // error: Invalid var phpdoc of $var. Cannot narrow string|null to string
+
+        /** @var string $var allow-narrowing */
+        $var = $this->returnNullableString();
 
         /** @var string|null|int $var */
         $var = $this->returnNullableString();
@@ -153,6 +167,11 @@ class ExampleClass extends ExampleClassParent
     }
 
     public function returnSelf(): self
+    {
+        return $this;
+    }
+
+    public function returnInterface(): ExampleInterface
     {
         return $this;
     }
