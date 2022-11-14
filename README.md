@@ -63,7 +63,7 @@ parameters:
 
 Few rules are enabled, but do nothing unless configured, those are marked with `*`.
 
-### AllowComparingOnlyComparableTypesRule
+### allowComparingOnlyComparableTypes
 - Denies using comparison operators `>,<,<=,>=,<=>` over anything other than `int|string|float|DateTimeInterface`. Null is not allowed.
 - Mixing different types in those operators is also forbidden, only exception is comparing floats with integers
 - Mainly targets to accidental comparisons of objects, enums or arrays which is valid in PHP, but very tricky
@@ -77,7 +77,7 @@ new DateTime() > '2040-01-02'; // comparing different types is denied
 200 > '1e2'; // comparing different types is denied
 ```
 
-### AllowNamedArgumentOnlyInAttributesRule
+### allowNamedArgumentOnlyInAttributes
 - Allows usage of named arguments only in native attributes
 - Before native attributes, we used [DisallowNamedArguments](https://github.com/slevomat/coding-standard#slevomatcodingstandardfunctionsdisallownamedarguments). But we used Doctrine annotations, which almost "require" named arguments when converted to native attributes.
 - This one is highly opinionated, you can easily disable it as described above
@@ -92,7 +92,7 @@ class User {
 }
 ```
 
-### BackedEnumGenericsRule *
+### backedEnumGenerics *
 - Ensures that every BackedEnum child defines generic type
 - This rule makes sense only when BackedEnum was hacked to be generic by stub as described in [this article](https://rnd.shipmonk.com/hacking-generics-into-backedenum-in-php-8-1/)
   - This rule does nothing if BackedEnum is not set to be generic, which is a default setup. Use following config to really start using it:
@@ -109,7 +109,7 @@ enum MyEnum: string { // missing @implements tag
 }
 ```
 
-### EnforceReadonlyPublicPropertyRule
+### enforceReadonlyPublicProperty
 - Ensures immutability of all public properties by enforcing `readonly` modifier
 - No modifier needed for readonly classes in PHP 8.2
 ```php
@@ -120,7 +120,7 @@ class EnforceReadonlyPublicPropertyRule {
 ```
 
 
-### ForbidAssignmentNotMatchingVarDocRule
+### forbidAssignmentNotMatchingVarDoc
 - Verifies if defined type in `@var` phpdoc accepts the assigned type during assignment
 - No other places except assignment are checked
 
@@ -145,7 +145,7 @@ $result = $queryBuilder->select('t.id')
 $result = $service->getSomeClassOrNull();
 ```
 
-### ForbidCustomFunctionsRule *
+### forbidCustomFunctions *
 - Allows you to easily deny some approaches within your codebase by denying classes, methods and functions
 - Configuration syntax is array where key is method name and value is reason used in error message
 - Works even with interfaces, constructors and some dynamic class/method names like `$fn = 'sleep'; $fn();`
@@ -163,7 +163,7 @@ new SomeClass(); // Class SomeClass is forbidden. Please use different class
 (new AnotherClass())->someMethod(); // Method AnotherClass::someMethod() is forbidden. Please use anotherMethod
 ```
 
-### ForbidEnumInFunctionArgumentsRule
+### forbidEnumInFunctionArguments
 - Guards passing native enums to native functions where it fails / produces warning or does unexpected behaviour
 - Most of the array manipulation functions does not work with enums as they do implicit __toString conversion inside, but that is not possible to do with enums
 - [See test](https://github.com/shipmonk-rnd/phpstan-rules/blob/master/tests/Rule/data/ForbidEnumInFunctionArgumentsRule/code.php) for all functions and their problems
@@ -176,10 +176,10 @@ implode('', [MyEnum::MyCase]); // denied, would fail on implicit toString conver
 ```
 
 
-### ForbidFetchOnMixedRule
+### forbidFetchOnMixed
 - Denies property fetch on unknown type.
 - Any property fetch assumes the caller is an object with such property and therefore, the typehint/phpdoc should be fixed.
-- Similar to `ForbidMethodCallOnMixedRule`
+- Similar to `forbidMethodCallOnMixed`
 - Makes sense only on PHPStan level 8 or below, gets autodisabled on level 9
 ```php
 function example($unknown) {
@@ -187,7 +187,7 @@ function example($unknown) {
 }
 ```
 
-### ForbidMatchDefaultArmForEnumsRule
+### forbidMatchDefaultArmForEnums
 - Denies using default arm in `match()` construct when native enum is passed as subject
 - This rules makes sense only as a complement of [native phpstan rule](https://github.com/phpstan/phpstan-src/blob/1.7.x/src/Rules/Comparison/MatchExpressionRule.php#L94) that guards that all enum cases are handled in match arms
 - As a result, you are forced to add new arm when new enum case is added. That brings up all the places in your codebase that needs new handling.
@@ -198,10 +198,10 @@ match ($enum) {
 }
 ```
 
-### ForbidMethodCallOnMixedRule
+### forbidMethodCallOnMixed
 - Denies calling methods on unknown type.
 - Any method call assumes the caller is an object with such method and therefore, the typehint/phpdoc should be fixed.
-- Similar to `ForbidFetchOnMixedRule`
+- Similar to `forbidFetchOnMixed`
 - Makes sense only on PHPStan level 8 or below, gets autodisabled on level 9
 ```php
 function example($unknown) {
@@ -209,10 +209,10 @@ function example($unknown) {
 }
 ```
 
-### ForbidNullInBinaryOperationsRule
+### forbidNullInBinaryOperations
 - Denies using binary operators if null is involved on either side
 - You can configure which operators are ignored in rule constructor. Default ignore is excluding only `===, !==, ??`
-- Following custom setup is recommended when using latest [phpstan-strict-rules](https://github.com/phpstan/phpstan-strict-rules) and `AllowComparingOnlyComparableTypesRule` is enabled
+- Following custom setup is recommended when using latest [phpstan-strict-rules](https://github.com/phpstan/phpstan-strict-rules) and `allowComparingOnlyComparableTypes` is enabled
 ```neon
 parameters:
     shipmonkRules:
@@ -229,7 +229,7 @@ function getFullName(?string $firstName, string $lastName): string {
 }
 ```
 
-### ForbidVariableTypeOverwritingRule
+### forbidVariableTypeOverwriting
 - Restricts variable assignment to those that does not change its type
   - Array append `$array[] = 1;` not yet supported
 - Null and mixed are not taken into account, advanced phpstan types like non-empty-X are trimmed before comparison
@@ -240,7 +240,7 @@ function example(OrderId $id) {
 }
 ```
 
-### ForbidUnsetClassFieldRule
+### forbidUnsetClassField
 - Denies calling `unset` over class field as it causes un-initialization, see https://3v4l.org/V8uuP
 - Null assignment should be used instead
 ```php
@@ -249,9 +249,9 @@ function example(MyClass $class) {
 }
 ```
 
-### ForbidUselessNullableReturnRule
+### forbidUselessNullableReturn
 - Denies marking method return type as nullable when null is never returned
-- Recommended to be used together with `UselessPrivatePropertyDefaultValueRule` and `UselessPrivatePropertyNullabilityRule`
+- Recommended to be used together with `uselessPrivatePropertyDefaultValue` and `UselessPrivatePropertyNullabilityRule`
 ```php
 class Example {
     public function example(int $foo): ?int { // null never returned
@@ -263,7 +263,7 @@ class Example {
 }
 ```
 
-### ForbidUnusedExceptionRule
+### forbidUnusedException
 - Reports forgotten exception throw (created or returned from function, but not used in any way)
 ```php
 function validate(): void {
@@ -272,7 +272,7 @@ function validate(): void {
 ```
 
 
-### ForbidUnusedMatchResultRule
+### forbidUnusedMatchResult
 - Reports forgotten usage of match result
 - Any `match` with at least one arm returning a value is checked
 ```php
@@ -282,7 +282,7 @@ match ($foo) { // unused match result
 ```
 
 
-### RequirePreviousExceptionPassRule
+### requirePreviousExceptionPass
 - Detects forgotten exception pass-as-previous when re-throwing
 - Checks if caught exception can be passed as argument to the call (including constructor call) in `throw` node inside the catch block
 - You may encounter false-positives in some edge-cases, where you do not want to pass exception as previous, feel free to ignore those
@@ -296,6 +296,7 @@ try {
 ```
 
 - If you want to be even stricter, you can set up `reportEvenIfExceptionIsNotAcceptableByRethrownOne` to `true` and the rule will start reporting even cases where the thrown exception does not have parameter matching the caught exception
+  - Defaults to true
   - That will force you to add the parameter to be able to pass it as previous
   - Usable only if you do not throw exceptions from libraries, which is a good practice anyway
 
@@ -303,7 +304,7 @@ try {
 parameters:
     shipmonkRules:
         requirePreviousExceptionPass:
-            reportEvenIfExceptionIsNotAcceptableByRethrownOne: false
+            reportEvenIfExceptionIsNotAcceptableByRethrownOne: true
 ```
 ```php
 class MyException extends RuntimeException {
@@ -319,12 +320,12 @@ try {
 }
 ```
 
-### UselessPrivatePropertyDefaultValueRule:
+### uselessPrivatePropertyDefaultValue:
 
 - Detects useless default value of a private property that is always initialized in constructor.
 - Cannot handle conditions or private method calls within constructor.
 - When enabled, return statements in constructors are denied to avoid false positives
-- Recommended to be used with `UselessPrivatePropertyNullabilityRule` and `ForbidUselessNullableReturnRule`
+- Recommended to be used with `uselessPrivatePropertyNullability` and `forbidUselessNullableReturn`
 ```php
 class Example
 {
@@ -337,9 +338,9 @@ class Example
 }
 ```
 
-### UselessPrivatePropertyNullabilityRule:
+### uselessPrivatePropertyNullability:
 - Detects useless nullability of a private property by checking type of all assignments.
-- Recommended to be used with `UselessPrivatePropertyNullabilityRule` and `ForbidUselessNullableReturnRule` as removing useless default value may cause useless nullability to be detected
+- Recommended to be used with `uselessPrivatePropertyNullability` and `forbidUselessNullableReturn` as removing useless default value may cause useless nullability to be detected
 ```php
 class Example
 {
