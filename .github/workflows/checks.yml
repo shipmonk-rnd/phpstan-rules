@@ -24,7 +24,7 @@ jobs:
                     php-version: ${{ matrix.php-version }}
             -
                 name: Install dependencies
-                run: composer update --no-progress --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+                run: composer update --no-progress --${{ matrix.dependency-version }} --prefer-dist --no-interaction
             -
                 name: Run checks and tests
                 run: composer check
