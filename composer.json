@@ -9,6 +9,7 @@
         "static analysis"
     ],
     "require": {
+        "php": "^7.4 || ^8.0",
         "nikic/php-parser": "^4.13.2",
         "phpstan/phpstan": "^1.8.1"
     },
