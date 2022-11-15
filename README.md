@@ -82,7 +82,7 @@ new DateTime() > '2040-01-02'; // comparing different types is denied
 
 ### allowNamedArgumentOnlyInAttributes
 - Allows usage of named arguments only in native attributes
-- Before native attributes, we used [DisallowNamedArguments](https://github.com/slevomat/coding-standard#slevomatcodingstandardfunctionsdisallownamedarguments). But we used Doctrine annotations, which almost "require" named arguments when converted to native attributes.
+- Before native attributes, we used [DisallowNamedArguments](https://github.com/slevomat/coding-standard/blob/master/doc/functions.md#slevomatcodingstandardfunctionsdisallownamedarguments) sniff. But we used Doctrine annotations, which almost "require" named arguments when converted to native attributes.
 - This one is highly opinionated, you can easily disable it as described above
 ```php
 class User {
