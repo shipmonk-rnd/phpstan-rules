@@ -39,6 +39,9 @@ parameters:
             enabled: true
         forbidMethodCallOnMixed:
             enabled: true
+        forbidNullInAssignOperations:
+            enabled: true
+            blacklist: ['??=']
         forbidNullInBinaryOperations:
             enabled: true
             blacklist: ['===', '!==', '??']
@@ -209,9 +212,20 @@ function example($unknown) {
 }
 ```
 
+### forbidNullInAssignOperations
+- Denies using [assign operators](https://www.php.net/manual/en/language.operators.assignment.php) if null is involved on right side
+- You can configure which operators are ignored, by default only `??=` is excluded
+```php
+function getCost(int $cost, ?int $surcharge): int {
+    $cost += $surcharge;  // denied, adding possibly-null value
+    return $cost;
+}
+```
+
+
 ### forbidNullInBinaryOperations
 - Denies using binary operators if null is involved on either side
-- You can configure which operators are ignored in rule constructor. Default ignore is excluding only `===, !==, ??`
+- You can configure which operators are ignored. Default ignore is excluding only `===, !==, ??`
 - Following custom setup is recommended when using latest [phpstan-strict-rules](https://github.com/phpstan/phpstan-strict-rules) and `allowComparingOnlyComparableTypes` is enabled
 ```neon
 parameters:
