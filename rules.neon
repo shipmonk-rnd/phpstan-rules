@@ -21,6 +21,9 @@ parameters:
             enabled: true
         forbidMethodCallOnMixed:
             enabled: true
+        forbidNullInAssignOperations:
+            enabled: true
+            blacklist: ['??=']
         forbidNullInBinaryOperations:
             enabled: true
             blacklist: ['===', '!==', '??']
@@ -75,6 +78,10 @@ parametersSchema:
         forbidMethodCallOnMixed: structure([
             enabled: bool()
         ])
+        forbidNullInAssignOperations: structure([
+            enabled: bool()
+            blacklist: arrayOf(string())
+        ])
         forbidNullInBinaryOperations: structure([
             enabled: bool()
             blacklist: arrayOf(string())
@@ -127,6 +134,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.forbidMatchDefaultArmForEnums.enabled%
     ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule:
         phpstan.rules.rule: %shipmonkRules.forbidMethodCallOnMixed.enabled%
+    ShipMonk\PHPStan\Rule\ForbidNullInAssignOperationsRule:
+        phpstan.rules.rule: %shipmonkRules.forbidNullInAssignOperations.enabled%
     ShipMonk\PHPStan\Rule\ForbidNullInBinaryOperationsRule:
         phpstan.rules.rule: %shipmonkRules.forbidNullInBinaryOperations.enabled%
     ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule:
@@ -186,6 +195,10 @@ services:
             checkExplicitMixed: %checkExplicitMixed%
     -
         class: ShipMonk\PHPStan\Rule\ForbidMatchDefaultArmForEnumsRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidNullInAssignOperationsRule
+        arguments:
+            blacklist: %shipmonkRules.forbidNullInAssignOperations.blacklist%
     -
         class: ShipMonk\PHPStan\Rule\ForbidNullInBinaryOperationsRule
         arguments:
