@@ -21,6 +21,7 @@ use PhpParser\Node\Expr\AssignOp\ShiftRight;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\TypeCombinator;
+use function get_class;
 use function in_array;
 
 /**
@@ -119,7 +120,7 @@ class ForbidNullInAssignOperationsRule implements Rule
             return '&=';
         }
 
-        throw new LogicException('Unexpected AssignOp child: ' . $node::class);
+        throw new LogicException('Unexpected AssignOp child: ' . get_class($node));
     }
 
 }
