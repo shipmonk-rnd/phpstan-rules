@@ -10,6 +10,9 @@ parameters:
             enabled: true
         forbidAssignmentNotMatchingVarDoc:
             enabled: true
+        forbidCast:
+            enabled: true
+            blacklist: ['(array)', '(object)', '(unset)']
         forbidCustomFunctions:
             enabled: true
             list: []
@@ -61,6 +64,10 @@ parametersSchema:
         ])
         forbidAssignmentNotMatchingVarDoc: structure([
             enabled: bool()
+        ])
+        forbidCast: structure([
+            enabled: bool()
+            blacklist: arrayOf(string())
         ])
         forbidCustomFunctions: structure([
             enabled: bool()
