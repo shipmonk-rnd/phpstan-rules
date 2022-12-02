@@ -26,7 +26,8 @@ class ExampleClass
         int $isPrivate,
         int $isPrivateWithConditionalAssignment,
         int $isPrivateWithDefaultNull,
-        int $isPrivateWithDefaultNotNull
+        int $isPrivateWithDefaultNotNull,
+        private ?int $isPrivatePromoted
     ) {
         $this->isPublic = $isPublic;
         $this->isProtected = $isProtected;
