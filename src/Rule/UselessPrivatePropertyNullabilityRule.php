@@ -74,7 +74,7 @@ class UselessPrivatePropertyNullabilityRule implements Rule
         $errors = [];
 
         foreach ($node->getProperties() as $property) {
-            $shouldBeChecked = $property->isPrivate() || $property->isReadOnly();
+            $shouldBeChecked = ($property->isPrivate() || $property->isReadOnly()) && !$property->isPromoted();
 
             if (!$shouldBeChecked) {
                 continue;
