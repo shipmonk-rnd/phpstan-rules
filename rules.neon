@@ -131,6 +131,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.enforceReadonlyPublicProperty.enabled%
     ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule:
         phpstan.rules.rule: %shipmonkRules.forbidAssignmentNotMatchingVarDoc.enabled%
+    ShipMonk\PHPStan\Rule\ForbidCastRule:
+        phpstan.rules.rule: %shipmonkRules.forbidCast.enabled%
     ShipMonk\PHPStan\Rule\ForbidCustomFunctionsRule:
         phpstan.rules.rule: %shipmonkRules.forbidCustomFunctions.enabled%
     ShipMonk\PHPStan\Rule\ForbidEnumInFunctionArgumentsRule:
@@ -186,6 +188,8 @@ services:
         class: ShipMonk\PHPStan\Rule\EnforceReadonlyPublicPropertyRule
     -
         class: ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidCastRule
     -
         class: ShipMonk\PHPStan\Rule\ForbidCustomFunctionsRule
         arguments:
