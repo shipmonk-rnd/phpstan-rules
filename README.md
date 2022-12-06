@@ -28,6 +28,9 @@ parameters:
             enabled: true
         forbidAssignmentNotMatchingVarDoc:
             enabled: true
+        forbidCast:
+            enabled: true
+            blacklist: ['(array)', '(object)', '(unset)']
         forbidCustomFunctions:
             enabled: true
             list: []
@@ -146,6 +149,28 @@ $result = $queryBuilder->select('t.id')
 ```php
 /** @var SomeClass $result allow-narrowing */
 $result = $service->getSomeClassOrNull();
+```
+
+### forbidCast
+- Deny casting you configure
+- Possible values to use:
+  - `(array)` - denied by default
+  - `(object)` - denied by default
+  - `(unset)` - denied by default
+  - `(bool)`
+  - `(int)`
+  - `(string)`
+  - `(float)` - forbids using also `(double)` and `(real)`
+
+```php
+$empty = (array) null; // denied cast
+$notEmpty = (array) 0; // denied cast
+```
+```neon
+parameters:
+    shipmonkRules:
+        forbidCast:
+            blacklist: ['(array)', '(object)', '(unset)']
 ```
 
 ### forbidCustomFunctions *
