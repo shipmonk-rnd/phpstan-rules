@@ -24,6 +24,8 @@ parameters:
             enabled: true
         backedEnumGenerics:
             enabled: true
+        enforceNativeReturnTypehint:
+            enabled: true
         enforceReadonlyPublicProperty:
             enabled: true
         forbidAssignmentNotMatchingVarDoc:
@@ -112,6 +114,21 @@ parameters:
 ```php
 enum MyEnum: string { // missing @implements tag
     case MyCase = 'case1';
+}
+```
+
+### enforceNativeReturnTypehint
+- Enforces usage of native return typehints in class methods if deducible from its PHPDoc and supported by your PHP version
+- Is disabled, if you have PHPStan set up with `treatPhpDocTypesAsCertain: false`
+```php
+class NoNativeReturnTypehint {
+    /**
+     * @return list<string>
+     */
+    public function returnList() // error, missing array typehint
+    {
+        return ['item'];
+    }
 }
 ```
 
