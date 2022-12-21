@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace EnforceNativeReturnTypehintRule;
+namespace EnforceNativeReturnTypehintRule74;
 
 class A {}
 class B {}

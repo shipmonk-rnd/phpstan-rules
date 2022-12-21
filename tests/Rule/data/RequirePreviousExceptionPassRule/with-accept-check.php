@@ -1,6 +1,6 @@
 <?php
 
-namespace RequirePreviousExceptionPassRule;
+namespace RequirePreviousExceptionPassRule\With;
 
 use Exception;
 use LogicException;
@@ -42,12 +42,12 @@ try {
 
 try {
 } catch (LogicException $e) {
-    throw MyException::createForAnyPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForAnyPrevious()
+    throw MyException::createForAnyPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\With\MyException::createForAnyPrevious()
 }
 
 try {
 } catch (RuntimeException $e) {
-    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForSpecificPrevious()
+    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\With\MyException::createForSpecificPrevious()
 }
 
 try {
@@ -68,5 +68,5 @@ try {
 try {
 } catch (LogicException $e) {
 } catch (LogicException|RuntimeException $e) { // Logic can never occur here, so Runtime must be passed
-    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForSpecificPrevious()
+    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\With\MyException::createForSpecificPrevious()
 }
