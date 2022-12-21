@@ -19,8 +19,11 @@
         "phpstan/phpstan-phpunit": "^1.1.1",
         "phpstan/phpstan-strict-rules": "^1.2.3",
         "phpunit/phpunit": "^9.5.20",
+        "shipmonk/name-collision-detector": "dev-master",
         "slevomat/coding-standard": "^8.0.1"
     },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "autoload": {
         "psr-4": {
             "ShipMonk\\PHPStan\\": "src/"
@@ -48,8 +51,10 @@
             "@check:cs",
             "@check:types",
             "@check:tests",
+            "@check:collisions",
             "@check:readme"
         ],
+        "check:collisions": "detect-collisions src tests",
         "check:composer": "composer normalize --dry-run --no-check-lock --no-update-lock",
         "check:cs": "phpcs",
         "check:ec": "ec src tests",
