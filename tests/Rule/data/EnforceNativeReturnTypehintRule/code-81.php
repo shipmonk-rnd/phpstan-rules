@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace EnforceNativeReturnTypehintRule;
+namespace EnforceNativeReturnTypehintRule81;
 
 class A {}
 class B {}
@@ -52,13 +52,13 @@ class MyClass {
     public function requireUnionOfScalarsWithNull() {} // error: Missing native return typehint string|int|null
 
     /** @return I&J&A */
-    public function requireIntersection() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule\I&\EnforceNativeReturnTypehintRule\J&\EnforceNativeReturnTypehintRule\A
+    public function requireIntersection() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\I&\EnforceNativeReturnTypehintRule81\J&\EnforceNativeReturnTypehintRule81\A
 
     /** @return A|B|int */
-    public function requireMixedUnion1() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule\A|\EnforceNativeReturnTypehintRule\B|int
+    public function requireMixedUnion1() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\A|\EnforceNativeReturnTypehintRule81\B|int
 
     /** @return A|string|null */
-    public function requireMixedUnion2() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule\A|string|null
+    public function requireMixedUnion2() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\A|string|null
 
     /** @return mixed */
     public function requireMixed() {} // error: Missing native return typehint mixed

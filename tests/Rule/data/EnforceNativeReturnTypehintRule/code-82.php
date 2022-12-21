@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace EnforceNativeReturnTypehintRule;
+namespace EnforceNativeReturnTypehintRule82;
 
 class A {}
 class B {}
@@ -52,13 +52,13 @@ class MyClass {
     public function requireUnionOfScalarsWithNull() {} // error: Missing native return typehint string|int|null
 
     /** @return I&J&A */
-    public function requireIntersection() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule\I&\EnforceNativeReturnTypehintRule\J&\EnforceNativeReturnTypehintRule\A
+    public function requireIntersection() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule82\I&\EnforceNativeReturnTypehintRule82\J&\EnforceNativeReturnTypehintRule82\A
 
     /** @return A|B|int */
-    public function requireMixedUnion1() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule\A|\EnforceNativeReturnTypehintRule\B|int
+    public function requireMixedUnion1() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule82\A|\EnforceNativeReturnTypehintRule82\B|int
 
     /** @return A|string|null */
-    public function requireMixedUnion2() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule\A|string|null
+    public function requireMixedUnion2() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule82\A|string|null
 
     /** @return mixed */
     public function requireMixed() {} // error: Missing native return typehint mixed
@@ -91,7 +91,7 @@ class MyClass {
     public function requireNullableString2() {} // error: Missing native return typehint ?string
 
     /** @return (A|B)&I */
-    public function requireDNF() {} // error: Missing native return typehint (\EnforceNativeReturnTypehintRule\A&\EnforceNativeReturnTypehintRule\I)|(\EnforceNativeReturnTypehintRule\B&\EnforceNativeReturnTypehintRule\I)
+    public function requireDNF() {} // error: Missing native return typehint (\EnforceNativeReturnTypehintRule82\A&\EnforceNativeReturnTypehintRule82\I)|(\EnforceNativeReturnTypehintRule82\B&\EnforceNativeReturnTypehintRule82\I)
 
 }
 

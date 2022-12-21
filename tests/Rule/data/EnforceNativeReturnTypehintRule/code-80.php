@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace EnforceNativeReturnTypehintRule;
+namespace EnforceNativeReturnTypehintRule80;
 
 class A {}
 class B {}
@@ -55,10 +55,10 @@ class MyClass {
     public function requireIntersection() {} // require PHP 8.1
 
     /** @return A|B|int */
-    public function requireMixedUnion1() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule\A|\EnforceNativeReturnTypehintRule\B|int
+    public function requireMixedUnion1() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule80\A|\EnforceNativeReturnTypehintRule80\B|int
 
     /** @return A|string|null */
-    public function requireMixedUnion2() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule\A|string|null
+    public function requireMixedUnion2() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule80\A|string|null
 
     /** @return mixed */
     public function requireMixed() {} // error: Missing native return typehint mixed

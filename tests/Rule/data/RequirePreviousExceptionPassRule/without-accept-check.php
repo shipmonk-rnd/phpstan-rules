@@ -1,6 +1,6 @@
 <?php
 
-namespace RequirePreviousExceptionPassRule;
+namespace RequirePreviousExceptionPassRule\Without;
 
 use Exception;
 use LogicException;
@@ -42,26 +42,26 @@ try {
 
 try {
 } catch (LogicException $e) {
-    throw MyException::createForAnyPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForAnyPrevious()
+    throw MyException::createForAnyPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\Without\MyException::createForAnyPrevious()
 }
 
 try {
 } catch (RuntimeException $e) {
-    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForSpecificPrevious()
+    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\Without\MyException::createForSpecificPrevious()
 }
 
 try {
 } catch (Throwable $e) {
-    throw MyException::createWithoutPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createWithoutPrevious()
+    throw MyException::createWithoutPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\Without\MyException::createWithoutPrevious()
 }
 
 try {
 } catch (LogicException $e) {
-    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForSpecificPrevious()
+    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\Without\MyException::createForSpecificPrevious()
 }
 
 try {
 } catch (LogicException|RuntimeException $e) {
-    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\MyException::createForSpecificPrevious()
+    throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\Without\MyException::createForSpecificPrevious()
 }
 
