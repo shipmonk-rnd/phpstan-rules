@@ -93,5 +93,7 @@ class MyClass {
     /** @return (A|B)&I */
     public function requireDNF() {} // possible in PHP 8.2
 
+    /** @return true|null */
+    public function requireTrueOrNull() {} // error: Missing native return typehint ?bool
 }
 
