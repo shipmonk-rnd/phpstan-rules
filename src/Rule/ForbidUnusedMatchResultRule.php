@@ -3,6 +3,7 @@
 namespace ShipMonk\PHPStan\Rule;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Match_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
@@ -34,7 +35,7 @@ class ForbidUnusedMatchResultRule implements Rule
         foreach ($node->arms as $arm) {
             $armType = $scope->getType($arm->body);
 
-            if (!$armType instanceof VoidType && !$armType instanceof NeverType) {
+            if (!$armType instanceof VoidType && !$armType instanceof NeverType && !$arm->body instanceof Assign) {
                 $returnedTypes[] = $armType;
             }
         }

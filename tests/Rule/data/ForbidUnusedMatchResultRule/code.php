@@ -41,6 +41,11 @@ class Clazz {
             };
         } catch (\Throwable $e) {}
 
+        match ($int) {
+            0 => $a = 'x',
+            1 => $b = 'y',
+        };
+
         return match ($bool) {
             false => 1,
             true => 2,
@@ -63,6 +68,11 @@ class Clazz {
             0 => new LogicException(),
             1 => new RuntimeException(),
             default => new Exception(),
+        };
+
+        match ($int) { // error: Unused match result detected, possible returns: string
+            0 => $a = 'x',
+            1 => 'y',
         };
     }
 
