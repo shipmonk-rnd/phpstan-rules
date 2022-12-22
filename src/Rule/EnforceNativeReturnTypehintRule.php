@@ -10,6 +10,7 @@ use PHPStan\Rules\Rule;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\CallableType;
+use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
@@ -132,7 +133,11 @@ class EnforceNativeReturnTypehintRule implements Rule
         $typeHint = null;
 
         if ((new BooleanType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
-            $typeHint = 'bool';
+            if ($typeWithoutNull instanceof ConstantBooleanType && PHP_VERSION_ID >= 80_200) {
+                $typeHint = $typeWithoutNull->describe(VerbosityLevel::typeOnly());
+            } else {
+                $typeHint = 'bool';
+            }
         } elseif ((new ResourceType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = 'resource';
         } elseif ((new CallableType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {

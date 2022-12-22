@@ -93,5 +93,7 @@ class MyClass {
     /** @return (A|B)&I */
     public function requireDNF() {} // error: Missing native return typehint (\EnforceNativeReturnTypehintRule82\A&\EnforceNativeReturnTypehintRule82\I)|(\EnforceNativeReturnTypehintRule82\B&\EnforceNativeReturnTypehintRule82\I)
 
+    /** @return true|null */
+    public function requireTrueOrNull() {} // error: Missing native return typehint ?true
 }
 
