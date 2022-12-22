@@ -7,7 +7,7 @@ class B {}
 interface I {}
 interface J {}
 
-class MyClass {
+class DeductFromPhpDocs {
 
     /** @return list<string> */
     public function doNotReportWithTypehint1(): array {}
@@ -97,3 +97,12 @@ class MyClass {
     public function requireTrueOrNull() {} // error: Missing native return typehint ?true
 }
 
+class DeductFromReturnStatements {
+
+    public function requireUnionOfScalars(bool $bool) {
+        if ($bool) {
+            return '';
+        }
+        return 1;
+    }
+}

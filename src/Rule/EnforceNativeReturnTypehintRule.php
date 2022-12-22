@@ -2,10 +2,17 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
+use Closure;
+use Generator;
+use LogicException;
 use PhpParser\Node;
-use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\ClosureReturnStatementsNode;
+use PHPStan\Node\FunctionReturnStatementsNode;
+use PHPStan\Node\MethodReturnStatementsNode;
+use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Php\PhpVersion;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
@@ -19,20 +26,22 @@ use PHPStan\Type\IterableType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\ResourceType;
+use PHPStan\Type\StaticType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\UnionType;
-use PHPStan\Type\VerbosityLevel;
 use PHPStan\Type\VoidType;
 use function implode;
+use function in_array;
 use function sprintf;
 use const PHP_VERSION_ID;
 
 /**
- * @implements Rule<ClassMethod>
+ * @implements Rule<ReturnStatementsNode>
  */
 class EnforceNativeReturnTypehintRule implements Rule
 {
@@ -56,11 +65,11 @@ class EnforceNativeReturnTypehintRule implements Rule
 
     public function getNodeType(): string
     {
-        return ClassMethod::class;
+        return ReturnStatementsNode::class;
     }
 
     /**
-     * @param ClassMethod $node
+     * @param ReturnStatementsNode $node
      * @return list<string>
      */
     public function processNode(Node $node, Scope $scope): array
@@ -69,37 +78,22 @@ class EnforceNativeReturnTypehintRule implements Rule
             return [];
         }
 
-        if ($node->returnType !== null) {
+        if ($this->hasNativeReturnTypehint($node)) {
             return [];
         }
 
-        $classReflection = $scope->getClassReflection();
-
-        if ($classReflection === null) {
+        if (!$scope->isInAnonymousFunction() && in_array($scope->getFunctionName(), ['__construct', '__destruct', '__clone'], true)) {
             return [];
         }
 
-        $docComment = $node->getDocComment();
+        $phpDocReturnType = $this->getPhpDocReturnType($node, $scope);
+        $returnType = $phpDocReturnType ?? $this->getTypeOfReturnStatements($node);
 
-        if ($docComment === null) {
-            return [];
+        if ($scope->isInTrait()) {
+            return []; // return may easily differ for each usage
         }
 
-        $resolvedPhpDoc = $this->fileTypeMapper->getResolvedPhpDoc(
-            $scope->getFile(),
-            $classReflection->getName(),
-            $scope->getTraitReflection() === null ? null : $scope->getTraitReflection()->getName(),
-            $scope->getFunctionName(),
-            $docComment->getText(),
-        );
-
-        $returnTag = $resolvedPhpDoc->getReturnTag();
-
-        if ($returnTag === null) {
-            return [];
-        }
-
-        $typeHint = $this->getTypehintByType($returnTag->getType(), $scope, true);
+        $typeHint = $this->getTypehintByType($returnType, $scope, $phpDocReturnType !== null, true);
 
         if ($typeHint === null) {
             return [];
@@ -110,10 +104,10 @@ class EnforceNativeReturnTypehintRule implements Rule
         ];
     }
 
-    private function getTypehintByType(Type $type, Scope $scope, bool $topLevel): ?string
+    private function getTypehintByType(Type $type, Scope $scope, bool $typeFromPhpDoc, bool $topLevel): ?string
     {
         if ($type instanceof MixedType) {
-            return 'mixed';
+            return null; // TODO questionable, adds almost no value
         }
 
         if ($type instanceof VoidType) {
@@ -121,7 +115,11 @@ class EnforceNativeReturnTypehintRule implements Rule
         }
 
         if ($type instanceof NeverType) {
-            return 'never';
+            if ($typeFromPhpDoc) {
+                return 'never';
+            }
+
+            return 'void';
         }
 
         if ($type instanceof NullType) {
@@ -140,20 +138,34 @@ class EnforceNativeReturnTypehintRule implements Rule
             }
         } elseif ((new ResourceType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = 'resource';
-        } elseif ((new CallableType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
-            $typeHint = 'callable'; // prefer callable over \Closure
         } elseif ((new IntegerType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = 'int';
         } elseif ((new FloatType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = 'float';
         } elseif ((new ArrayType(new MixedType(), new MixedType()))->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = 'array';
+        } elseif ((new ObjectType(Generator::class))->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
+            $typeHint = Generator::class;
+        } elseif ((new ObjectType(Closure::class))->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
+            $typeHint = Closure::class;
+        } elseif ((new CallableType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
+            $typeHint = 'callable';
         } elseif ((new IterableType(new MixedType(), new MixedType()))->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = 'iterable';
         } elseif ((new StringType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = 'string';
-        } elseif ($type instanceof TypeWithClassName) {
-            $typeHint = '\\' . $typeWithoutNull->describe(VerbosityLevel::typeOnly());
+        } elseif ($typeWithoutNull instanceof StaticType) {
+            if (PHP_VERSION_ID < 80_000) {
+                $typeHint = 'self';
+            } else {
+                $typeHint = 'static';
+            }
+        } elseif ($typeWithoutNull instanceof TypeWithClassName) {
+            if ($typeWithoutNull->getClassName() === $this->getClassName($scope)) {
+                $typeHint = 'self';
+            } else {
+                $typeHint = '\\' . $typeWithoutNull->getClassName();
+            }
         }
 
         if ($typeHint !== null && TypeCombinator::containsNull($type)) {
@@ -163,7 +175,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         if ($typeHint === null) {
             if ($type instanceof UnionType) {
                 if (!$this->phpVersion->supportsNativeUnionTypes()) {
-                    return null;
+                    return null; // TODO enforce object when union not supported (?)
                 }
 
                 $typehintParts = [];
@@ -179,7 +191,12 @@ class EnforceNativeReturnTypehintRule implements Rule
                         $wrap = true;
                     }
 
-                    $subtypeHint = $this->getTypehintByType($subtype, $scope, false);
+                    $subtypeHint = $this->getTypehintByType($subtype, $scope, $typeFromPhpDoc, false);
+
+                    if ($subtypeHint === null) {
+                        return null;
+                    }
+
                     $typehintParts[] = $wrap ? "($subtypeHint)" : $subtypeHint;
                 }
 
@@ -204,7 +221,12 @@ class EnforceNativeReturnTypehintRule implements Rule
                         $wrap = true;
                     }
 
-                    $subtypeHint = $this->getTypehintByType($subtype, $scope, false);
+                    $subtypeHint = $this->getTypehintByType($subtype, $scope, $typeFromPhpDoc, false);
+
+                    if ($subtypeHint === null) {
+                        return null;
+                    }
+
                     $typehintParts[] = $wrap ? "($subtypeHint)" : $subtypeHint;
                 }
 
@@ -213,6 +235,75 @@ class EnforceNativeReturnTypehintRule implements Rule
         }
 
         return $typeHint;
+    }
+
+    private function getTypeOfReturnStatements(ReturnStatementsNode $node): Type
+    {
+        if ($node->getStatementResult()->hasYield()) {
+            return new ObjectType(Generator::class);
+        }
+
+        $types = [];
+
+        foreach ($node->getReturnStatements() as $returnStatement) {
+            $returnNode = $returnStatement->getReturnNode();
+            if ($returnNode->expr !== null) {
+                $types[] = $returnStatement->getScope()->getType($returnNode->expr);
+            }
+        }
+
+        return TypeCombinator::union(...$types);
+    }
+
+    private function hasNativeReturnTypehint(ReturnStatementsNode $node): bool
+    {
+        if ($node instanceof MethodReturnStatementsNode) { // @phpstan-ignore-line ignore bc warning
+            return $node->hasNativeReturnTypehint();
+        }
+
+        if ($node instanceof FunctionReturnStatementsNode) { // @phpstan-ignore-line ignore bc warning
+            return $node->hasNativeReturnTypehint();
+        }
+
+        if ($node instanceof ClosureReturnStatementsNode) { // @phpstan-ignore-line ignore bc warning
+            return $node->getClosureExpr()->returnType !== null;
+        }
+
+        throw new LogicException('Unexpected subtype');
+    }
+
+    private function getPhpDocReturnType(Node $node, Scope $scope): ?Type
+    {
+        $docComment = $node->getDocComment();
+
+        if ($docComment === null) {
+            return null;
+        }
+
+        $resolvedPhpDoc = $this->fileTypeMapper->getResolvedPhpDoc(
+            $scope->getFile(),
+            $scope->getClassReflection() === null ? null : $scope->getClassReflection()->getName(),
+            $scope->getTraitReflection() === null ? null : $scope->getTraitReflection()->getName(),
+            $scope->getFunctionName(),
+            $docComment->getText(),
+        );
+
+        $returnTag = $resolvedPhpDoc->getReturnTag();
+
+        if ($returnTag === null) {
+            return null;
+        }
+
+        return $returnTag->getType();
+    }
+
+    private function getClassName(Scope $scope): ?string
+    {
+        if ($scope->getClassReflection() === null) {
+            return null;
+        }
+
+        return $scope->getClassReflection()->getName();
     }
 
 }
