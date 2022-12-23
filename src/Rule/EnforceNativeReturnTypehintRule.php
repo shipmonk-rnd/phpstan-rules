@@ -281,6 +281,10 @@ class EnforceNativeReturnTypehintRule implements Rule
                 return null;
             }
 
+            if (in_array($subtypeHint, $typehintParts, true)) {
+                continue;
+            }
+
             $typehintParts[] = $wrap ? "($subtypeHint)" : $subtypeHint;
         }
 
@@ -314,6 +318,10 @@ class EnforceNativeReturnTypehintRule implements Rule
 
             if ($subtypeHint === null) {
                 return null;
+            }
+
+            if (in_array($subtypeHint, $typehintParts, true)) {
+                continue;
             }
 
             $typehintParts[] = $wrap ? "($subtypeHint)" : $subtypeHint;
