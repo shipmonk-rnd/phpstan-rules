@@ -7,7 +7,12 @@ class B {}
 interface I {}
 interface J {}
 
-class MyClass {
+class CallableObject {
+    public function __invoke(): void {
+    }
+}
+
+class DeductFromPhpDocs {
 
     /** @return list<string> */
     public function doNotReportWithTypehint1(): array {}
@@ -37,7 +42,7 @@ class MyClass {
     public function requireArray5() {} // error: Missing native return typehint array
 
     /** @return \Closure(): int */
-    public function requireClosureCallable() {} // error: Missing native return typehint callable
+    public function requireClosureCallable() {} // error: Missing native return typehint \Closure
 
     /** @return iterable */
     public function requireIterable() {} // error: Missing native return typehint iterable
@@ -46,40 +51,43 @@ class MyClass {
     public function requireCallable() {} // error: Missing native return typehint callable
 
     /** @return string|int */
-    public function requireUnionOfScalars() {} // require PHP 8.0
+    public function requireUnionOfScalars() {}
 
     /** @return string|int|null */
-    public function requireUnionOfScalarsWithNull() {} // require PHP 8.0
+    public function requireUnionOfScalarsWithNull() {}
 
     /** @return I&J&A */
-    public function requireIntersection() {} // require PHP 8.1
+    public function requireIntersection() {} // error: Missing native return typehint object
 
     /** @return A|B|int */
-    public function requireMixedUnion1() {} // require PHP 8.0
+    public function requireMixedUnion1() {}
 
     /** @return A|string|null */
-    public function requireMixedUnion2() {} // require PHP 8.0
+    public function requireMixedUnion2() {}
+
+    /** @return A|null */
+    public function requireUnionWithNullOnly() {} // error: Missing native return typehint ?\EnforceNativeReturnTypehintRule74\A
 
     /** @return mixed */
-    public function requireMixed() {} // error: Missing native return typehint mixed
+    public function requireMixed() {}
 
     /** @return mixed|int|string */
-    public function requireMixed2() {} // error: Missing native return typehint mixed
+    public function requireMixed2() {}
 
     /** @return unknown-type */
-    public function requireMixed3() {} // error: Missing native return typehint mixed
+    public function requireMixed3() {}
 
     /** @return mixed|int|null */
-    public function requireMixed4() {} // error: Missing native return typehint mixed
+    public function requireMixed4() {}
 
     /** @return void */
     public function requireVoid() {} // error: Missing native return typehint void
 
     /** @return null */
-    public function requireNullVoid() {} // cannot determine void vs return null
+    public function requireNullVoid() {}
 
     /** @return never */
-    public function requireNever() {} // error: Missing native return typehint never
+    public function requireNever() {} // error: Missing native return typehint void
 
     /** @return class-string */
     public function requireString() {} // error: Missing native return typehint string
@@ -91,10 +99,190 @@ class MyClass {
     public function requireNullableString2() {} // error: Missing native return typehint ?string
 
     /** @return (A|B)&I */
-    public function requireDNF() {} // possible in PHP 8.2
+    public function requireDnf() {} // error: Missing native return typehint object
+
+    /** @return (A&I)|string */
+    public function requireDnfWithScalarIncluded() {}
+
+    /** @return static */
+    public function returnStatic() {} // error: Missing native return typehint self
+
+    /** @return $this */
+    public function returnStatic2() {} // error: Missing native return typehint self
+
+    /** @return self */
+    public function returnSelf() {} // error: Missing native return typehint self
+
+    /** @return \Traversable */
+    public function returnTraversable() {} // error: Missing native return typehint \Traversable
+
+    /** @return object */
+    public function returnObject() {} // error: Missing native return typehint object
+
+    /** @return \UnitEnum */
+    public function returnEnum() {} // error: Missing native return typehint \UnitEnum
 
     /** @return true|null */
     public function requireTrueOrNull() {} // error: Missing native return typehint ?bool
 
 }
 
+class DeductFromReturnStatements {
+
+    public function __construct()
+    {
+        function () { // error: Missing native return typehint string
+            return '';
+        };
+    }
+
+    public function __clone()
+    {
+
+    }
+
+    public function __destruct()
+    {
+
+    }
+
+    public function requireUnionOfScalars(bool $bool)
+    {
+        if ($bool) {
+            return '';
+        }
+        return 1;
+    }
+
+    public function requireClass() // error: Missing native return typehint \stdClass
+    {
+        return new \stdClass();
+    }
+
+    public function requireVoid() // error: Missing native return typehint void
+    {
+    }
+
+    public function requireNever() // error: Missing native return typehint void
+    {
+        throw new \LogicException();
+    }
+
+    public function returnNewSelf() // error: Missing native return typehint self
+    {
+        return new self;
+    }
+
+    public function returnThis() // error: Missing native return typehint self
+    {
+        return $this;
+    }
+
+    public function returnResource()
+    {
+        return fopen('php://memory');
+    }
+
+    public function returnNull()
+    {
+        return null;
+    }
+
+    public function requireGenerator() // error: Missing native return typehint \Generator
+    {
+        yield 1;
+        return 2;
+    }
+
+    public function requireInt() // error: Missing native return typehint int
+    {
+        return 1;
+    }
+
+    public function requireIterableObject() // error: Missing native return typehint \ArrayObject
+    {
+        return new \ArrayObject(); // prefer specific class over generic iterable
+    }
+
+    public function requireCallableObject() // error: Missing native return typehint \EnforceNativeReturnTypehintRule74\CallableObject
+    {
+        return new CallableObject(); // prefer specific class over generic callable
+    }
+
+    public function requireString() // error: Missing native return typehint string
+    {
+        return self::class;
+    }
+
+    public function testClosureWithoutReturn(): \Closure
+    {
+        function () { // error: Missing native return typehint self
+            return $this;
+        };
+
+        return function () { // error: Missing native return typehint int
+            return 1;
+        };
+    }
+
+}
+
+/** @return int */
+function functionWithPhpDoc() { // error: Missing native return typehint int
+
+};
+
+
+function functionWithReturn() { // error: Missing native return typehint int
+    return 1;
+};
+
+trait TraitWithReturnSelf {
+
+    abstract protected function returnException(): \Throwable;
+
+    /**
+     * @return \Throwable
+     */
+    public function returnDiffersPerUser1()
+    {
+        return static::returnException();
+    }
+
+    public function returnDiffersPerUser2()
+    {
+        return static::returnException();
+    }
+
+    public function returnSelf1()
+    {
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function returnSelf2()
+    {
+        return $this;
+    }
+
+}
+
+class TraitUser1 {
+    use TraitWithReturnSelf;
+
+    protected function returnException(): \RuntimeException
+    {
+        return new \RuntimeException();
+    }
+}
+
+class TraitUser2 {
+    use TraitWithReturnSelf;
+
+    protected function returnException(): \LogicException
+    {
+        return new \LogicException();
+    }
+}
