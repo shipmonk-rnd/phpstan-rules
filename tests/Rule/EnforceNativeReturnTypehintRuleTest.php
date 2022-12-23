@@ -6,6 +6,7 @@ use PHPStan\Php\PhpVersion;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\FileTypeMapper;
 use ShipMonk\PHPStan\RuleTestCase;
+use const PHP_VERSION_ID;
 
 /**
  * @extends RuleTestCase<EnforceNativeReturnTypehintRule>
@@ -24,6 +25,16 @@ class EnforceNativeReturnTypehintRuleTest extends RuleTestCase
             $this->phpVersion,
             true,
         );
+    }
+
+    public function testEnum(): void
+    {
+        if (PHP_VERSION_ID < 80_100) {
+            self::markTestSkipped('Requires PHP 8.1');
+        }
+
+        $this->phpVersion = self::getContainer()->getByType(PhpVersion::class);
+        $this->analyseFile(__DIR__ . '/data/EnforceNativeReturnTypehintRule/code-enum.php');
     }
 
     public function testPhp82(): void
