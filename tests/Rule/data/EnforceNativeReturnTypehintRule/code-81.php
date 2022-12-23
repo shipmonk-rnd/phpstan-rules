@@ -18,13 +18,10 @@ class DeductFromPhpDocs {
     public function doNotReportWithTypehint1(): array {}
 
     /** @return int */
-    public function doNotReportWithTypehint2(): never {}
+    public function doNotReportWithTypehint2(): int {}
 
-    /** @return int */
+    /** @return mixed */
     public function doNotReportWithTypehint3(): mixed {}
-
-    /** @return float */
-    public function doNotReportWithTypehint4(): int {}
 
     /** @return list<string> */
     public function requireArray() {} // error: Missing native return typehint array
@@ -84,7 +81,7 @@ class DeductFromPhpDocs {
     public function requireVoid() {} // error: Missing native return typehint void
 
     /** @return null */
-    public function requireNullVoid() {}
+    public function requireNull() {}
 
     /** @return never */
     public function requireNever() {} // error: Missing native return typehint never
@@ -223,6 +220,61 @@ class DeductFromReturnStatements {
         return function () { // error: Missing native return typehint int
             return 1;
         };
+    }
+
+}
+
+class EnforceNarrowerTypehint {
+
+    public function requireIterableObject(): iterable // error: Native return typehint is iterable, but can be narrowed to \ArrayObject
+    {
+        return new \ArrayObject();
+    }
+
+    public function requireCallableObject(): callable // error: Native return typehint is callable, but can be narrowed to \EnforceNativeReturnTypehintRule81\CallableObject
+    {
+        return new CallableObject();
+    }
+
+    public function requireString(): mixed // error: Native return typehint is mixed, but can be narrowed to string
+    {
+        return self::class;
+    }
+
+    public function requireClosure(): callable // error: Native return typehint is callable, but can be narrowed to \Closure
+    {
+        return function (): int {
+            return 1;
+        };
+    }
+
+    public function requireChild(): \Throwable // error: Native return typehint is \Throwable, but can be narrowed to \LogicException
+    {
+        return new \LogicException();
+    }
+
+    /**
+     * @return \LogicException|\RuntimeException
+     */
+    public function requireUnion(): object // error: Native return typehint is object, but can be narrowed to \LogicException|\RuntimeException
+    {
+
+    }
+
+    public function requireNever(): void // error: Native return typehint is void, but can be narrowed to never
+    {
+        throw new \LogicException();
+    }
+
+    public function returnThis(): self // error: Native return typehint is self, but can be narrowed to static
+    {
+        return $this;
+    }
+
+
+    public function requireNullableString2(?string $out): mixed // error: Native return typehint is mixed, but can be narrowed to ?string
+    {
+        return $out;
     }
 
 }

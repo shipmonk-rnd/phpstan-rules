@@ -5,7 +5,9 @@ namespace ShipMonk\PHPStan\Rule;
 use Generator;
 use LogicException;
 use PhpParser\Node;
+use PhpParser\Node\Stmt\Function_;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\ClassMethod;
 use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\FunctionReturnStatementsNode;
 use PHPStan\Node\MethodReturnStatementsNode;
@@ -35,9 +37,9 @@ use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 use PHPStan\Type\VoidType;
+use ReflectionClass;
 use function implode;
 use function in_array;
-use function sprintf;
 
 /**
  * @implements Rule<ReturnStatementsNode>
@@ -51,15 +53,19 @@ class EnforceNativeReturnTypehintRule implements Rule
 
     private bool $treatPhpDocTypesAsCertain;
 
+    private bool $enforceNarrowestTypehint;
+
     public function __construct(
         FileTypeMapper $fileTypeMapper,
         PhpVersion $phpVersion,
-        bool $treatPhpDocTypesAsCertain
+        bool $treatPhpDocTypesAsCertain,
+        bool $enforceNarrowestTypehint = true
     )
     {
         $this->fileTypeMapper = $fileTypeMapper;
         $this->phpVersion = $phpVersion;
         $this->treatPhpDocTypesAsCertain = $treatPhpDocTypesAsCertain;
+        $this->enforceNarrowestTypehint = $enforceNarrowestTypehint;
     }
 
     public function getNodeType(): string
@@ -77,10 +83,6 @@ class EnforceNativeReturnTypehintRule implements Rule
             return [];
         }
 
-        if ($this->hasNativeReturnTypehint($node)) {
-            return [];
-        }
-
         if (!$scope->isInAnonymousFunction() && in_array($scope->getFunctionName(), ['__construct', '__destruct', '__clone'], true)) {
             return [];
         }
@@ -89,18 +91,36 @@ class EnforceNativeReturnTypehintRule implements Rule
             return []; // return may easily differ for each usage
         }
 
+        $hasNativeReturnType = $this->hasNativeReturnTypehint($node);
+
+        if ($hasNativeReturnType && !$this->enforceNarrowestTypehint) {
+            return [];
+        }
+
+        $alwaysTerminating = $node->getStatementResult()->isAlwaysTerminating();
         $phpDocReturnType = $this->getPhpDocReturnType($node, $scope);
         $returnType = $phpDocReturnType ?? $this->getTypeOfReturnStatements($node);
 
-        $typeHint = $this->getTypehintByType($returnType, $scope, $phpDocReturnType !== null, $node->getStatementResult()->isAlwaysTerminating(), true);
+        $typeHint = $this->getTypehintByType($returnType, $scope, $phpDocReturnType !== null, $alwaysTerminating, true);
 
         if ($typeHint === null) {
             return [];
         }
 
-        return [
-            sprintf('Missing native return typehint %s', $typeHint),
-        ];
+        if (!$hasNativeReturnType) {
+            return ["Missing native return typehint $typeHint"];
+        }
+
+        if ($this->enforceNarrowestTypehint) {
+            $nativeReturnType = $this->getNativeReturnTypehint($node, $scope);
+            $typeHintFromNativeTypehint = $this->getTypehintByType($nativeReturnType, $scope, $phpDocReturnType !== null, $alwaysTerminating, true);
+
+            if ($typeHintFromNativeTypehint !== $typeHint) {
+                return ["Native return typehint is $typeHintFromNativeTypehint, but can be narrowed to $typeHint"];
+            }
+        }
+
+        return [];
     }
 
     private function getTypehintByType(
@@ -202,6 +222,37 @@ class EnforceNativeReturnTypehintRule implements Rule
         }
 
         return TypeCombinator::union(...$types);
+    }
+
+    private function getNativeReturnTypehint(ReturnStatementsNode $node, Scope $scope): Type
+    {
+        $reflection = new ReflectionClass($node);
+
+        if ($node instanceof MethodReturnStatementsNode) { // @phpstan-ignore-line ignore bc warning
+            $classMethodReflection = $reflection->getProperty('classMethod');
+            $classMethodReflection->setAccessible(true);
+            /** @var ClassMethod $classMethod */
+            $classMethod = $classMethodReflection->getValue($node);
+            return $scope->getFunctionType($classMethod->returnType, $classMethod->returnType === null, false);
+        }
+
+        if ($node instanceof FunctionReturnStatementsNode) { // @phpstan-ignore-line ignore bc warning
+            $functionReflection = $reflection->getProperty('function');
+            $functionReflection->setAccessible(true);
+            /** @var Function_ $function */
+            $function = functionReflection->getValue($node);
+            return $scope->getFunctionType($function->returnType, $function->returnType === null, false);
+        }
+
+        if ($node instanceof ClosureReturnStatementsNode) { // @phpstan-ignore-line ignore bc warning
+            $closureReflection = $reflection->getProperty('closureExpr');
+            $closureReflection->setAccessible(true);
+            /** @var Closure $closure */
+            $closure = $closureReflection->getValue($node);
+            return $scope->getFunctionType($closure->returnType, $closure->returnType === null, false);
+        }
+
+        throw new LogicException('Unexpected subtype');
     }
 
     private function hasNativeReturnTypehint(ReturnStatementsNode $node): bool
