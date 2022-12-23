@@ -24,6 +24,7 @@ class EnforceNativeReturnTypehintRuleTest extends RuleTestCase
             self::getContainer()->getByType(FileTypeMapper::class),
             $this->phpVersion,
             true,
+            true,
         );
     }
 
