@@ -118,8 +118,13 @@ enum MyEnum: string { // missing @implements tag
 ```
 
 ### enforceNativeReturnTypehint
-- Enforces usage of native return typehints in class methods if deducible from its PHPDoc and supported by your PHP version
+- Enforces usage of native return typehints if supported by your PHP version
+- If PHPDoc is present, it deduces needed typehint from that, if not, deduction is performed based on real types returned
+- Applies to class methods, closures and functions
 - Is disabled, if you have PHPStan set up with `treatPhpDocTypesAsCertain: false`
+- Limitations:
+  - Does not suggest parent typehint
+  - Ignores trait methods
 ```php
 class NoNativeReturnTypehint {
     /**

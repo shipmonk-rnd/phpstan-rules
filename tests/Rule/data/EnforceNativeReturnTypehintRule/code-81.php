@@ -7,6 +7,11 @@ class B {}
 interface I {}
 interface J {}
 
+class CallableObject {
+    public function __invoke(): void {
+    }
+}
+
 class DeductFromPhpDocs {
 
     /** @return list<string> */
@@ -37,7 +42,7 @@ class DeductFromPhpDocs {
     public function requireArray5() {} // error: Missing native return typehint array
 
     /** @return \Closure(): int */
-    public function requireClosureCallable() {} // error: Missing native return typehint Closure
+    public function requireClosureCallable() {} // error: Missing native return typehint \Closure
 
     /** @return iterable */
     public function requireIterable() {} // error: Missing native return typehint iterable
@@ -64,22 +69,22 @@ class DeductFromPhpDocs {
     public function requireUnionWithNullOnly() {} // error: Missing native return typehint ?\EnforceNativeReturnTypehintRule81\A
 
     /** @return mixed */
-    public function requireMixed() {}
+    public function requireMixed() {} // error: Missing native return typehint mixed
 
     /** @return mixed|int|string */
-    public function requireMixed2() {}
+    public function requireMixed2() {} // error: Missing native return typehint mixed
 
     /** @return unknown-type */
-    public function requireMixed3() {}
+    public function requireMixed3() {} // error: Missing native return typehint mixed
 
     /** @return mixed|int|null */
-    public function requireMixed4() {}
+    public function requireMixed4() {} // error: Missing native return typehint mixed
 
     /** @return void */
     public function requireVoid() {} // error: Missing native return typehint void
 
     /** @return null */
-    public function requireNullVoid() {} // cannot determine void vs return null
+    public function requireNullVoid() {}
 
     /** @return never */
     public function requireNever() {} // error: Missing native return typehint never
@@ -94,7 +99,28 @@ class DeductFromPhpDocs {
     public function requireNullableString2() {} // error: Missing native return typehint ?string
 
     /** @return (A|B)&I */
-    public function requireDNF() {} // possible in PHP 8.2
+    public function requireDnf() {} // error: Missing native return typehint object
+
+    /** @return (A&I)|string */
+    public function requireDnfWithScalarIncluded() {}
+
+    /** @return static */
+    public function returnStatic() {} // error: Missing native return typehint static
+
+    /** @return $this */
+    public function returnStatic2() {} // error: Missing native return typehint static
+
+    /** @return self */
+    public function returnSelf() {} // error: Missing native return typehint self
+
+    /** @return \Traversable */
+    public function returnTraversable() {} // error: Missing native return typehint \Traversable
+
+    /** @return object */
+    public function returnObject() {} // error: Missing native return typehint object
+
+    /** @return \UnitEnum */
+    public function returnEnum() {} // error: Missing native return typehint \UnitEnum
 
     /** @return true|null */
     public function requireTrueOrNull() {} // error: Missing native return typehint ?bool
@@ -128,8 +154,18 @@ class DeductFromReturnStatements {
         return 1;
     }
 
+    public function requireClass() // error: Missing native return typehint \stdClass
+    {
+        return new \stdClass();
+    }
+
     public function requireVoid() // error: Missing native return typehint void
     {
+    }
+
+    public function requireNever() // error: Missing native return typehint never
+    {
+        throw new \LogicException();
     }
 
     public function returnNewSelf() // error: Missing native return typehint self
@@ -142,12 +178,9 @@ class DeductFromReturnStatements {
         return $this;
     }
 
-    /**
-     * @return static
-     */
-    public function returnStatic() // error: Missing native return typehint static
+    public function returnResource() // error: Missing native return typehint resource|bool
     {
-        return $this;
+        return fopen('php://memory');
     }
 
     public function returnNull()
@@ -155,7 +188,7 @@ class DeductFromReturnStatements {
         return null;
     }
 
-    public function requireGenerator() // error: Missing native return typehint Generator
+    public function requireGenerator() // error: Missing native return typehint \Generator
     {
         yield 1;
         return 2;
@@ -164,6 +197,16 @@ class DeductFromReturnStatements {
     public function requireInt() // error: Missing native return typehint int
     {
         return 1;
+    }
+
+    public function requireIterableObject() // error: Missing native return typehint \ArrayObject
+    {
+        return new \ArrayObject(); // prefer specific class over generic iterable
+    }
+
+    public function requireCallableObject() // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\CallableObject
+    {
+        return new CallableObject(); // prefer specific class over generic callable
     }
 
     public function requireString() // error: Missing native return typehint string
