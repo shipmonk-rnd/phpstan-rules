@@ -286,14 +286,3 @@ class TraitUser2 {
         return new \LogicException();
     }
 }
-
-enum MyBoolean: string
-{
-    case True = 'true';
-    case False = 'false';
-
-    public static function createFromBool(bool $boolValue) // error: Missing native return typehint self
-    {
-        return $boolValue ? self::True : self::False;
-    }
-}
