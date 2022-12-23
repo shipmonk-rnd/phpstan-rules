@@ -177,7 +177,7 @@ class DeductFromReturnStatements {
         return $this;
     }
 
-    public function returnResource() // error: Missing native return typehint resource|false
+    public function returnResource()
     {
         return fopen('php://memory');
     }

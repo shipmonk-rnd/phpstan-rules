@@ -26,7 +26,6 @@ use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ObjectWithoutClassType;
-use PHPStan\Type\ResourceType;
 use PHPStan\Type\StaticType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
@@ -144,8 +143,6 @@ class EnforceNativeReturnTypehintRule implements Rule
             } else {
                 $typeHint = 'bool';
             }
-        } elseif ((new ResourceType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
-            $typeHint = 'resource';
         } elseif ((new IntegerType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = 'int';
         } elseif ((new FloatType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
