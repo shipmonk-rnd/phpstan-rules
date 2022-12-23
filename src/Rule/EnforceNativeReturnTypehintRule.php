@@ -33,6 +33,7 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\UnionType;
+use PHPStan\Type\VerbosityLevel;
 use PHPStan\Type\VoidType;
 use function implode;
 use function in_array;
@@ -138,7 +139,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         $typeHint = null;
 
         if ((new BooleanType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
-            if ($typeWithoutNull instanceof ConstantBooleanType && PHP_VERSION_ID >= 80_200) {
+            if ($typeWithoutNull instanceof ConstantBooleanType && $this->phpVersion->getVersionId() >= 80_200) {
                 $typeHint = $typeWithoutNull->describe(VerbosityLevel::typeOnly());
             } else {
                 $typeHint = 'bool';
