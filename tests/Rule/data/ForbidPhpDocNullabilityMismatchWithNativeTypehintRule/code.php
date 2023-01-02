@@ -1,0 +1,70 @@
+<?php declare(strict_types = 1);
+
+namespace ForbidPhpDocNotMatchingNativeTypehintRule;
+
+
+class HelloWorld
+{
+
+    /**
+     * @var int
+     */
+    private ?int $nullMissingInPhpDoc; // error: The @var phpdoc does not contain null, but native return type does
+
+    /**
+     * @var int|null
+     */
+    private int $nullMissingInNativeType;
+
+    /**
+     * @var int
+     */
+    private int $okProperty;
+
+    private int $okProperty2;
+
+    /**
+     * @var int
+     */
+    private $okProperty3;
+
+    /**
+     * @return int[]
+     */
+    public function nullMissingInPhpDocReturn(): ?array // error: The @return phpdoc does not contain null, but native return type does
+    {
+        return [];
+    }
+
+    /**
+     * @return int[]|null
+     */
+    public function nullMissingInNativeReturn(): array
+    {
+        return [];
+    }
+
+    /**
+     * @param int $foo
+     */
+    public function nullMissingInPhpDocParam(?int $foo, string $okParam): void // error: The @param $foo phpdoc does not contain null, but native return type does
+    {
+    }
+
+    /**
+     * @param int|null $bar
+     */
+    public function nullMissingInNativeParam(bool $fine, int $bar): void
+    {
+
+    }
+
+    /**
+     * @phpstan-return ($originalMoney is null ? null : float)
+     */
+    public function testConditionTypeForParameter(?float $originalMoney): ?float
+    {
+        return $originalMoney;
+    }
+
+}

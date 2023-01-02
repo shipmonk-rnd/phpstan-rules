@@ -50,6 +50,8 @@ parameters:
         forbidNullInBinaryOperations:
             enabled: true
             blacklist: ['===', '!==', '??']
+        forbidPhpDocNullabilityMismatchWithNativeTypehint:
+            enabled: true
         forbidVariableTypeOverwriting:
             enabled: true
         forbidUnsetClassField:
@@ -288,6 +290,18 @@ parameters:
 function getFullName(?string $firstName, string $lastName): string {
     return $firstName . ' ' . $lastName; // denied, null involved in binary operation
 }
+```
+
+### forbidPhpDocNullabilityMismatchWithNativeTypehint
+- Disallows having nullable native typehint while using non-nullable phpdoc
+- Checks `@return` and `@param` over methods and `@var` over properties
+- PHPStan itself allows using subtype of native type in phpdoc, but [resolves overall type as union of those types](https://phpstan.org/r/6f447c03-d79b-4731-b8c8-125eab3e56fc) making such phpdoc actually invalid
+
+```php
+/**
+ * @param string $param
+ */
+public function sayHello(?string $param) {} // invalid phpdoc not containing null
 ```
 
 ### forbidVariableTypeOverwriting

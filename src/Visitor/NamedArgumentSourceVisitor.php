@@ -21,7 +21,7 @@ class NamedArgumentSourceVisitor extends NodeVisitorAbstract
 
     /**
      * @param Node[] $nodes
-     * @return Node[]
+     * @return Node[]|null
      */
     public function beforeTraverse(array $nodes): ?array
     {
