@@ -32,6 +32,8 @@ parameters:
         forbidNullInBinaryOperations:
             enabled: true
             blacklist: ['===', '!==', '??']
+        forbidNullInInterpolatedString:
+            enabled: true
         forbidPhpDocNullabilityMismatchWithNativeTypehint:
             enabled: true
         forbidVariableTypeOverwriting:
@@ -100,8 +102,11 @@ parametersSchema:
             enabled: bool()
             blacklist: arrayOf(string())
         ])
+        forbidNullInInterpolatedString: structure([
+            enabled: bool()
+        ])
         forbidPhpDocNullabilityMismatchWithNativeTypehint: structure([
-             enabled: bool()
+            enabled: bool()
         ])
         forbidVariableTypeOverwriting: structure([
             enabled: bool()
@@ -159,6 +164,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.forbidNullInAssignOperations.enabled%
     ShipMonk\PHPStan\Rule\ForbidNullInBinaryOperationsRule:
         phpstan.rules.rule: %shipmonkRules.forbidNullInBinaryOperations.enabled%
+    ShipMonk\PHPStan\Rule\ForbidNullInInterpolatedStringRule:
+        phpstan.rules.rule: %shipmonkRules.forbidNullInInterpolatedString.enabled%
     ShipMonk\PHPStan\Rule\ForbidPhpDocNullabilityMismatchWithNativeTypehintRule:
         phpstan.rules.rule: %shipmonkRules.forbidPhpDocNullabilityMismatchWithNativeTypehint.enabled%
     ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule:
@@ -232,6 +239,8 @@ services:
         class: ShipMonk\PHPStan\Rule\ForbidNullInBinaryOperationsRule
         arguments:
             blacklist: %shipmonkRules.forbidNullInBinaryOperations.blacklist%
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidNullInInterpolatedStringRule
     -
         class: ShipMonk\PHPStan\Rule\ForbidPhpDocNullabilityMismatchWithNativeTypehintRule
     -

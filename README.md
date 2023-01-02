@@ -50,6 +50,8 @@ parameters:
         forbidNullInBinaryOperations:
             enabled: true
             blacklist: ['===', '!==', '??']
+        forbidNullInInterpolatedString:
+            enabled: true
         forbidPhpDocNullabilityMismatchWithNativeTypehint:
             enabled: true
         forbidVariableTypeOverwriting:
@@ -289,6 +291,15 @@ parameters:
 ```php
 function getFullName(?string $firstName, string $lastName): string {
     return $firstName . ' ' . $lastName; // denied, null involved in binary operation
+}
+```
+
+### forbidNullInInterpolatedString
+- Disallows using nullable expressions within double-quoted strings
+- This should probably comply with setup of concat operator (`.`) in `forbidNullInBinaryOperations` so if you blacklisted it there, you might want to disable this rule
+```php
+public function output(?string $name) {
+    echo "Hello $name!"; // denied, possibly null value
 }
 ```
 
