@@ -60,6 +60,15 @@ class HelloWorld
     }
 
     /**
+     * @param int $noNative
+     * @return int
+     */
+    public function noNativeTypehint($noNative)
+    {
+        return 1;
+    }
+
+    /**
      * @phpstan-return ($originalMoney is null ? null : float)
      */
     public function testConditionTypeForParameter(?float $originalMoney): ?float
