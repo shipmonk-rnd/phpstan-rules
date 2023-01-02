@@ -294,6 +294,7 @@ function getFullName(?string $firstName, string $lastName): string {
 
 ### forbidPhpDocNullabilityMismatchWithNativeTypehint
 - Disallows having nullable native typehint while using non-nullable phpdoc
+- Checks `@return` and `@param` over methods and `@var` over properties
 - PHPStan itself allows using subtype of native type in phpdoc, but [resolves overall type as union of those types](https://phpstan.org/r/6f447c03-d79b-4731-b8c8-125eab3e56fc) making such phpdoc actually invalid
 
 ```php
