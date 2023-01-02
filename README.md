@@ -296,7 +296,7 @@ function getFullName(?string $firstName, string $lastName): string {
 
 ### forbidNullInInterpolatedString
 - Disallows using nullable expressions within double-quoted strings
-- This should probably comply with setup of concat operator (`.`) setup in `forbidNullInBinaryOperations` so if you blacklisted it there, you might want to disable this rule
+- This should probably comply with setup of concat operator (`.`) in `forbidNullInBinaryOperations` so if you blacklisted it there, you might want to disable this rule
 ```php
 public function output(?string $name) {
     echo "Hello $name!"; // denied, possibly null value
