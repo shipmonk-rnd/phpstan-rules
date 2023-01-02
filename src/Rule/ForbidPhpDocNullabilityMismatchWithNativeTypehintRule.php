@@ -5,6 +5,7 @@ namespace ShipMonk\PHPStan\Rule;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\FunctionLike;
+use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Analyser\Scope;
 use PHPStan\PhpDoc\ResolvedPhpDocBlock;
@@ -71,7 +72,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     private function checkPropertyTypes(Property $node, Scope $scope): array
     {
         $phpDocReturnType = $this->getPropertyPhpDocType($node, $scope);
-        $nativeReturnType = $this->getPropertyNativeType($node, $scope);
+        $nativeReturnType = $this->getParamOrPropertyNativeType($node, $scope);
 
         return $this->comparePhpDocAndNativeType($phpDocReturnType, $nativeReturnType, $scope, '@var');
     }
@@ -91,7 +92,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
             $paramName = $param->var->name;
 
             $phpDocParamType = $this->getPhpDocParamType($node, $scope, $paramName);
-            $nativeParamType = $scope->getFunctionType($param->type, false, false);
+            $nativeParamType = $this->getParamOrPropertyNativeType($param, $scope);
 
             $errors = array_merge(
                 $errors,
@@ -102,7 +103,10 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
         return $errors;
     }
 
-    private function getPropertyNativeType(Property $node, Scope $scope): ?Type
+    /**
+     * @param Param|Property $node
+     */
+    private function getParamOrPropertyNativeType(Node $node, Scope $scope): ?Type
     {
         if ($node->type === null) {
             return null;
