@@ -201,6 +201,9 @@ class EnforceNativeReturnTypehintRule implements Rule
         return TypeCombinator::union(...$types);
     }
 
+    /**
+     * To be removed once we bump phpstan version to 1.9.5+ (https://github.com/phpstan/phpstan-src/pull/2141)
+     */
     private function hasNativeReturnTypehint(ReturnStatementsNode $node): bool
     {
         if ($node instanceof MethodReturnStatementsNode) { // @phpstan-ignore-line ignore bc warning
