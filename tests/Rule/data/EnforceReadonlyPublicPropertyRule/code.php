@@ -28,3 +28,15 @@ class MyClass {
 
 }
 
+readonly class MyReadonlyClass {
+
+    public ?int $foo;
+
+    public readonly int $bar;
+
+    protected int $baz;
+
+    private int $bag;
+
+}
+
