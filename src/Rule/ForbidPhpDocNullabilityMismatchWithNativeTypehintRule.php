@@ -11,6 +11,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\PhpDoc\ResolvedPhpDocBlock;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\FileTypeMapper;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
 use function array_merge;
@@ -200,6 +201,10 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     private function comparePhpDocAndNativeType(?Type $phpDocReturnType, ?Type $nativeReturnType, Scope $scope, string $phpDocIdentification): array
     {
         if ($phpDocReturnType === null || $nativeReturnType === null) {
+            return [];
+        }
+
+        if ($nativeReturnType instanceof MixedType) {
             return [];
         }
 
