@@ -69,6 +69,15 @@ class HelloWorld
     }
 
     /**
+     * @param string[] $mixedNative
+     * @return string[]
+     */
+    public function mixedNative(mixed $mixedNative): mixed
+    {
+        return 1;
+    }
+
+    /**
      * @phpstan-return ($originalMoney is null ? null : float)
      */
     public function testConditionTypeForParameter(?float $originalMoney): ?float
