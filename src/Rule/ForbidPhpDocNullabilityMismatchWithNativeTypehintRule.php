@@ -6,6 +6,8 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\FunctionLike;
 use PhpParser\Node\Param;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Analyser\Scope;
 use PHPStan\PhpDoc\ResolvedPhpDocBlock;
@@ -171,7 +173,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
             $scope->getFile(),
             $scope->getClassReflection() === null ? null : $scope->getClassReflection()->getName(),
             $scope->getTraitReflection() === null ? null : $scope->getTraitReflection()->getName(),
-            $scope->getFunctionName(),
+            $this->getFunctionName($node),
             $docComment->getText(),
         );
     }
@@ -217,6 +219,15 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
         }
 
         return [];
+    }
+
+    private function getFunctionName(Node $node): ?string
+    {
+        if ($node instanceof ClassMethod || $node instanceof Function_) {
+            return $node->name->name;
+        }
+
+        return null;
     }
 
 }
