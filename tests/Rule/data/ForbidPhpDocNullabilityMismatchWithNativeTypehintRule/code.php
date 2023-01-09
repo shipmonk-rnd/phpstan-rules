@@ -85,4 +85,14 @@ class HelloWorld
         return $originalMoney;
     }
 
+    /**
+     * @template T as string|null
+     * @phpstan-param T $stringOrNullInTemplate
+     * @phpstan-return T
+     */
+    public static function getString($stringOrNullInTemplate): ?string
+    {
+        return $stringOrNullInTemplate;
+    }
+
 }
