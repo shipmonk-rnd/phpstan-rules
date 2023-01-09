@@ -90,7 +90,17 @@ class HelloWorld
      * @phpstan-param T $stringOrNullInTemplate
      * @phpstan-return T
      */
-    public static function getString($stringOrNullInTemplate): ?string
+    public static function getStringOrNull($stringOrNullInTemplate): ?string
+    {
+        return $stringOrNullInTemplate;
+    }
+
+    /**
+     * @template T as string
+     * @phpstan-param T $stringOrNullInTemplate
+     * @phpstan-return T
+     */
+    public static function getStringMissingNull($stringOrNullInTemplate): ?string // error: The @return phpdoc does not contain null, but native return type does
     {
         return $stringOrNullInTemplate;
     }
