@@ -1,9 +1,10 @@
 {
     "name": "shipmonk/phpstan-rules",
-    "description": "Various PHPStan rules we found useful in ShipMonk.",
+    "description": "Various extra strict PHPStan rules we found useful in ShipMonk.",
     "license": [
         "MIT"
     ],
+    "type": "phpstan-extension",
     "keywords": [
         "phpstan",
         "static analysis"
@@ -41,6 +42,13 @@
             "dealerdirect/phpcodesniffer-composer-installer": false
         },
         "sort-packages": true
+    },
+    "extra": {
+        "phpstan": {
+            "includes": [
+                "rules.neon"
+            ]
+        }
     },
     "scripts": {
         "check": [
