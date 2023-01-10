@@ -8,7 +8,7 @@ You may find some of them opinionated, so we recommend picking only those fittin
 composer require --dev shipmonk/phpstan-rules
 ```
 
-Enable all rules:
+Use [official extension-installer](https://phpstan.org/user-guide/extension-library#installing-extensions) or enable all rules manually by:
 ```neon
 includes:
     - vendor/shipmonk/phpstan-rules/rules.neon
