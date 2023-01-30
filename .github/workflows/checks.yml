@@ -26,5 +26,11 @@ jobs:
                 name: Install dependencies
                 run: composer update --no-progress --${{ matrix.dependency-version }} --prefer-dist --no-interaction
             -
+                name: Install composer require checker
+                run: wget -q https://github.com/maglnet/ComposerRequireChecker/releases/download/3.8.0/composer-require-checker.phar
+            -
                 name: Run checks and tests
                 run: composer check
+            -
+                name: Check shadow dependencies
+                run: php composer-require-checker.phar check composer.json
