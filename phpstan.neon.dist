@@ -4,7 +4,6 @@ includes:
     - ./vendor/phpstan/phpstan-strict-rules/rules.neon
     - ./vendor/phpstan/phpstan-phpunit/extension.neon
     - ./vendor/phpstan/phpstan-phpunit/rules.neon
-    - ./phpstan.ignores.php
     - ./rules.neon
 
 parameters:
@@ -18,3 +17,9 @@ parameters:
     checkMissingCallableSignature: true
     checkUninitializedProperties: true
     checkTooWideReturnTypesInProtectedAndPublicMethods: true
+
+    ignoreErrors:
+        -
+            message: "#Class BackedEnum not found\\.#"
+            path: src/Rule/BackedEnumGenericsRule.php
+            reportUnmatched: false # fails only for PHP < 8 https://github.com/phpstan/phpstan/issues/6290
