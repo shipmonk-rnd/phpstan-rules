@@ -28,7 +28,7 @@ class UselessPrivatePropertyNullabilityRule implements Rule
 
     /**
      * @param ClassPropertiesNode $node
-     * @return RuleError[]
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -97,7 +97,7 @@ class UselessPrivatePropertyNullabilityRule implements Rule
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     private function getConstructors(ClassReflection $classReflection): array
     {

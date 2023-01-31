@@ -6,6 +6,8 @@ parameters:
             enabled: true
         backedEnumGenerics:
             enabled: true
+        enforceListReturn:
+            enabled: true
         enforceNativeReturnTypehint:
             enabled: true
         enforceReadonlyPublicProperty:
@@ -63,6 +65,9 @@ parametersSchema:
             enabled: bool()
         ])
         backedEnumGenerics: structure([
+            enabled: bool()
+        ])
+        enforceListReturn: structure([
             enabled: bool()
         ])
         enforceNativeReturnTypehint: structure([
@@ -144,6 +149,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.backedEnumGenerics.enabled%
     ShipMonk\PHPStan\Rule\EnforceNativeReturnTypehintRule:
         phpstan.rules.rule: %shipmonkRules.enforceNativeReturnTypehint.enabled%
+    ShipMonk\PHPStan\Rule\EnforceListReturnRule:
+        phpstan.rules.rule: %shipmonkRules.enforceListReturn.enabled%
     ShipMonk\PHPStan\Rule\EnforceReadonlyPublicPropertyRule:
         phpstan.rules.rule: %shipmonkRules.enforceReadonlyPublicProperty.enabled%
     ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule:
@@ -205,6 +212,8 @@ services:
         class: ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule
     -
         class: ShipMonk\PHPStan\Rule\BackedEnumGenericsRule
+    -
+        class: ShipMonk\PHPStan\Rule\EnforceListReturnRule
     -
         class: ShipMonk\PHPStan\Rule\EnforceNativeReturnTypehintRule
         arguments:

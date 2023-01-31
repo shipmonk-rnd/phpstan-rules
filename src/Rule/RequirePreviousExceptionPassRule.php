@@ -52,7 +52,7 @@ class RequirePreviousExceptionPassRule implements Rule
 
     /**
      * @param TryCatch $node
-     * @return RuleError[]
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -95,7 +95,7 @@ class RequirePreviousExceptionPassRule implements Rule
     }
 
     /**
-     * @return RuleError[]
+     * @return list<RuleError>
      */
     private function processExceptionCreation(bool $strictTypes, ?string $caughtExceptionVariableName, Type $caughtExceptionType, CallLike $node, Scope $scope): array
     {

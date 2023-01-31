@@ -35,7 +35,7 @@ class ForbidUnusedExceptionRule implements Rule
 
     /**
      * @param Expr $node
-     * @return string[]
+     * @return list<string>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -52,7 +52,7 @@ class ForbidUnusedExceptionRule implements Rule
 
     /**
      * @param MethodCall|StaticCall $node
-     * @return string[]
+     * @return list<string>
      */
     private function processCall(CallLike $node, Scope $scope): array
     {
@@ -68,7 +68,7 @@ class ForbidUnusedExceptionRule implements Rule
     }
 
     /**
-     * @return string[]
+     * @return list<string>
      */
     private function processNew(New_ $node, Scope $scope): array
     {

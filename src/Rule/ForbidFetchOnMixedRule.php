@@ -34,7 +34,7 @@ class ForbidFetchOnMixedRule implements Rule
 
     /**
      * @param PropertyFetch $node
-     * @return string[] errors
+     * @return list<string> errors
      */
     public function processNode(Node $node, Scope $scope): array
     {

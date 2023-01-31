@@ -20,7 +20,7 @@ class EnforceReadonlyPublicPropertyRule implements Rule
 
     /**
      * @param ClassPropertyNode $node
-     * @return string[]
+     * @return list<string>
      */
     public function processNode(Node $node, Scope $scope): array
     {
