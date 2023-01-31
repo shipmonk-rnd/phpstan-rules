@@ -36,6 +36,7 @@ class A
     public function testRegular(DateTimeImmutable $a, DateTimeImmutable $b): void
     {
         $a === $b; // error: Using === with DateTimeImmutable is denied
+        $a !== $b; // error: Using !== with DateTimeImmutable is denied
     }
 
     public function testNullable(?DateTimeImmutable $a, DateTimeImmutable $b): void

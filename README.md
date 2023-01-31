@@ -261,7 +261,7 @@ function example($unknown) {
 ```
 
 ### forbidImmutableClassIdenticalComparison
-- Denies comparing configured (immutable)classes by `===` or `!==`
+- Denies comparing configured (immutable) classes by `===` or `!==`
 - Default configuration contains only `DateTimeImmutable`
 - You may want to add more immutable classes from your codebase or vendor
 
