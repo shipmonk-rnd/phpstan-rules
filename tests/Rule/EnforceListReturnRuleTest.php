@@ -13,7 +13,7 @@ class EnforceListReturnRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new EnforceListReturnRule(true);
+        return new EnforceListReturnRule();
     }
 
     public function test(): void

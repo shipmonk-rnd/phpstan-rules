@@ -8,6 +8,7 @@ use PHPStan\Node\MethodReturnStatementsNode;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\Rule;
+use PHPStan\Type\Accessory\AccessoryArrayListType;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\VerbosityLevel;
@@ -18,13 +19,6 @@ use function count;
  */
 class EnforceListReturnRule implements Rule
 {
-
-    private bool $listTypesEnabled;
-
-    public function __construct(bool $listTypesEnabled)
-    {
-        $this->listTypesEnabled = $listTypesEnabled;
-    }
 
     public function getNodeType(): string
     {
@@ -37,7 +31,7 @@ class EnforceListReturnRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        if ($this->listTypesEnabled === false) {
+        if (AccessoryArrayListType::isListTypeEnabled() === false) {
             return [];
         }
 

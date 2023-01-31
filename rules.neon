@@ -214,8 +214,6 @@ services:
         class: ShipMonk\PHPStan\Rule\BackedEnumGenericsRule
     -
         class: ShipMonk\PHPStan\Rule\EnforceListReturnRule
-        arguments:
-            listTypesEnabled: %featureToggles.listType%
     -
         class: ShipMonk\PHPStan\Rule\EnforceNativeReturnTypehintRule
         arguments:
