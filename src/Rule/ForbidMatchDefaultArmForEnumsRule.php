@@ -24,7 +24,7 @@ class ForbidMatchDefaultArmForEnumsRule implements Rule
 
     /**
      * @param MatchExpressionNode $node
-     * @return RuleError[]
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

@@ -30,7 +30,7 @@ class ForbidNullInInterpolatedStringRule implements Rule
 
     /**
      * @param Encapsed $node
-     * @return string[]
+     * @return list<string>
      */
     public function processNode(Node $node, Scope $scope): array
     {

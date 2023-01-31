@@ -34,7 +34,7 @@ class ForbidMethodCallOnMixedRule implements Rule
 
     /**
      * @param MethodCall $node
-     * @return string[] errors
+     * @return list<string> errors
      */
     public function processNode(Node $node, Scope $scope): array
     {

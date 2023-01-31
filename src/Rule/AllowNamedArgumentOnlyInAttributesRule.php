@@ -21,7 +21,7 @@ class AllowNamedArgumentOnlyInAttributesRule implements Rule
 
     /**
      * @param Arg $node
-     * @return string[]
+     * @return list<string>
      */
     public function processNode(Node $node, Scope $scope): array
     {

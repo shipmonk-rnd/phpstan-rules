@@ -21,7 +21,7 @@ class ForbidReturnInConstructorRule implements Rule
 
     /**
      * @param Return_ $node
-     * @return string[]
+     * @return list<string>
      */
     public function processNode(Node $node, Scope $scope): array
     {

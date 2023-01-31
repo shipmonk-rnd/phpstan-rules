@@ -33,7 +33,7 @@ class AllowComparingOnlyComparableTypesRule implements Rule
 
     /**
      * @param BinaryOp $node
-     * @return string[]
+     * @return list<string>
      */
     public function processNode(Node $node, Scope $scope): array
     {

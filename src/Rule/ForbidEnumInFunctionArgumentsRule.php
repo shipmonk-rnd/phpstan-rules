@@ -50,7 +50,7 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
 
     /**
      * @param FuncCall $node
-     * @return string[]
+     * @return list<string>
      */
     public function processNode(Node $node, Scope $scope): array
     {
