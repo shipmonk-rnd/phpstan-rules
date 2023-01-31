@@ -24,6 +24,9 @@ parameters:
             enabled: true
         forbidFetchOnMixed:
             enabled: true
+        forbidImmutableClassIdenticalComparison:
+            enabled: true
+            blacklist: ['DateTimeImmutable']
         forbidMatchDefaultArmForEnums:
             enabled: true
         forbidMethodCallOnMixed:
@@ -92,6 +95,10 @@ parametersSchema:
         ])
         forbidFetchOnMixed: structure([
             enabled: bool()
+        ])
+        forbidImmutableClassIdenticalComparison: structure([
+            enabled: bool()
+            blacklist: arrayOf(string())
         ])
         forbidMatchDefaultArmForEnums: structure([
             enabled: bool()
@@ -163,6 +170,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.forbidEnumInFunctionArguments.enabled%
     ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule:
         phpstan.rules.rule: %shipmonkRules.forbidFetchOnMixed.enabled%
+    ShipMonk\PHPStan\Rule\ForbidImmutableClassIdenticalComparisonRule:
+        phpstan.rules.rule: %shipmonkRules.forbidImmutableClassIdenticalComparison.enabled%
     ShipMonk\PHPStan\Rule\ForbidMatchDefaultArmForEnumsRule:
         phpstan.rules.rule: %shipmonkRules.forbidMatchDefaultArmForEnums.enabled%
     ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule:
@@ -234,6 +243,10 @@ services:
         class: ShipMonk\PHPStan\Rule\ForbidFetchOnMixedRule
         arguments:
             checkExplicitMixed: %checkExplicitMixed%
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidImmutableClassIdenticalComparisonRule
+        arguments:
+            blacklist: %shipmonkRules.forbidImmutableClassIdenticalComparison.blacklist%
     -
         class: ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule
         arguments:

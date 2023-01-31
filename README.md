@@ -42,6 +42,9 @@ parameters:
             enabled: true
         forbidFetchOnMixed:
             enabled: true
+        forbidImmutableClassIdenticalComparison:
+            enabled: true
+            blacklist: ['DateTimeImmutable']
         forbidMatchDefaultArmForEnums:
             enabled: true
         forbidMethodCallOnMixed:
@@ -255,6 +258,29 @@ implode('', [MyEnum::MyCase]); // denied, would fail on implicit toString conver
 function example($unknown) {
     $unknown->property; // cannot fetch property on mixed
 }
+```
+
+### forbidImmutableClassIdenticalComparison
+- Denies comparing configured (immutable)classes by `===` or `!==`
+- Default configuration contains only `DateTimeImmutable`
+- You may want to add more immutable classes from your codebase or vendor
+
+```php
+function isEqual(DateTimeImmutable $a, DateTimeImmutable $b): bool {
+    return $a === $b;  // comparing immutable classes, denied
+}
+```
+```neon
+parameters:
+    shipmonkRules:
+        forbidImmutableClassIdenticalComparison:
+            blacklist:
+                - DateTimeImmutable
+                - Brick\Money
+                - Brick\Math\BigNumber
+                - Brick\Math\BigInteger
+                - Brick\Math\BigDecimal
+                - Brick\Math\BigRational
 ```
 
 ### forbidMatchDefaultArmForEnums
