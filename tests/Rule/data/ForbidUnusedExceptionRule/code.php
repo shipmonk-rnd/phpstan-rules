@@ -42,6 +42,16 @@ class ExampleClass
         $this->okUsage4($throwable);
     }
 
+    public function okUsage5(bool $decide, ?Throwable $throwable): void
+    {
+        $this->okUsage5($decide, $decide ? new LogicException() : null);
+    }
+
+    public function okUsage6(): \Generator
+    {
+        yield new \OutOfBoundsException();
+    }
+
     public function getExceptionAtRuntime(): RuntimeException
     {
         return new RuntimeException();

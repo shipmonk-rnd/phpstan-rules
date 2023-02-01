@@ -11,7 +11,9 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Expr\Throw_ as ThrowExpr;
+use PhpParser\Node\Expr\Yield_;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\Throw_;
 use PhpParser\NodeVisitorAbstract;
@@ -90,6 +92,8 @@ class UnusedExceptionVisitor extends NodeVisitorAbstract
             || $parent instanceof Coalesce
             || $parent instanceof ArrayItem
             || $parent instanceof NullsafeMethodCall
+            || $parent instanceof Ternary
+            || $parent instanceof Yield_
             || $parent instanceof ThrowExpr;
     }
 
