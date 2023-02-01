@@ -83,12 +83,13 @@ class UselessPrivatePropertyNullabilityRule implements Rule
             $propertyName = $property->getName();
             $defaultValueNode = $property->getDefault();
             $propertyReflection = $classReflection->getProperty($propertyName, $scope);
+            $definitionHasTypehint = $property->getNativeType() !== null;
             $definitionIsNullable = TypeCombinator::containsNull($propertyReflection->getWritableType());
             $nullIsAssigned = $nullabilityNeeded[$propertyName] ?? false;
             $hasNullDefaultValue = $defaultValueNode instanceof ConstFetch && $scope->resolveName($defaultValueNode->name) === 'null';
             $isUninitialized = isset($uninitializedProperties[$propertyName]);
 
-            if ($definitionIsNullable && !$nullIsAssigned && !$hasNullDefaultValue && !$isUninitialized) {
+            if ($definitionHasTypehint && $definitionIsNullable && !$nullIsAssigned && !$hasNullDefaultValue && !$isUninitialized) {
                 $errors[] = RuleErrorBuilder::message("Property {$className}::{$propertyName} is defined as nullable, but null is never assigned")->line($property->getLine())->build();
             }
         }
