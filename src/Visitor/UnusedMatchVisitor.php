@@ -10,9 +10,9 @@ use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\Match_;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
+use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Expr\Throw_ as ThrowExpr;
 use PhpParser\Node\Expr\Yield_;
-use PhpParser\Node\Expr\YieldFrom;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\Throw_;
 use PhpParser\NodeVisitorAbstract;
@@ -80,8 +80,8 @@ class UnusedMatchVisitor extends NodeVisitorAbstract
             || $parent instanceof Coalesce
             || $parent instanceof ArrayItem
             || $parent instanceof NullsafeMethodCall
+            || $parent instanceof Ternary
             || $parent instanceof Yield_
-            || $parent instanceof YieldFrom
             || $parent instanceof ThrowExpr;
     }
 

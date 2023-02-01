@@ -46,6 +46,11 @@ class Clazz {
             1 => $b = 'y',
         };
 
+        $bool ? match ($int) {
+            0 => 'x',
+            1 => 'y',
+        } : null;
+
         return match ($bool) {
             false => 1,
             true => 2,
