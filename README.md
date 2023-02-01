@@ -442,6 +442,7 @@ class Example
 
 ### uselessPrivatePropertyNullability:
 - Detects useless nullability of a private property by checking type of all assignments.
+- Works only with natively typehinted properties
 - Recommended to be used with `uselessPrivatePropertyNullability` and `forbidUselessNullableReturn` as removing useless default value may cause useless nullability to be detected
 ```php
 class Example

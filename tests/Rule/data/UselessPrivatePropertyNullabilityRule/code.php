@@ -20,6 +20,9 @@ class ExampleClass
 
     private ?int $isUninitialized;
 
+    /** @var null|int */
+    private $isUninitializedWithoutTypehint;
+
     public function __construct(
         int $isPublic,
         int $isProtected,
