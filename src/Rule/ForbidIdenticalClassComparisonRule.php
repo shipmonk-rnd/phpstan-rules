@@ -21,7 +21,7 @@ use function count;
 /**
  * @implements Rule<BinaryOp>
  */
-class ForbidImmutableClassIdenticalComparisonRule implements Rule
+class ForbidIdenticalClassComparisonRule implements Rule
 {
 
     private const DEFAULT_BLACKLIST = [DateTimeImmutable::class];

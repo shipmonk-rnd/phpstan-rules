@@ -42,7 +42,7 @@ parameters:
             enabled: true
         forbidFetchOnMixed:
             enabled: true
-        forbidImmutableClassIdenticalComparison:
+        forbidIdenticalClassComparison:
             enabled: true
             blacklist: ['DateTimeImmutable']
         forbidMatchDefaultArmForEnums:
@@ -260,20 +260,20 @@ function example($unknown) {
 }
 ```
 
-### forbidImmutableClassIdenticalComparison
-- Denies comparing configured (immutable) classes by `===` or `!==`
+### forbidIdenticalClassComparison
+- Denies comparing configured classes by `===` or `!==`
 - Default configuration contains only `DateTimeImmutable`
-- You may want to add more immutable classes from your codebase or vendor
+- You may want to add more classes from your codebase or vendor
 
 ```php
 function isEqual(DateTimeImmutable $a, DateTimeImmutable $b): bool {
-    return $a === $b;  // comparing immutable classes, denied
+    return $a === $b;  // comparing denied classes
 }
 ```
 ```neon
 parameters:
     shipmonkRules:
-        forbidImmutableClassIdenticalComparison:
+        forbidIdenticalClassComparison:
             blacklist:
                 - DateTimeImmutable
                 - Brick\Money

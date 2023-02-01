@@ -7,21 +7,21 @@ use PHPStan\Rules\Rule;
 use ShipMonk\PHPStan\RuleTestCase;
 
 /**
- * @extends RuleTestCase<ForbidImmutableClassIdenticalComparisonRule>
+ * @extends RuleTestCase<ForbidIdenticalClassComparisonRule>
  */
-class ForbidImmutableClassIdenticalComparisonRuleTest extends RuleTestCase
+class ForbidIdenticalClassComparisonRuleTest extends RuleTestCase
 {
 
     protected function getRule(): Rule
     {
-        return new ForbidImmutableClassIdenticalComparisonRule(
+        return new ForbidIdenticalClassComparisonRule(
             self::getContainer()->getByType(ReflectionProvider::class),
         );
     }
 
     public function testClass(): void
     {
-        $this->analyseFile(__DIR__ . '/data/ForbidImmutableClassIdenticalComparisonRule/code.php');
+        $this->analyseFile(__DIR__ . '/data/ForbidIdenticalClassComparisonRule/code.php');
     }
 
 }
