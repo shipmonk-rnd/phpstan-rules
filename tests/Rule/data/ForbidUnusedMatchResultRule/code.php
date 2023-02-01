@@ -34,6 +34,11 @@ class Clazz {
             true => new RuntimeException(),
         };
 
+        yield from match ($bool) {
+            false => [],
+            true => [],
+        };
+
         try {
             match ($bool) {
                 false => throw new LogicException(),
