@@ -275,7 +275,7 @@ parameters:
     shipmonkRules:
         forbidIdenticalClassComparison:
             blacklist:
-                - DateTimeImmutable
+                - DateTimeInterface
                 - Brick\Money
                 - Brick\Math\BigNumber
                 - Brick\Math\BigInteger
