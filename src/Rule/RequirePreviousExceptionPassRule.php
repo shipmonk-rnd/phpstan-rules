@@ -97,7 +97,13 @@ class RequirePreviousExceptionPassRule implements Rule
     /**
      * @return list<RuleError>
      */
-    private function processExceptionCreation(bool $strictTypes, ?string $caughtExceptionVariableName, Type $caughtExceptionType, CallLike $node, Scope $scope): array
+    private function processExceptionCreation(
+        bool $strictTypes,
+        ?string $caughtExceptionVariableName,
+        Type $caughtExceptionType,
+        CallLike $node,
+        Scope $scope
+    ): array
     {
         $passed = false;
 
@@ -170,7 +176,11 @@ class RequirePreviousExceptionPassRule implements Rule
     /**
      * @param Name[] $exceptionNames
      */
-    private function getCaughtExceptionType(array $exceptionNames, Scope $scope, Type $exceptionTypesCaughtInPreviousCatches): Type
+    private function getCaughtExceptionType(
+        array $exceptionNames,
+        Scope $scope,
+        Type $exceptionTypesCaughtInPreviousCatches
+    ): Type
     {
         $classes = [];
 

@@ -294,7 +294,12 @@ class EnforceNativeReturnTypehintRule implements Rule
         return implode('|', $typehintParts);
     }
 
-    private function getIntersectionTypehint(Type $type, Scope $scope, bool $typeFromPhpDoc, bool $alwaysTerminating): ?string
+    private function getIntersectionTypehint(
+        Type $type,
+        Scope $scope,
+        bool $typeFromPhpDoc,
+        bool $alwaysTerminating
+    ): ?string
     {
         if (!$type instanceof IntersectionType) {
             return null;
