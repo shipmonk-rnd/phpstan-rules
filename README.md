@@ -44,7 +44,7 @@ parameters:
             enabled: true
         forbidIdenticalClassComparison:
             enabled: true
-            blacklist: ['DateTimeImmutable']
+            blacklist: ['DateTimeInterface']
         forbidMatchDefaultArmForEnums:
             enabled: true
         forbidMethodCallOnMixed:
@@ -262,7 +262,7 @@ function example($unknown) {
 
 ### forbidIdenticalClassComparison
 - Denies comparing configured classes by `===` or `!==`
-- Default configuration contains only `DateTimeImmutable`
+- Default configuration contains only `DateTimeInterface`
 - You may want to add more classes from your codebase or vendor
 
 ```php

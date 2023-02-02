@@ -2,7 +2,7 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
-use DateTimeImmutable;
+use DateTimeInterface;
 use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Expr\BinaryOp;
@@ -24,7 +24,7 @@ use function count;
 class ForbidIdenticalClassComparisonRule implements Rule
 {
 
-    private const DEFAULT_BLACKLIST = [DateTimeImmutable::class];
+    private const DEFAULT_BLACKLIST = [DateTimeInterface::class];
 
     /**
      * @var array<int, class-string<object>>

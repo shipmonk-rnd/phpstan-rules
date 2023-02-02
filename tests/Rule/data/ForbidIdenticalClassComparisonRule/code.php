@@ -35,13 +35,13 @@ class A
 
     public function testRegular(DateTimeImmutable $a, DateTimeImmutable $b): void
     {
-        $a === $b; // error: Using === with DateTimeImmutable is denied
-        $a !== $b; // error: Using !== with DateTimeImmutable is denied
+        $a === $b; // error: Using === with DateTimeInterface is denied
+        $a !== $b; // error: Using !== with DateTimeInterface is denied
     }
 
     public function testNullable(?DateTimeImmutable $a, DateTimeImmutable $b): void
     {
-        $a === $b; // error: Using === with DateTimeImmutable is denied
+        $a === $b; // error: Using === with DateTimeInterface is denied
     }
 
     /**
@@ -50,14 +50,14 @@ class A
      */
     public function testUnion(object $a, object $b, Dummy $c, DateTimeImmutable $d): void
     {
-        $a === $b; // error: Using === with DateTimeImmutable is denied
-        $a === $d; // error: Using === with DateTimeImmutable is denied
+        $a === $b; // error: Using === with DateTimeInterface is denied
+        $a === $d; // error: Using === with DateTimeInterface is denied
         $a === $c;
     }
 
     public function testChild(DateTimeImmutableChild $a, ?DateTimeImmutable $b): void
     {
-        $a === $b; // error: Using === with DateTimeImmutable is denied
+        $a === $b; // error: Using === with DateTimeInterface is denied
     }
 
     /**
@@ -65,7 +65,7 @@ class A
      */
     public function testIntersection(object $a, DateTimeImmutable $b): void
     {
-        $a === $b; // error: Using === with DateTimeImmutable is denied
+        $a === $b; // error: Using === with DateTimeInterface is denied
     }
 
 }
