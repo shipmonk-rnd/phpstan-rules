@@ -200,7 +200,12 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     /**
      * @return list<string>
      */
-    private function comparePhpDocAndNativeType(?Type $phpDocReturnType, ?Type $nativeReturnType, Scope $scope, string $phpDocIdentification): array
+    private function comparePhpDocAndNativeType(
+        ?Type $phpDocReturnType,
+        ?Type $nativeReturnType,
+        Scope $scope,
+        string $phpDocIdentification
+    ): array
     {
         if ($phpDocReturnType === null || $nativeReturnType === null) {
             return [];
