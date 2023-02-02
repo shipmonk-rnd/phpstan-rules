@@ -11,6 +11,7 @@ use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
+use PHPStan\Type\CallableType;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
@@ -25,6 +26,11 @@ class ForbidIdenticalClassComparisonRule implements Rule
 {
 
     private const DEFAULT_BLACKLIST = [DateTimeInterface::class];
+    private const IGNORED_TYPES = [
+        MixedType::class, // mixed is "maybe" accepted by any (denied) class
+        ObjectWithoutClassType::class, // object is "maybe" accepted by any (denied) class
+        CallableType::class, // any non-final class descendant can have __invoke method causing it to be "maybe" accepted by any (denied) class
+    ];
 
     /**
      * @var array<int, class-string<object>>
@@ -75,13 +81,10 @@ class ForbidIdenticalClassComparisonRule implements Rule
             return []; // always-true or always-false, already reported by native PHPStan (like $a === $a)
         }
 
-        if (
-            $leftType instanceof MixedType
-            || $leftType instanceof ObjectWithoutClassType
-            || $rightType instanceof MixedType
-            || $rightType instanceof ObjectWithoutClassType
-        ) {
-            return []; // those may contain forbidden class, but that is too strict
+        foreach (self::IGNORED_TYPES as $ignoredType) {
+            if ($leftType instanceof $ignoredType || $rightType instanceof $ignoredType) {
+                return [];
+            }
         }
 
         $errors = [];

@@ -23,14 +23,16 @@ class A
         }
     }
 
-    public function testMixed(DateTimeImmutable $a, mixed $b): void
+    public function testProblematicTypes(
+        DateTimeImmutable $a,
+        mixed $b,
+        object $c,
+        callable $d
+    ): void
     {
         $a === $b;
-    }
-
-    public function testAnyObject(DateTimeImmutable $a, object $b): void
-    {
-        $a === $b;
+        $a === $c;
+        $a === $d;
     }
 
     public function testRegular(DateTimeImmutable $a, DateTimeImmutable $b): void
