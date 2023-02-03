@@ -36,6 +36,18 @@ class ExampleClass {
         return $this->foo ?? $two ?? null;
     }
 
+    /**
+     * @return int|null
+     */
+    public function getNullable5(int $one)
+    {
+        if ($one > 1) {
+            return;
+        }
+
+        return 1;
+    }
+
     public function getStrict1(): int
     {
         return 1;
