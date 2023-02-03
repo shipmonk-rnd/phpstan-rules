@@ -35,4 +35,22 @@ class ForbidCustomFunctionsRuleTest extends RuleTestCase
         $this->analyseFile(__DIR__ . '/data/ForbidCustomFunctionsRule/code.php');
     }
 
+    public function testInvalidConfig1(): void
+    {
+        self::expectExceptionMessage("Unexpected forbidden function name, string expected, got 0. Usage: ['var_dump' => 'Remove debug code!'].");
+        new ForbidCustomFunctionsRule(['var_dump'], $this->createMock(ReflectionProvider::class));
+    }
+
+    public function testInvalidConfig2(): void
+    {
+        self::expectExceptionMessage("Unexpected forbidden function description, string expected, got array. Usage: ['var_dump' => 'Remove debug code!'].");
+        new ForbidCustomFunctionsRule(['var_dump' => []], $this->createMock(ReflectionProvider::class));
+    }
+
+    public function testInvalidConfig3(): void
+    {
+        self::expectExceptionMessage('Unexpected format of forbidden function Class::method::12, expected Namespace\Class::methodName');
+        new ForbidCustomFunctionsRule(['Class::method::12' => 'Description'], $this->createMock(ReflectionProvider::class));
+    }
+
 }

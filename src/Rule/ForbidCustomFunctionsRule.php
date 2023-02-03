@@ -20,6 +20,7 @@ use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\TypeUtils;
 use function count;
 use function explode;
+use function gettype;
 use function is_string;
 use function sprintf;
 
@@ -40,15 +41,19 @@ class ForbidCustomFunctionsRule implements Rule
     private ReflectionProvider $reflectionProvider;
 
     /**
-     * @param array<string, mixed> $forbiddenFunctions
+     * @param array<mixed, mixed> $forbiddenFunctions
      */
     public function __construct(array $forbiddenFunctions, ReflectionProvider $reflectionProvider)
     {
         $this->reflectionProvider = $reflectionProvider;
 
         foreach ($forbiddenFunctions as $forbiddenFunction => $description) {
+            if (!is_string($forbiddenFunction)) {
+                throw new LogicException("Unexpected forbidden function name, string expected, got $forbiddenFunction. Usage: ['var_dump' => 'Remove debug code!'].");
+            }
+
             if (!is_string($description)) {
-                throw new LogicException('Unexpected forbidden function description, string expected');
+                throw new LogicException('Unexpected forbidden function description, string expected, got ' . gettype($description) . '. Usage: [\'var_dump\' => \'Remove debug code!\'].');
             }
 
             $parts = explode('::', $forbiddenFunction);
