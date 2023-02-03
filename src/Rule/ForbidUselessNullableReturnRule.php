@@ -10,6 +10,7 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
+use PHPStan\Type\NullType;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
 use PHPStan\Type\VoidType;
@@ -50,10 +51,11 @@ class ForbidUselessNullableReturnRule implements Rule
             $returnExpression = $returnStatement->getReturnNode()->expr;
 
             if ($returnExpression === null) {
-                continue;
+                $returnedType = new NullType();
+            } else {
+                $returnedType = $returnStatement->getScope()->getType($returnExpression);
             }
 
-            $returnedType = $returnStatement->getScope()->getType($returnExpression);
             $allReturnTypes[] = $returnedType;
         }
 
