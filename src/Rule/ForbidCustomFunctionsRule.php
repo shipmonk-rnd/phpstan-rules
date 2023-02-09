@@ -17,7 +17,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericClassStringType;
-use PHPStan\Type\TypeUtils;
+use function array_merge;
 use function count;
 use function explode;
 use function gettype;
@@ -143,11 +143,13 @@ class ForbidCustomFunctionsRule implements Rule
     {
         $type = $scope->getType($expr);
 
-        if ($type instanceof ConstantStringType) {
-            return $this->validateMethod('__construct', $type->getValue());
+        $errors = [];
+
+        foreach ($type->getConstantStrings() as $constantStringType) {
+            $errors = array_merge($errors, $this->validateMethod('__construct', $constantStringType->getValue()));
         }
 
-        return [];
+        return $errors;
     }
 
     /**
@@ -161,7 +163,7 @@ class ForbidCustomFunctionsRule implements Rule
             $classType = $classType->getGenericType();
         }
 
-        $classNames = TypeUtils::getDirectClassNames($classType);
+        $classNames = $classType->getObjectClassNames();
         $errors = [];
 
         foreach ($classNames as $className) {
@@ -218,7 +220,7 @@ class ForbidCustomFunctionsRule implements Rule
         $nameType = $scope->getType($name);
 
         if ($nameType instanceof ConstantStringType) {
-            return $nameType->getValue();
+            return $nameType->getValue(); // TODO return list<string> and spread it
         }
 
         return null;
@@ -240,7 +242,7 @@ class ForbidCustomFunctionsRule implements Rule
         $nameType = $scope->getType($name);
 
         if ($nameType instanceof ConstantStringType) {
-            return $nameType->getValue();
+            return $nameType->getValue(); // TODO return list<string> and spread it
         }
 
         return null;

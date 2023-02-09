@@ -15,7 +15,6 @@ use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\MixedType;
-use PHPStan\Type\NullType;
 use PHPStan\Type\SubtractableType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -89,7 +88,7 @@ class ForbidVariableTypeOverwritingRule implements Rule
             $type = $type->generalize(GeneralizePrecision::lessSpecific());
         }
 
-        if ($type instanceof NullType) {
+        if ($type->isNull()->yes()) {
             return $type;
         }
 
@@ -98,12 +97,12 @@ class ForbidVariableTypeOverwritingRule implements Rule
 
     private function isTypeToIgnore(Type $type): bool
     {
-        return $type instanceof NullType || $type instanceof MixedType;
+        return $type->isNull()->yes() || $type instanceof MixedType;
     }
 
     private function removeNullAccessoryAndSubtractedTypes(Type $type): Type
     {
-        if ($type instanceof NullType) {
+        if ($type->isNull()->yes()) {
             return $type;
         }
 
