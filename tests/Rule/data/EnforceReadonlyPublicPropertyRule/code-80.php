@@ -6,8 +6,6 @@ trait MyTrait {
 
     public ?string $public;
 
-    public string $publicReadonly;
-
     protected string $protected;
 
     private string $private;
