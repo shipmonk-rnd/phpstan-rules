@@ -2,9 +2,9 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
+use PHPStan\Php\PhpVersion;
 use PHPStan\Rules\Rule;
 use ShipMonk\PHPStan\RuleTestCase;
-use const PHP_VERSION_ID;
 
 /**
  * @extends RuleTestCase<EnforceReadonlyPublicPropertyRule>
@@ -12,18 +12,29 @@ use const PHP_VERSION_ID;
 class EnforceReadonlyPublicPropertyRuleTest extends RuleTestCase
 {
 
+    private ?PhpVersion $phpVersion = null;
+
     protected function getRule(): Rule
     {
-        return new EnforceReadonlyPublicPropertyRule();
+        self::assertNotNull($this->phpVersion);
+        return new EnforceReadonlyPublicPropertyRule($this->phpVersion);
     }
 
-    public function test(): void
+    public function testPhp81(): void
     {
-        if (PHP_VERSION_ID < 80_100) {
-            self::markTestSkipped('Requires PHP 8.1');
-        }
+        $this->phpVersion = $this->createPhpVersion(80_100);
+        $this->analyseFile(__DIR__ . '/data/EnforceReadonlyPublicPropertyRule/code-81.php');
+    }
 
-        $this->analyseFile(__DIR__ . '/data/EnforceReadonlyPublicPropertyRule/code.php');
+    public function testPhp80(): void
+    {
+        $this->phpVersion = $this->createPhpVersion(80_000);
+        $this->analyseFile(__DIR__ . '/data/EnforceReadonlyPublicPropertyRule/code-80.php');
+    }
+
+    private function createPhpVersion(int $version): PhpVersion
+    {
+        return new PhpVersion($version); // @phpstan-ignore-line ignore bc promise
     }
 
 }
