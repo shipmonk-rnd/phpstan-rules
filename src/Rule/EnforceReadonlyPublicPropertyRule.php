@@ -5,6 +5,7 @@ namespace ShipMonk\PHPStan\Rule;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClassPropertyNode;
+use PHPStan\Php\PhpVersion;
 use PHPStan\Rules\Rule;
 
 /**
@@ -12,6 +13,13 @@ use PHPStan\Rules\Rule;
  */
 class EnforceReadonlyPublicPropertyRule implements Rule
 {
+
+    private PhpVersion $phpVersion;
+
+    public function __construct(PhpVersion $phpVersion)
+    {
+        $this->phpVersion = $phpVersion;
+    }
 
     public function getNodeType(): string
     {
@@ -24,6 +32,10 @@ class EnforceReadonlyPublicPropertyRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
+        if (!$this->phpVersion->supportsReadOnlyProperties()) {
+            return [];
+        }
+
         if (!$node->isPublic() || $node->isReadOnly()) {
             return [];
         }

@@ -1,6 +1,6 @@
 <?php
 
-namespace EnforceReadonlyPublicPropertyRule;
+namespace EnforceReadonlyPublicPropertyRule81;
 
 trait MyTrait {
 
