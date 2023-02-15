@@ -163,6 +163,7 @@ class NoNativeReturnTypehint {
 ### enforceReadonlyPublicProperty
 - Ensures immutability of all public properties by enforcing `readonly` modifier
 - No modifier needed for readonly classes in PHP 8.2
+- Does nothing if PHP version does not support readonly properties (PHP 8.0 and below)
 ```php
 class EnforceReadonlyPublicPropertyRule {
     public int $foo; // fails, no readonly modifier
