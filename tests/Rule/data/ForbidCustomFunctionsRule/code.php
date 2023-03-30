@@ -51,9 +51,11 @@ class Test
 {
 
     /**
+     * @param class-string<SomeClass>|SomeClass $classStringOrTheClass
      * @param class-string<SomeClass> $classString
      */
     public function test(
+        mixed $classStringOrTheClass,
         string $classString,
         SomeClass $class,
         SomeClass|AnotherClass $union,
@@ -101,6 +103,7 @@ class Test
         $class->getSelf()->$forbiddenMethodName(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
         $class->getSelf()::$forbiddenStaticMethodName(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
         $classString::$forbiddenStaticMethodName(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
+        $classStringOrTheClass::$forbiddenStaticMethodName(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
         new $forbiddenClassName(); // error: Method ForbidCustomFunctionsRule\ClassWithForbiddenConstructor::__construct() is forbidden. Description 3
     }
 }

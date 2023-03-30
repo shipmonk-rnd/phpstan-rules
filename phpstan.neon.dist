@@ -23,5 +23,3 @@ parameters:
             message: "#Class BackedEnum not found\\.#"
             path: src/Rule/BackedEnumGenericsRule.php
             reportUnmatched: false # fails only for PHP < 8 https://github.com/phpstan/phpstan/issues/6290
-        -
-            message: "#Doing instanceof PHPStan\\\\Type\\\\IntersectionType is error-prone and deprecated.#"

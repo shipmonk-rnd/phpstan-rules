@@ -60,12 +60,12 @@ function testBasics(
     array $map,
     array $intList = [1],
 ): void {
-    $intList = ['string']; // error: Overwriting variable $intList while changing its type from array<int, int> to array<int, string>
+    $intList = ['string']; // error: Overwriting variable $intList while changing its type from array<int<0, max>, int> to array<int<0, max>, string>
     $array = 1; // error: Overwriting variable $array while changing its type from array to int
     $string = 1; // error: Overwriting variable $string while changing its type from string to int
-    $objectList = ['foo']; // error: Overwriting variable $objectList while changing its type from array<int, ForbidVariableTypeOverwritingRule\ParentClass> to array<int, string>
+    $objectList = ['foo']; // error: Overwriting variable $objectList while changing its type from array<int<0, max>, ForbidVariableTypeOverwritingRule\ParentClass> to array<int<0, max>, string>
     $class = new \stdClass(); // error: Overwriting variable $class while changing its type from ForbidVariableTypeOverwritingRule\ParentClass to stdClass
-    $map = [1]; // error: Overwriting variable $map while changing its type from array<string, string> to array<int, int>
+    $map = [1]; // error: Overwriting variable $map while changing its type from array<string, string> to array<int<0, max>, int>
 }
 
 function testIgnoredTypes(

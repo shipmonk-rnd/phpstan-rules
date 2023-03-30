@@ -146,12 +146,7 @@ class ForbidCustomFunctionsRule implements Rule
     private function validateCallOverExpr(array $methodNames, Expr $expr, Scope $scope): array
     {
         $classType = $scope->getType($expr);
-
-        if ($classType->isClassStringType()->yes()) {
-            $classType = $classType->getClassStringObjectType();
-        }
-
-        $classNames = $classType->getObjectClassNames();
+        $classNames = $classType->getObjectTypeOrClassStringObjectType()->getObjectClassNames();
         $errors = [];
 
         foreach ($classNames as $className) {

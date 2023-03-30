@@ -10,14 +10,12 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\Accessory\AccessoryType;
 use PHPStan\Type\GeneralizePrecision;
-use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\SubtractableType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeTraverser;
-use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
 /**
@@ -77,12 +75,7 @@ class ForbidVariableTypeOverwritingRule implements Rule
 
     private function generalize(Type $type): Type
     {
-        if (
-            $type->isConstantValue()->yes()
-            || $type->getEnumCases() !== []
-            || $type instanceof IntegerRangeType
-            || $type instanceof UnionType // e.g. 'foo'|'bar' -> string or int<min, -1>|int<1, max> -> int
-        ) {
+        if ($type->isConstantValue()->yes()) {
             $type = $type->generalize(GeneralizePrecision::lessSpecific());
         }
 
@@ -104,7 +97,7 @@ class ForbidVariableTypeOverwritingRule implements Rule
             return $type;
         }
 
-        if ($type instanceof IntersectionType) {
+        if ($type instanceof IntersectionType) { // @phpstan-ignore-line ignore instanceof intersection
             $newInnerTypes = [];
 
             foreach ($type->getTypes() as $innerType) {
