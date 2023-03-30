@@ -11,7 +11,6 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
-use PHPStan\Type\TypeWithClassName;
 use ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor;
 use Throwable;
 
@@ -87,9 +86,13 @@ class ForbidUnusedExceptionRule implements Rule
     {
         $type = $scope->getType($node);
 
-        return $type instanceof TypeWithClassName // TODO fix once getObjectClassReflections is ready?
-            && $type->getClassReflection() !== null
-            && $type->getClassReflection()->isSubclassOf(Throwable::class);
+        foreach ($type->getObjectClassReflections() as $classReflection) {
+            if ($classReflection->isSubclassOf(Throwable::class)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function isUsed(Expr $node): bool

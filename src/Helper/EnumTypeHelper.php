@@ -32,7 +32,7 @@ class EnumTypeHelper
 
     public static function isEnum(Type $type): bool
     {
-        return $type->getEnumCases() !== []; // TODO not 100% correct for enum Foo {}
+        return $type->getEnumCases() !== [];
     }
 
 }

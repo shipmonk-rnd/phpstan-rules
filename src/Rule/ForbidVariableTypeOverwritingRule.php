@@ -9,8 +9,6 @@ use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\Accessory\AccessoryType;
-use PHPStan\Type\ConstantType;
-use PHPStan\Type\Enum\EnumCaseObjectType;
 use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\IntersectionType;
@@ -80,9 +78,9 @@ class ForbidVariableTypeOverwritingRule implements Rule
     private function generalize(Type $type): Type
     {
         if (
-            $type instanceof ConstantType
+            $type->isConstantValue()->yes()
+            || $type->getEnumCases() !== []
             || $type instanceof IntegerRangeType
-            || $type instanceof EnumCaseObjectType
             || $type instanceof UnionType // e.g. 'foo'|'bar' -> string or int<min, -1>|int<1, max> -> int
         ) {
             $type = $type->generalize(GeneralizePrecision::lessSpecific());

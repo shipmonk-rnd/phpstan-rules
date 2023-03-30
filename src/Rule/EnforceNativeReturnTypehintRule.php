@@ -28,9 +28,9 @@ use PHPStan\Type\StaticType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
+use function count;
 use function implode;
 use function in_array;
 use function sprintf;
@@ -154,11 +154,13 @@ class EnforceNativeReturnTypehintRule implements Rule
             } else {
                 $typeHint = 'static';
             }
-        } elseif ($typeWithoutNull instanceof TypeWithClassName) {
-            if ($typeWithoutNull->getClassName() === $this->getClassName($scope)) {
+        } elseif (count($typeWithoutNull->getObjectClassNames()) === 1) {
+            $className = $typeWithoutNull->getObjectClassNames()[0];
+
+            if ($className === $this->getClassName($scope)) {
                 $typeHint = 'self';
             } else {
-                $typeHint = '\\' . $typeWithoutNull->getClassName();
+                $typeHint = '\\' . $className;
             }
         } elseif ((new CallableType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = 'callable';

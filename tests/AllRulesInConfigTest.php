@@ -4,7 +4,6 @@ namespace ShipMonk\PHPStan;
 
 use DirectoryIterator;
 use PHPStan\Testing\PHPStanTestCase;
-use SplFileInfo;
 use function array_keys;
 use function array_merge;
 use function get_class;
@@ -32,7 +31,7 @@ class AllRulesInConfigTest extends PHPStanTestCase
         $existingRules = new DirectoryIterator(__DIR__ . '/../src/Rule');
         $existingRuleClassNames = [];
 
-        /** @var SplFileInfo $existingRule */
+        /** @var DirectoryIterator $existingRule */
         foreach ($existingRules as $existingRule) {
             if (!$existingRule->isFile()) {
                 continue;
