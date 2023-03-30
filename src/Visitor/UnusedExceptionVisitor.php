@@ -14,6 +14,7 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Ternary;
 use PhpParser\Node\Expr\Throw_ as ThrowExpr;
 use PhpParser\Node\Expr\Yield_;
+use PhpParser\Node\MatchArm;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\Throw_;
 use PhpParser\NodeVisitorAbstract;
@@ -94,7 +95,8 @@ class UnusedExceptionVisitor extends NodeVisitorAbstract
             || $parent instanceof NullsafeMethodCall
             || $parent instanceof Ternary
             || $parent instanceof Yield_
-            || $parent instanceof ThrowExpr;
+            || $parent instanceof ThrowExpr
+            || $parent instanceof MatchArm;
     }
 
 }
