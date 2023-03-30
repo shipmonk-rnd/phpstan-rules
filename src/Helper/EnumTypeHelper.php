@@ -32,7 +32,13 @@ class EnumTypeHelper
 
     public static function isEnum(Type $type): bool
     {
-        return $type->getEnumCases() !== [];
+        foreach ($type->getObjectClassReflections() as $classReflection) {
+            if ($classReflection->isEnum()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
