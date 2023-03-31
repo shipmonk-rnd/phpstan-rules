@@ -4,7 +4,8 @@ namespace ShipMonk\PHPStan\Rule;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
-use PHPStan\Node\MethodReturnStatementsNode;
+use PHPStan\Node\ReturnStatementsNode;
+use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\Rule;
@@ -13,18 +14,18 @@ use PHPStan\Type\VerbosityLevel;
 use function count;
 
 /**
- * @implements Rule<MethodReturnStatementsNode>
+ * @implements Rule<ReturnStatementsNode>
  */
 class EnforceListReturnRule implements Rule
 {
 
     public function getNodeType(): string
     {
-        return MethodReturnStatementsNode::class;
+        return ReturnStatementsNode::class;
     }
 
     /**
-     * @param MethodReturnStatementsNode $node
+     * @param ReturnStatementsNode $node
      * @return list<string>
      */
     public function processNode(Node $node, Scope $scope): array
@@ -33,30 +34,33 @@ class EnforceListReturnRule implements Rule
             return [];
         }
 
-        if ($scope->getClassReflection() === null) {
+        $methodReflection = $scope->getFunction();
+
+        if ($methodReflection === null) {
             return [];
         }
 
-        $method = $scope->getFunction();
+        if ($this->alwaysReturnList($node) && !$this->isMarkedWithListReturn($methodReflection)) {
+            $callLikeType = $methodReflection instanceof MethodReflection
+                ? 'Method'
+                : 'Function';
 
-        if (!$method instanceof MethodReflection) {
-            return [];
-        }
-
-        if ($this->alwaysReturnList($node) && !$this->isMarkedWithListReturn($method)) {
-            return ["Method {$method->getName()} always return list, but is marked as {$this->getReturnPhpDoc($method)}"];
+            return ["{$callLikeType} {$methodReflection->getName()} always return list, but is marked as {$this->getReturnPhpDoc($methodReflection)}"];
         }
 
         return [];
     }
 
-    private function getReturnPhpDoc(MethodReflection $methodReflection): string
+    /**
+     * @param FunctionReflection|MethodReflection $methodReflection
+     */
+    private function getReturnPhpDoc(object $methodReflection): string
     {
         $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         return $returnType->describe(VerbosityLevel::precise());
     }
 
-    private function alwaysReturnList(MethodReturnStatementsNode $node): bool
+    private function alwaysReturnList(ReturnStatementsNode $node): bool
     {
         $returnStatementsCount = count($node->getReturnStatements());
 
@@ -85,7 +89,10 @@ class EnforceListReturnRule implements Rule
         return true;
     }
 
-    private function isMarkedWithListReturn(MethodReflection $methodReflection): bool
+    /**
+     * @param FunctionReflection|MethodReflection $methodReflection
+     */
+    private function isMarkedWithListReturn(object $methodReflection): bool
     {
         $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         return $returnType->isList()->yes();
