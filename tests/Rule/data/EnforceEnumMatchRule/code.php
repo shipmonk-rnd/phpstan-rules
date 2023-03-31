@@ -23,13 +23,15 @@ enum SomeEnum: string
         } elseif ($this === self::Int || $condition) {
             return 0;
         }
+
+        return 1;
     }
 
     public function exhaustiveWithOrCondition(): int
     {
         if ($this === self::Out) {
             return -1;
-        } elseif ($this === self::Int || $this === self::Dom) { // not detected
+        } elseif ($this === self::Int || $this === self::Dom) { // not detected (reported as always-true in phpstan)
             return 0;
         }
     }
@@ -51,9 +53,11 @@ enum SomeEnum: string
             return -1;
         } elseif ($this === self::Int) {
             return 0;
-        } elseif ($this !== self::Dom) {
+        } elseif ($this !== self::Dom) {  // this one is reported as always false in native phpstan
             throw new \LogicException('Not expected case');
         }
+
+        return 1;
     }
 
     public function notExhaustive(): int
@@ -63,6 +67,8 @@ enum SomeEnum: string
         } elseif ($this === self::Int) {
             return 0;
         }
+
+        return 1;
     }
 
     public function exhaustiveButNoElseIf(): int
