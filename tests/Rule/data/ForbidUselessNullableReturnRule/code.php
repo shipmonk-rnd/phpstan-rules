@@ -67,3 +67,8 @@ class ExampleClass {
     }
 
 }
+
+function nullableFunction(int $int): ?int // error: Declared return type int|null contains null, but it is never returned. Returned types: int.
+{
+    return $int;
+}
