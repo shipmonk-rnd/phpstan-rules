@@ -3,4 +3,3 @@
 !/cache/.gitkeep
 /.idea
 /phpstan.neon
-/composer.lock
