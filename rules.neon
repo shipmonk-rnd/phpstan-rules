@@ -6,6 +6,8 @@ parameters:
             enabled: true
         backedEnumGenerics:
             enabled: true
+        enforceEnumMatch:
+            enabled: true
         enforceListReturn:
             enabled: true
         enforceNativeReturnTypehint:
@@ -69,6 +71,9 @@ parametersSchema:
             enabled: bool()
         ])
         backedEnumGenerics: structure([
+            enabled: bool()
+        ])
+        enforceEnumMatch: structure([
             enabled: bool()
         ])
         enforceListReturn: structure([
@@ -156,6 +161,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.allowNamedArgumentOnlyInAttributes.enabled%
     ShipMonk\PHPStan\Rule\BackedEnumGenericsRule:
         phpstan.rules.rule: %shipmonkRules.backedEnumGenerics.enabled%
+    ShipMonk\PHPStan\Rule\EnforceEnumMatchRule:
+        phpstan.rules.rule: %shipmonkRules.enforceEnumMatch.enabled%
     ShipMonk\PHPStan\Rule\EnforceNativeReturnTypehintRule:
         phpstan.rules.rule: %shipmonkRules.enforceNativeReturnTypehint.enabled%
     ShipMonk\PHPStan\Rule\EnforceListReturnRule:
@@ -223,6 +230,8 @@ services:
         class: ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule
     -
         class: ShipMonk\PHPStan\Rule\BackedEnumGenericsRule
+    -
+        class: ShipMonk\PHPStan\Rule\EnforceEnumMatchRule
     -
         class: ShipMonk\PHPStan\Rule\EnforceListReturnRule
     -

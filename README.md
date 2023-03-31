@@ -24,6 +24,8 @@ parameters:
             enabled: true
         backedEnumGenerics:
             enabled: true
+        enforceEnumMatch:
+            enabled: true
         enforceListReturn:
             enabled: true
         enforceNativeReturnTypehint:
@@ -126,6 +128,39 @@ enum MyEnum: string { // missing @implements tag
     case MyCase = 'case1';
 }
 ```
+
+### enforceEnumMatchRule
+- Enforces usage of `match ($enum)` instead of `if ... elseif ($enum === Enum::Case) ... `
+- This rule aims to "fix" a bit problematic behaviour of PHPStan (introduced at 1.10). It understands enum cases very well and forces you to adjust following code:
+```php
+enum MyEnum {
+    case Foo;
+    case Bar;
+}
+
+if ($enum === MyEnum::Foo) {
+    // ...
+} elseif ($enum === MyEnum::Bar) {
+    // ...
+} else {
+    throw new LogicException('Unknown case'); // phpstan knows it cannot happen
+}
+```
+to
+```php
+if ($enum === MyEnum::Foo) {
+    // ...
+} elseif ($enum === MyEnum::Bar) {
+    // ...
+}
+```
+
+We believe that this leads to more error-prone code since adding new enum case may not fail in tests.
+Very good approach within similar cases is to use `match` construct so that (ideally with `forbidMatchDefaultArmForEnums` enabled) phpstan fails once new case is added.
+
+For those reasons, this rule **tries** to detect enum-exhaustive elseif chains and forces you to rewrite it to `match ($enum)`.
+The rule is limited to very simple cases like shown above.
+
 
 ### enforceListReturn
 - Enforces usage of `list<T>` when list is always returned from a class method
