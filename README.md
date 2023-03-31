@@ -1,6 +1,6 @@
 # ShipMonk PHPStan rules
-Various rules we found useful in ShipMonk.
-You may find some of them opinionated, so we recommend picking only those fitting your needs.
+About **30 super-strict rules** we found useful in ShipMonk.
+If you find some of them opinionated, you can easily disable them.
 
 ## Installation:
 
@@ -98,7 +98,6 @@ new DateTime() > '2040-01-02'; // comparing different types is denied
 ### allowNamedArgumentOnlyInAttributes
 - Allows usage of named arguments only in native attributes
 - Before native attributes, we used [DisallowNamedArguments](https://github.com/slevomat/coding-standard/blob/master/doc/functions.md#slevomatcodingstandardfunctionsdisallownamedarguments) sniff. But we used Doctrine annotations, which almost "require" named arguments when converted to native attributes.
-- This one is highly opinionated, you can easily disable it as described above
 ```php
 class User {
     #[Column(type: Types::STRING, nullable: false)] // allowed
@@ -108,6 +107,13 @@ class User {
         $this->setEmail(email: $email); // forbidden
     }
 }
+```
+- This one is highly opinionated and will probably be disabled/dropped next major version as it does not provide any extra strictness, you can disable it by:
+```neon
+parameters:
+    shipmonkRules:
+        allowNamedArgumentOnlyInAttributes:
+            enabled: false
 ```
 
 ### backedEnumGenerics *
@@ -515,3 +521,8 @@ class Example
     }
 }
 ```
+
+## Contributing
+- Check your code by `composer check`
+- Autofix coding-style by `composer fix:cs`
+- All functionality must be tested
