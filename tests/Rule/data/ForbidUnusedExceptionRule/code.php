@@ -52,6 +52,13 @@ class ExampleClass
         yield new \OutOfBoundsException();
     }
 
+    public function okUsage7(string $decide): void
+    {
+        $exception = match ($decide) {
+            'foo' => new \OutOfRangeException(),
+        };
+    }
+
     public function getExceptionAtRuntime(): RuntimeException
     {
         return new RuntimeException();
