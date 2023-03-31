@@ -1,11 +1,10 @@
 <?php declare(strict_types = 1);
 
-namespace ForbidAssignmentNotMatchingVarDocRule;
+namespace ForbidAssignmentNotMatchingVarDocRule\NoNarrow;
 
 use Exception;
 use LogicException;
 use RuntimeException;
-use ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule;
 use Throwable;
 
 class AnotherClass {
@@ -70,13 +69,13 @@ class ExampleClass extends ExampleClassParent
         $var = $this->returnSelf();
 
         /** @var AnotherClass $var */
-        $var = $this->returnSelf(); // error: Invalid var phpdoc of $var. Cannot assign ForbidAssignmentNotMatchingVarDocRule\ExampleClass to ForbidAssignmentNotMatchingVarDocRule\AnotherClass
+        $var = $this->returnSelf(); // error: Invalid var phpdoc of $var. Cannot assign ForbidAssignmentNotMatchingVarDocRule\NoNarrow\ExampleClass to ForbidAssignmentNotMatchingVarDocRule\NoNarrow\AnotherClass
 
         /** @var ExampleInterface $var */
         $var = $this->returnInterface();
 
         /** @var ExampleClass $var */
-        $var = $this->returnInterface(); // error: Invalid var phpdoc of $var. Cannot narrow ForbidAssignmentNotMatchingVarDocRule\ExampleInterface to ForbidAssignmentNotMatchingVarDocRule\ExampleClass
+        $var = $this->returnInterface(); // error: Invalid var phpdoc of $var. Cannot narrow ForbidAssignmentNotMatchingVarDocRule\NoNarrow\ExampleInterface to ForbidAssignmentNotMatchingVarDocRule\NoNarrow\ExampleClass
 
         /** @var ExampleClass $var allow-narrowing */
         $var = $this->returnInterface();
@@ -124,7 +123,7 @@ class ExampleClass extends ExampleClassParent
         $var = $this->returnArrayOfSelf();
 
         /** @var array<int> $var */
-        $var = $this->returnArrayOfSelf(); // error: Invalid var phpdoc of $var. Cannot assign array<ForbidAssignmentNotMatchingVarDocRule\ExampleClass> to array<int>
+        $var = $this->returnArrayOfSelf(); // error: Invalid var phpdoc of $var. Cannot assign array<ForbidAssignmentNotMatchingVarDocRule\NoNarrow\ExampleClass> to array<int>
     }
 
     /**

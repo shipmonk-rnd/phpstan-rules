@@ -26,11 +26,15 @@ class ForbidAssignmentNotMatchingVarDocRule implements Rule
 
     private FileTypeMapper $fileTypeMapper;
 
+    private bool $allowNarrowing;
+
     public function __construct(
-        FileTypeMapper $fileTypeMapper
+        FileTypeMapper $fileTypeMapper,
+        bool $allowNarrowing
     )
     {
         $this->fileTypeMapper = $fileTypeMapper;
+        $this->allowNarrowing = $allowNarrowing;
     }
 
     public function getNodeType(): string
@@ -45,7 +49,7 @@ class ForbidAssignmentNotMatchingVarDocRule implements Rule
     public function processNode(Node $node, Scope $scope): array
     {
         $checkShapeOnly = false;
-        $allowNarrowing = false;
+        $allowNarrowing = $this->allowNarrowing;
         $phpDoc = $node->getDocComment();
 
         if ($phpDoc === null) {
