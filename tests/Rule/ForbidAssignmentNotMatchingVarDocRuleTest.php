@@ -12,14 +12,28 @@ use ShipMonk\PHPStan\RuleTestCase;
 class ForbidAssignmentNotMatchingVarDocRuleTest extends RuleTestCase
 {
 
+    private ?bool $allowNarrowing = null;
+
     protected function getRule(): Rule
     {
-        return new ForbidAssignmentNotMatchingVarDocRule(self::getContainer()->getByType(FileTypeMapper::class));
+        self::assertNotNull($this->allowNarrowing);
+
+        return new ForbidAssignmentNotMatchingVarDocRule(
+            self::getContainer()->getByType(FileTypeMapper::class),
+            $this->allowNarrowing,
+        );
     }
 
-    public function testClass(): void
+    public function testDefault(): void
     {
-        $this->analyseFile(__DIR__ . '/data/ForbidAssignmentNotMatchingVarDocRule/code.php');
+        $this->allowNarrowing = false;
+        $this->analyseFile(__DIR__ . '/data/ForbidAssignmentNotMatchingVarDocRule/narrowing-disabled.php');
+    }
+
+    public function testNarrowing(): void
+    {
+        $this->allowNarrowing = true;
+        $this->analyseFile(__DIR__ . '/data/ForbidAssignmentNotMatchingVarDocRule/narrowing-enabled.php');
     }
 
 }

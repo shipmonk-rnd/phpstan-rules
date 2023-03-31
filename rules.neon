@@ -14,6 +14,7 @@ parameters:
             enabled: true
         forbidAssignmentNotMatchingVarDoc:
             enabled: true
+            allowNarrowing: false
         forbidCast:
             enabled: true
             blacklist: ['(array)', '(object)', '(unset)']
@@ -81,6 +82,7 @@ parametersSchema:
         ])
         forbidAssignmentNotMatchingVarDoc: structure([
             enabled: bool()
+            allowNarrowing: bool()
         ])
         forbidCast: structure([
             enabled: bool()
@@ -231,6 +233,8 @@ services:
         class: ShipMonk\PHPStan\Rule\EnforceReadonlyPublicPropertyRule
     -
         class: ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule
+        arguments:
+            allowNarrowing: %shipmonkRules.forbidAssignmentNotMatchingVarDoc.allowNarrowing%
     -
         class: ShipMonk\PHPStan\Rule\ForbidCastRule
     -
