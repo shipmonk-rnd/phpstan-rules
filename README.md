@@ -207,7 +207,7 @@ parameters:
 
 #### Differences with native check:
 
-- Since `phpstan/phpstan:1.10.0` with bleedingEdge and [enabled](https://phpstan.org/config-reference#reportwrongphpdoctypeinvartag), there is a very similar check within PHPStan itself.
+- Since `phpstan/phpstan:1.10.0` with bleedingEdge, there is a [very similar check within PHPStan itself](https://phpstan.org/blog/phpstan-1-10-comes-with-lie-detector#validate-inline-phpdoc-%40var-tag-type).
 - The main difference is that it allows only subtype (narrowing), not supertype (widening) in `@var` phpdoc.
 - This rule allows only widening, narrowing is allowed only when marked by `allow-narrowing` or configured by `allowNarrowing: true`.
 - Basically, **there are 3 ways for you to check inline `@var` phpdoc**:
@@ -217,6 +217,13 @@ parameters:
     - this rule enabled with `allowNarrowing: true`, native check disabled
   - allow only widening
     - this rule enabled, native check disabled
+
+- You can disable native check while keeping bleedingEdge by:
+```neon
+parameters:
+    featureToggles:
+        varTagType: false
+```
 
 ### forbidCast
 - Deny casting you configure
