@@ -9,18 +9,13 @@ use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\Accessory\AccessoryType;
-use PHPStan\Type\ConstantType;
-use PHPStan\Type\Enum\EnumCaseObjectType;
 use PHPStan\Type\GeneralizePrecision;
-use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\MixedType;
-use PHPStan\Type\NullType;
 use PHPStan\Type\SubtractableType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeTraverser;
-use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
 /**
@@ -80,16 +75,11 @@ class ForbidVariableTypeOverwritingRule implements Rule
 
     private function generalize(Type $type): Type
     {
-        if (
-            $type instanceof ConstantType
-            || $type instanceof IntegerRangeType
-            || $type instanceof EnumCaseObjectType
-            || $type instanceof UnionType // e.g. 'foo'|'bar' -> string or int<min, -1>|int<1, max> -> int
-        ) {
+        if ($type->isConstantValue()->yes()) {
             $type = $type->generalize(GeneralizePrecision::lessSpecific());
         }
 
-        if ($type instanceof NullType) {
+        if ($type->isNull()->yes()) {
             return $type;
         }
 
@@ -98,16 +88,16 @@ class ForbidVariableTypeOverwritingRule implements Rule
 
     private function isTypeToIgnore(Type $type): bool
     {
-        return $type instanceof NullType || $type instanceof MixedType;
+        return $type->isNull()->yes() || $type instanceof MixedType;
     }
 
     private function removeNullAccessoryAndSubtractedTypes(Type $type): Type
     {
-        if ($type instanceof NullType) {
+        if ($type->isNull()->yes()) {
             return $type;
         }
 
-        if ($type instanceof IntersectionType) {
+        if ($type instanceof IntersectionType) { // @phpstan-ignore-line ignore instanceof intersection
             $newInnerTypes = [];
 
             foreach ($type->getTypes() as $innerType) {

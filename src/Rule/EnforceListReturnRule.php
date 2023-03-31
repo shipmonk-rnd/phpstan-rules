@@ -9,8 +9,6 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\Accessory\AccessoryArrayListType;
-use PHPStan\Type\ArrayType;
-use PHPStan\Type\NeverType;
 use PHPStan\Type\VerbosityLevel;
 use function count;
 
@@ -79,7 +77,7 @@ class EnforceListReturnRule implements Rule
                 return false;
             }
 
-            if ($returnStatementsCount === 1 && $returnType instanceof ArrayType && $returnType->getItemType() instanceof NeverType) {
+            if ($returnStatementsCount === 1 && $returnType->isArray()->yes() && $returnType->isIterableAtLeastOnce()->no()) {
                 return false; // do not consider empty array as list when it is the only return statement
             }
         }

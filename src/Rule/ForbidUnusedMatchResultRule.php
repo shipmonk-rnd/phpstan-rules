@@ -10,7 +10,6 @@ use PHPStan\Rules\Rule;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
-use PHPStan\Type\VoidType;
 use ShipMonk\PHPStan\Visitor\UnusedMatchVisitor;
 
 /**
@@ -35,7 +34,7 @@ class ForbidUnusedMatchResultRule implements Rule
         foreach ($node->arms as $arm) {
             $armType = $scope->getType($arm->body);
 
-            if (!$armType instanceof VoidType && !$armType instanceof NeverType && !$arm->body instanceof Assign) {
+            if (!$armType->isVoid()->yes() && !$armType instanceof NeverType && !$arm->body instanceof Assign) {
                 $returnedTypes[] = $armType;
             }
         }

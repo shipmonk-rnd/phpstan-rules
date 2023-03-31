@@ -13,7 +13,6 @@ use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
-use PHPStan\Type\VoidType;
 
 /**
  * @implements Rule<MethodReturnStatementsNode>
@@ -41,7 +40,7 @@ class ForbidUselessNullableReturnRule implements Rule
 
         $declaredType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-        if ($declaredType instanceof VoidType) {
+        if ($declaredType->isVoid()->yes()) {
             return [];
         }
 

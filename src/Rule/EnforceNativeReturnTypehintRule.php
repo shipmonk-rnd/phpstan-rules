@@ -15,7 +15,6 @@ use PHPStan\Rules\Rule;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\CallableType;
-use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
@@ -23,17 +22,15 @@ use PHPStan\Type\IntersectionType;
 use PHPStan\Type\IterableType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
-use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ObjectWithoutClassType;
 use PHPStan\Type\StaticType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
-use PHPStan\Type\VoidType;
+use function count;
 use function implode;
 use function in_array;
 use function sprintf;
@@ -114,7 +111,7 @@ class EnforceNativeReturnTypehintRule implements Rule
             return $this->phpVersion->getVersionId() >= 80_000 ? 'mixed' : null;
         }
 
-        if ($type instanceof VoidType) {
+        if ($type->isVoid()->yes()) {
             return 'void';
         }
 
@@ -126,7 +123,7 @@ class EnforceNativeReturnTypehintRule implements Rule
             return 'void';
         }
 
-        if ($type instanceof NullType) {
+        if ($type->isNull()->yes()) {
             if (!$topLevel || $this->phpVersion->getVersionId() >= 80_200) {
                 return 'null';
             }
@@ -138,7 +135,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         $typeHint = null;
 
         if ((new BooleanType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
-            if ($typeWithoutNull instanceof ConstantBooleanType && $this->phpVersion->getVersionId() >= 80_200) {
+            if (($typeWithoutNull->isTrue()->yes() || $typeWithoutNull->isFalse()->yes()) && $this->phpVersion->getVersionId() >= 80_200) {
                 $typeHint = $typeWithoutNull->describe(VerbosityLevel::typeOnly());
             } else {
                 $typeHint = 'bool';
@@ -157,11 +154,13 @@ class EnforceNativeReturnTypehintRule implements Rule
             } else {
                 $typeHint = 'static';
             }
-        } elseif ($typeWithoutNull instanceof TypeWithClassName) {
-            if ($typeWithoutNull->getClassName() === $this->getClassName($scope)) {
+        } elseif (count($typeWithoutNull->getObjectClassNames()) === 1) {
+            $className = $typeWithoutNull->getObjectClassNames()[0];
+
+            if ($className === $this->getClassName($scope)) {
                 $typeHint = 'self';
             } else {
-                $typeHint = '\\' . $typeWithoutNull->getClassName();
+                $typeHint = '\\' . $className;
             }
         } elseif ((new CallableType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = 'callable';
@@ -270,7 +269,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         foreach ($type->getTypes() as $subtype) {
             $wrap = false;
 
-            if ($subtype instanceof IntersectionType) {
+            if ($subtype instanceof IntersectionType) { // @phpstan-ignore-line ignore instanceof intersection
                 if ($this->phpVersion->getVersionId() < 80_200) { // DNF
                     return null;
                 }
@@ -301,7 +300,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         bool $alwaysTerminating
     ): ?string
     {
-        if (!$type instanceof IntersectionType) {
+        if (!$type instanceof IntersectionType) { // @phpstan-ignore-line ignore instanceof intersection
             return null;
         }
 

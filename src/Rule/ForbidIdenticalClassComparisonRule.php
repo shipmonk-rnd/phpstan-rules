@@ -12,7 +12,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\CallableType;
-use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ObjectWithoutClassType;
@@ -77,7 +76,7 @@ class ForbidIdenticalClassComparisonRule implements Rule
         $rightType = $scope->getType($node->right);
         $leftType = $scope->getType($node->left);
 
-        if ($nodeType instanceof ConstantBooleanType) {
+        if ($nodeType->isTrue()->yes() || $nodeType->isFalse()->yes()) {
             return []; // always-true or always-false, already reported by native PHPStan (like $a === $a)
         }
 

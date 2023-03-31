@@ -8,7 +8,6 @@ use PHPStan\Node\MatchExpressionNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
-use ShipMonk\PHPStan\Helper\EnumTypeHelper;
 use function count;
 
 /**
@@ -31,7 +30,7 @@ class ForbidMatchDefaultArmForEnumsRule implements Rule
         $matchCondition = $node->getCondition();
         $matchArgument = $scope->getType($matchCondition);
 
-        if (!EnumTypeHelper::isEnum($matchArgument)) {
+        if (!$matchArgument->isEnum()->yes()) {
             return [];
         }
 

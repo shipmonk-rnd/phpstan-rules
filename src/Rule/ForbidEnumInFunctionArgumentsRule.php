@@ -7,7 +7,8 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
-use ShipMonk\PHPStan\Helper\EnumTypeHelper;
+use PHPStan\Type\Type;
+use PHPStan\Type\UnionType;
 use function array_key_exists;
 use function count;
 use function implode;
@@ -75,7 +76,7 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
 
             $argumentType = $scope->getType($argument->value);
 
-            if (EnumTypeHelper::containsEnum($argumentType)) {
+            if ($this->containsEnum($argumentType)) {
                 $wrongArguments[] = $position + 1;
             }
         }
@@ -96,6 +97,25 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
         }
 
         return $position === $forbiddenArgumentPosition;
+    }
+
+    private function containsEnum(Type $type): bool
+    {
+        if ($type->isArray()->yes() && $this->containsEnum($type->getIterableValueType())) {
+            return true;
+        }
+
+        if ($type instanceof UnionType) {
+            foreach ($type->getTypes() as $innerType) {
+                if ($this->containsEnum($innerType)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return $type->isEnum()->yes();
     }
 
 }

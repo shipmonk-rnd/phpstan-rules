@@ -16,8 +16,8 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\Constant\ConstantStringType;
-use PHPStan\Type\Generic\GenericClassStringType;
-use PHPStan\Type\TypeUtils;
+use function array_map;
+use function array_merge;
 use function count;
 use function explode;
 use function gettype;
@@ -84,46 +84,33 @@ class ForbidCustomFunctionsRule implements Rule
     public function processNode(Node $node, Scope $scope): array
     {
         if ($node instanceof MethodCall) {
-            $methodName = $this->getMethodName($node->name, $scope);
+            $methodNames = $this->getMethodNames($node->name, $scope);
 
-            if ($methodName === null) {
-                return [];
-            }
-
-            return $this->validateCallOverExpr($methodName, $node->var, $scope);
+            return $this->validateCallOverExpr($methodNames, $node->var, $scope);
         }
 
         if ($node instanceof StaticCall) {
-            $methodName = $this->getMethodName($node->name, $scope);
-
-            if ($methodName === null) {
-                return [];
-            }
+            $methodNames = $this->getMethodNames($node->name, $scope);
 
             $classNode = $node->class;
 
             if ($classNode instanceof Name) {
-                return $this->validateMethod($methodName, $scope->resolveName($classNode));
+                return $this->validateMethod($methodNames, $scope->resolveName($classNode));
             }
 
-            return $this->validateCallOverExpr($methodName, $classNode, $scope);
+            return $this->validateCallOverExpr($methodNames, $classNode, $scope);
         }
 
         if ($node instanceof FuncCall) {
-            $methodName = $this->getFunctionName($node->name, $scope);
-
-            if ($methodName === null) {
-                return [];
-            }
-
-            return $this->validateFunction($methodName);
+            $methodNames = $this->getFunctionNames($node->name, $scope);
+            return $this->validateFunction($methodNames);
         }
 
         if ($node instanceof New_) {
             $classNode = $node->class;
 
             if ($classNode instanceof Name) {
-                return $this->validateMethod('__construct', $scope->resolveName($classNode));
+                return $this->validateMethod(['__construct'], $scope->resolveName($classNode));
             }
 
             if ($classNode instanceof Expr) {
@@ -143,31 +130,29 @@ class ForbidCustomFunctionsRule implements Rule
     {
         $type = $scope->getType($expr);
 
-        if ($type instanceof ConstantStringType) {
-            return $this->validateMethod('__construct', $type->getValue());
+        $errors = [];
+
+        foreach ($type->getConstantStrings() as $constantStringType) {
+            $errors = array_merge($errors, $this->validateMethod(['__construct'], $constantStringType->getValue()));
         }
 
-        return [];
+        return $errors;
     }
 
     /**
+     * @param list<string> $methodNames
      * @return list<string>
      */
-    private function validateCallOverExpr(string $methodName, Expr $expr, Scope $scope): array
+    private function validateCallOverExpr(array $methodNames, Expr $expr, Scope $scope): array
     {
         $classType = $scope->getType($expr);
-
-        if ($classType instanceof GenericClassStringType) {
-            $classType = $classType->getGenericType();
-        }
-
-        $classNames = TypeUtils::getDirectClassNames($classType);
+        $classNames = $classType->getObjectTypeOrClassStringObjectType()->getObjectClassNames();
         $errors = [];
 
         foreach ($classNames as $className) {
             $errors = [
                 ...$errors,
-                ...$this->validateMethod($methodName, $className),
+                ...$this->validateMethod($methodNames, $className),
             ];
         }
 
@@ -175,75 +160,86 @@ class ForbidCustomFunctionsRule implements Rule
     }
 
     /**
+     * @param list<string> $methodNames
      * @return list<string>
      */
-    private function validateMethod(string $methodName, string $className): array
+    private function validateMethod(array $methodNames, string $className): array
     {
+        $errors = [];
+
         foreach ($this->reflectionProvider->getClass($className)->getAncestors() as $ancestor) {
             $ancestorClassName = $ancestor->getName();
 
             if (isset($this->forbiddenFunctions[$ancestorClassName][self::ANY_METHOD])) {
-                return [sprintf('Class %s is forbidden. %s', $ancestorClassName, $this->forbiddenFunctions[$ancestorClassName][self::ANY_METHOD])];
+                $errors[] = sprintf('Class %s is forbidden. %s', $ancestorClassName, $this->forbiddenFunctions[$ancestorClassName][self::ANY_METHOD]);
             }
 
-            if (isset($this->forbiddenFunctions[$ancestorClassName][$methodName])) {
-                return [sprintf('Method %s::%s() is forbidden. %s', $ancestorClassName, $methodName, $this->forbiddenFunctions[$ancestorClassName][$methodName])];
+            foreach ($methodNames as $methodName) {
+                if (isset($this->forbiddenFunctions[$ancestorClassName][$methodName])) {
+                    $errors[] = sprintf('Method %s::%s() is forbidden. %s', $ancestorClassName, $methodName, $this->forbiddenFunctions[$ancestorClassName][$methodName]);
+                }
             }
         }
 
-        return [];
+        return $errors;
     }
 
     /**
+     * @param list<string> $functionNames
      * @return list<string>
      */
-    private function validateFunction(string $functionName): array
+    private function validateFunction(array $functionNames): array
     {
-        if (isset($this->forbiddenFunctions[self::FUNCTION][$functionName])) {
-            return [sprintf('Function %s() is forbidden. %s', $functionName, $this->forbiddenFunctions[self::FUNCTION][$functionName])];
+        $errors = [];
+
+        foreach ($functionNames as $functionName) {
+            if (isset($this->forbiddenFunctions[self::FUNCTION][$functionName])) {
+                $errors[] = sprintf('Function %s() is forbidden. %s', $functionName, $this->forbiddenFunctions[self::FUNCTION][$functionName]);
+            }
         }
 
-        return [];
+        return $errors;
     }
 
     /**
      * @param Name|Expr $name
+     * @return list<string>
      */
-    private function getFunctionName(Node $name, Scope $scope): ?string
+    private function getFunctionNames(Node $name, Scope $scope): array
     {
         if ($name instanceof Name) {
-            return $this->reflectionProvider->resolveFunctionName($name, $scope);
+            $functionName = $this->reflectionProvider->resolveFunctionName($name, $scope);
+            return $functionName === null ? [] : [$functionName];
         }
 
         $nameType = $scope->getType($name);
 
-        if ($nameType instanceof ConstantStringType) {
-            return $nameType->getValue();
-        }
-
-        return null;
+        return array_map(
+            static fn (ConstantStringType $type) => $type->getValue(),
+            $nameType->getConstantStrings(),
+        );
     }
 
     /**
      * @param Name|Expr|Identifier $name
+     * @return list<string>
      */
-    private function getMethodName(Node $name, Scope $scope): ?string
+    private function getMethodNames(Node $name, Scope $scope): array
     {
         if ($name instanceof Name) {
-            return $name->toString();
+            return [$name->toString()];
         }
 
         if ($name instanceof Identifier) {
-            return $name->toString();
+            return [$name->toString()];
         }
 
         $nameType = $scope->getType($name);
 
-        if ($nameType instanceof ConstantStringType) {
-            return $nameType->getValue();
-        }
-
-        return null;
+        return array_map(
+            static fn (ConstantStringType $type) => $type->getValue(),
+            $nameType->getConstantStrings(),
+        );
     }
 
 }
