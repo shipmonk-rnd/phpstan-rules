@@ -2,13 +2,6 @@
 
 namespace EnforceEnumMatchRule;
 
-
-enum AnotherEnum: string
-{
-    case Foo = 'foo';
-    case Bar = 'bar';
-}
-
 enum SomeEnum: string
 {
 
