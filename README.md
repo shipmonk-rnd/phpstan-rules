@@ -1,6 +1,9 @@
 # ShipMonk PHPStan rules
 About **30 super-strict rules** we found useful in ShipMonk.
-If you find some of them opinionated, you can easily disable them.
+We tend to have PHPStan set up as strict as possible (bleedingEdge, strict-rules, checkUninitializedProperties, ...), but that still was not strict enough for us.
+This set of rules should fill the missing gaps we found.
+
+If you find some rules opinionated, you can easily disable them.
 
 ## Installation:
 
