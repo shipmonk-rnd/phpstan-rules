@@ -73,3 +73,17 @@ class A implements I {
 
 }
 
+/**
+ * @return array<string>
+ */
+function someFunction(): array // error: Function EnforceListReturnRule\someFunction always return list, but is marked as array<string>
+{
+    return ['list'];
+}
+
+/**
+ * @return array<string>
+ */
+$closure = function (): array {
+    return ['list'];
+};

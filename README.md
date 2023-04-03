@@ -128,7 +128,7 @@ enum MyEnum: string { // missing @implements tag
 ```
 
 ### enforceListReturn
-- Enforces usage of `list<T>` when list is always returned from a class method
+- Enforces usage of `list<T>` when list is always returned from a class method or function
 - When only single return with empty array is present in the method, it is not considered as list
 - Does nothing when [list types](https://phpstan.org/blog/phpstan-1-9-0-with-phpdoc-asserts-list-type#list-type) are disabled in PHPStan
 ```php
