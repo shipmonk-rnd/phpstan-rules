@@ -4,8 +4,7 @@ namespace ShipMonk\PHPStan\Rule;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
-use PHPStan\Node\MethodReturnStatementsNode;
-use PHPStan\Reflection\MethodReflection;
+use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\MixedType;
@@ -15,18 +14,18 @@ use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
 
 /**
- * @implements Rule<MethodReturnStatementsNode>
+ * @implements Rule<ReturnStatementsNode>
  */
 class ForbidUselessNullableReturnRule implements Rule
 {
 
     public function getNodeType(): string
     {
-        return MethodReturnStatementsNode::class;
+        return ReturnStatementsNode::class;
     }
 
     /**
-     * @param MethodReturnStatementsNode $node
+     * @param ReturnStatementsNode $node
      * @return list<string>
      */
     public function processNode(Node $node, Scope $scope): array
@@ -34,7 +33,7 @@ class ForbidUselessNullableReturnRule implements Rule
         $verbosity = VerbosityLevel::precise();
         $methodReflection = $scope->getFunction();
 
-        if (!$methodReflection instanceof MethodReflection) {
+        if ($methodReflection === null) {
             return [];
         }
 
