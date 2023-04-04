@@ -5,15 +5,15 @@ namespace EnforceEnumMatchRule;
 enum SomeEnum: string
 {
 
-    case Dom = 'dom';
-    case Int = 'int';
-    case Out = 'out';
+    case One = 'one';
+    case Two = 'two';
+    case Three = 'three';
 
     public function nonEnumConditionIncluded(bool $condition): int
     {
-        if ($this === self::Out) {
+        if ($this === self::Three || $this === self::One) {
             return -1;
-        } elseif ($this === self::Int || $condition) {
+        } elseif ($this === self::Two || $condition) { // error: This condition contains always-true enum comparison of EnforceEnumMatchRule\SomeEnum::Two. Use match expression instead, PHPStan will report unhandled enum cases
             return 0;
         }
 
@@ -22,32 +22,45 @@ enum SomeEnum: string
 
     public function exhaustiveWithOrCondition(): int
     {
-        if ($this === self::Out) {
+        if ($this === self::Three) {
             return -1;
-        } elseif ($this === self::Int || $this === self::Dom) { // not detected (reported as always-true in phpstan)
+        } elseif ($this === self::Two || $this === self::One) { // error: This condition contains always-true enum comparison of EnforceEnumMatchRule\SomeEnum::One. Use match expression instead, PHPStan will report unhandled enum cases
             return 0;
         }
     }
 
     public function basicExhaustive(): int
     {
-        if ($this === self::Out) {
+        if ($this === self::Three) {
             return -1;
-        } elseif ($this === self::Int) {
+        } elseif ($this === self::Two) {
             return 0;
-        } elseif ($this === self::Dom) { // error: This else-if chain looks like exhaustive enum check. Rewrite it to match construct to ensure that error is raised when new enum case is added.
+        } elseif ($this === self::One) { // error: This condition contains always-true enum comparison of EnforceEnumMatchRule\SomeEnum::One. Use match expression instead, PHPStan will report unhandled enum cases
             return 1;
         }
     }
 
     public function notExhaustiveWithNegatedConditionInLastElseif(): int
     {
-        if ($this === self::Out) {
+        if ($this === self::Three) {
             return -1;
-        } elseif ($this === self::Int) {
+        } elseif ($this === self::Two) {
             return 0;
-        } elseif ($this !== self::Dom) {  // this one is reported as always false in native phpstan
+        } elseif ($this !== self::One) { // error: This condition contains always-false enum comparison of EnforceEnumMatchRule\SomeEnum::One. Use match expression instead, PHPStan will report unhandled enum cases
             throw new \LogicException('Not expected case');
+        }
+
+        return 1;
+    }
+
+    public function nonSenseAlwaysFalseCodeNotReported(self $enum): int
+    {
+        if ($enum === self::Three) {
+            return -1;
+        }
+
+        if ($enum === self::Three) { // cannot use $this, see https://github.com/phpstan/phpstan/issues/9142
+            return 0;
         }
 
         return 1;
@@ -55,9 +68,9 @@ enum SomeEnum: string
 
     public function notExhaustive(): int
     {
-        if ($this === self::Out) {
+        if ($this === self::Three) {
             return -1;
-        } elseif ($this === self::Int) {
+        } elseif ($this === self::Two) {
             return 0;
         }
 
@@ -66,40 +79,40 @@ enum SomeEnum: string
 
     public function exhaustiveButNoElseIf(): int
     {
-        if ($this === self::Out) {
+        if ($this === self::Three) {
             return -1;
         }
 
-        if ($this === self::Int) {
+        if ($this === self::Two) {
             return 0;
         }
 
-        if ($this === self::Dom) { // this one is reported as always true in native phpstan
+        if ($this === self::One) { // error: This condition contains always-true enum comparison of EnforceEnumMatchRule\SomeEnum::One. Use match expression instead, PHPStan will report unhandled enum cases
             return 1;
         }
     }
 
     /**
-     * @param self::Out|self::Int $param
+     * @param self::Two|self::Three $param
      */
     public function exhaustiveOfSubset(self $param): int
     {
-        if ($param === self::Out) {
+        if ($param === self::Three) {
             return -1;
-        } elseif ($param === self::Int) { // error: This else-if chain looks like exhaustive enum check. Rewrite it to match construct to ensure that error is raised when new enum case is added.
+        } elseif ($param === self::Two) { // error: This condition contains always-true enum comparison of EnforceEnumMatchRule\SomeEnum::Two. Use match expression instead, PHPStan will report unhandled enum cases
             return 0;
         }
     }
 
     public function exhaustiveButNotAllInThatElseIfChain(self $param): int
     {
-        if ($param === self::Dom) {
+        if ($param === self::One) {
             throw new \LogicException();
         }
 
-        if ($param === self::Out) {
+        if ($param === self::Three) {
             return -1;
-        } elseif ($param === self::Int) { // error: This else-if chain looks like exhaustive enum check. Rewrite it to match construct to ensure that error is raised when new enum case is added.
+        } elseif ($param === self::Two) { // error: This condition contains always-true enum comparison of EnforceEnumMatchRule\SomeEnum::Two. Use match expression instead, PHPStan will report unhandled enum cases
             return 0;
         }
     }
@@ -109,7 +122,7 @@ enum SomeEnum: string
      */
     public function alwaysTrueButNoEnumThere(bool $true): int
     {
-        if ($this === self::Out) {
+        if ($this === self::Three) {
             return -1;
         } elseif ($true === true) {
             return 0;
