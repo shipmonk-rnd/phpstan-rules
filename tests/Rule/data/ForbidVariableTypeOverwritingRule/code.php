@@ -22,6 +22,11 @@ class AnotherClassWithInterface implements SomeInterface {
 
 }
 
+enum FooEnum {
+    case One;
+    case Two;
+}
+
 function testGeneralizationAndNarrowing(
     object $object,
     SomeInterface $interface,
@@ -60,12 +65,12 @@ function testBasics(
     array $map,
     array $intList = [1],
 ): void {
-    $intList = ['string']; // error: Overwriting variable $intList while changing its type from array<int<0, max>, int> to array<int<0, max>, string>
+    $intList = ['string']; // error: Overwriting variable $intList while changing its type from array<int, int> to array<int, string>
     $array = 1; // error: Overwriting variable $array while changing its type from array to int
     $string = 1; // error: Overwriting variable $string while changing its type from string to int
-    $objectList = ['foo']; // error: Overwriting variable $objectList while changing its type from array<int<0, max>, ForbidVariableTypeOverwritingRule\ParentClass> to array<int<0, max>, string>
+    $objectList = ['foo']; // error: Overwriting variable $objectList while changing its type from array<int, ForbidVariableTypeOverwritingRule\ParentClass> to array<int, string>
     $class = new \stdClass(); // error: Overwriting variable $class while changing its type from ForbidVariableTypeOverwritingRule\ParentClass to stdClass
-    $map = [1]; // error: Overwriting variable $map while changing its type from array<string, string> to array<int<0, max>, int>
+    $map = [1]; // error: Overwriting variable $map while changing its type from array<string, string> to array<int, int>
 }
 
 function testIgnoredTypes(
@@ -130,4 +135,19 @@ function testSubtractedTypeNotKept(ParentClass $someClass, array $strings) {
 
     unset($strings[0]);
     $strings = array_values($strings);
+}
+
+function testEnumCaseChange() {
+    $case1 = FooEnum::One;
+    $case1 = FooEnum::Two;
+}
+
+/**
+ * @param positive-int $positive
+ * @param negative-int $negative
+ *
+ * @return void
+ */
+function testIntToInt(int $positive, int $negative) {
+    $positive = $negative;
 }
