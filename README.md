@@ -139,7 +139,7 @@ enum MyEnum: string { // missing @implements tag
 ```
 
 ### enforceEnumMatchRule
-- Enforces usage of `match ($enum)` instead of conditions like `($enum === Enum::Case)`
+- Enforces usage of `match ($enum)` instead of exhaustive conditions like `if ($enum === Enum::One) elseif ($enum === Enum::Two)`
 - This rule aims to "fix" a bit problematic behaviour of PHPStan (introduced at 1.10). It understands enum cases very well and forces you to adjust following code:
 ```php
 enum MyEnum {
