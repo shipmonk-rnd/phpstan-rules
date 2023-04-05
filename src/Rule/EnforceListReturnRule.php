@@ -4,6 +4,7 @@ namespace ShipMonk\PHPStan\Rule;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Reflection\MethodReflection;
@@ -36,7 +37,7 @@ class EnforceListReturnRule implements Rule
 
         $methodReflection = $scope->getFunction();
 
-        if ($methodReflection === null) {
+        if ($methodReflection === null || $node instanceof ClosureReturnStatementsNode) { // @phpstan-ignore-line ignore bc promise
             return [];
         }
 

@@ -71,6 +71,14 @@ class A implements I {
         return ['hash' => 'map'];
     }
 
+
+    public function voidMethod(): void
+    {
+        $fn = static function (): array {
+            return ['list'];
+        };
+    }
+
 }
 
 /**
