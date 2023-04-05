@@ -66,9 +66,24 @@ class ExampleClass {
         return $this->bar;
     }
 
+
+    public function voidMethod(): void
+    {
+        $fn = static function (array $string): ?array { // error: Declared return type array|null contains null, but it is never returned. Returned types: array.
+            return $string;
+        };
+
+        return;
+    }
+
+
 }
 
 function nullableFunction(int $int): ?int // error: Declared return type int|null contains null, but it is never returned. Returned types: int.
 {
     return $int;
 }
+
+$globalFn = static function (int $int): ?int { // error: Declared return type int|null contains null, but it is never returned. Returned types: int.
+    return $int;
+};
