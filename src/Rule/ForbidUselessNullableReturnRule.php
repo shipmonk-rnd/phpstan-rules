@@ -4,6 +4,7 @@ namespace ShipMonk\PHPStan\Rule;
 
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\Rule;
@@ -33,11 +34,13 @@ class ForbidUselessNullableReturnRule implements Rule
         $verbosity = VerbosityLevel::precise();
         $methodReflection = $scope->getFunction();
 
-        if ($methodReflection === null) {
+        if ($node instanceof ClosureReturnStatementsNode) { // @phpstan-ignore-line ignore bc promise
+            $declaredType = $scope->getFunctionType($node->getClosureExpr()->getReturnType(), false, false);
+        } elseif ($methodReflection !== null) {
+            $declaredType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        } else {
             return [];
         }
-
-        $declaredType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
         if ($declaredType->isVoid()->yes()) {
             return [];

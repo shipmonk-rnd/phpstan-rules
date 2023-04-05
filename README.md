@@ -458,7 +458,7 @@ function example(MyClass $class) {
 ```
 
 ### forbidUselessNullableReturn
-- Denies marking function/method return type as nullable when null is never returned
+- Denies marking closure/function/method return type as nullable when null is never returned
 - Recommended to be used together with `uselessPrivatePropertyDefaultValue` and `UselessPrivatePropertyNullabilityRule`
 ```php
 public function example(int $foo): ?int { // null never returned
