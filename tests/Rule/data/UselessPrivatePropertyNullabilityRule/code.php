@@ -10,6 +10,8 @@ class ExampleClass
 
     private ?int $isPrivate; // error: Property UselessPrivatePropertyNullabilityRule\ExampleClass::isPrivate is defined as nullable, but null is never assigned
 
+    private ?int $isPrivateMixedAssigned;
+
     private ?int $isPrivateAssigned;
 
     private ?int $isPrivateWithConditionalAssignment;
@@ -24,6 +26,7 @@ class ExampleClass
     private $isUninitializedWithoutTypehint;
 
     public function __construct(
+        mixed $mixed,
         int $isPublic,
         int $isProtected,
         int $isPrivate,
@@ -35,6 +38,7 @@ class ExampleClass
         $this->isPublic = $isPublic;
         $this->isProtected = $isProtected;
         $this->isPrivate = $isPrivate;
+        $this->isPrivateMixedAssigned = $mixed;
         $this->isPrivateWithConditionalAssignment = $isPrivateWithConditionalAssignment === 0 ? null : 1;
         $this->isPrivateWithDefaultNull = $isPrivateWithDefaultNull;
         $this->isPrivateWithDefaultNotNull = $isPrivateWithDefaultNotNull;
