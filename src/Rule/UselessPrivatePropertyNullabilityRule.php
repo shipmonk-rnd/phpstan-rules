@@ -12,6 +12,7 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Type\NullType;
 use PHPStan\Type\TypeCombinator;
 use ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor;
 
@@ -62,9 +63,10 @@ class UselessPrivatePropertyNullabilityRule implements Rule
                 continue;
             }
 
+            $nullType = new NullType();
             $assignedType = $propertyUsage->getScope()->getType($assignedExpr);
 
-            if (TypeCombinator::containsNull($assignedType)) {
+            if ($assignedType->accepts($nullType, $scope->isDeclareStrictTypes())->yes()) {
                 $nullabilityNeeded[$propertyName] = true;
             }
         }
