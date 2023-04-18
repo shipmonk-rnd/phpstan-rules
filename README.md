@@ -27,6 +27,9 @@ parameters:
             enabled: true
         backedEnumGenerics:
             enabled: true
+        classSuffixNaming:
+            enabled: true
+            superclassToSuffixMapping: []
         enforceEnumMatch:
             enabled: true
         enforceListReturn:
@@ -137,6 +140,23 @@ enum MyEnum: string { // missing @implements tag
     case MyCase = 'case1';
 }
 ```
+
+### classSuffixNaming *
+- Allows you to enforce class name suffix for subclasses of configured superclass
+- Checks nothing by default, configure it by passing `superclass => suffix` mapping
+- Passed superclass is not expected to have such suffix, only subclasses are
+- You can use interface as superclass
+
+```neon
+    shipmonkRules:
+        classSuffixNaming:
+            superclassToSuffixMapping:
+                \Exception: Exception
+                \PHPStan\Rules\Rule: Rule
+                \PHPUnit\Framework\TestCase: Test
+                \Symfony\Component\Console\Command\Command: Command
+```
+
 
 ### enforceEnumMatchRule
 - Enforces usage of `match ($enum)` instead of exhaustive conditions like `if ($enum === Enum::One) elseif ($enum === Enum::Two)`

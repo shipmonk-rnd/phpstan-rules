@@ -18,6 +18,13 @@ parameters:
     checkUninitializedProperties: true
     checkTooWideReturnTypesInProtectedAndPublicMethods: true
 
+    shipmonkRules:
+        classSuffixNaming:
+            superclassToSuffixMapping:
+                PHPStan\Rules\Rule: Rule
+                PhpParser\NodeVisitor: Visitor
+                ShipMonk\PHPStan\RuleTestCase: RuleTest
+
     ignoreErrors:
         -
             message: "#Class BackedEnum not found\\.#"

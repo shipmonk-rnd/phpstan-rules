@@ -6,6 +6,9 @@ parameters:
             enabled: true
         backedEnumGenerics:
             enabled: true
+        classSuffixNaming:
+            enabled: true
+            superclassToSuffixMapping: []
         enforceEnumMatch:
             enabled: true
         enforceListReturn:
@@ -72,6 +75,10 @@ parametersSchema:
         ])
         backedEnumGenerics: structure([
             enabled: bool()
+        ])
+        classSuffixNaming: structure([
+            enabled: bool()
+            superclassToSuffixMapping: arrayOf(string(), string())
         ])
         enforceEnumMatch: structure([
             enabled: bool()
@@ -161,6 +168,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.allowNamedArgumentOnlyInAttributes.enabled%
     ShipMonk\PHPStan\Rule\BackedEnumGenericsRule:
         phpstan.rules.rule: %shipmonkRules.backedEnumGenerics.enabled%
+    ShipMonk\PHPStan\Rule\ClassSuffixNamingRule:
+        phpstan.rules.rule: %shipmonkRules.classSuffixNaming.enabled%
     ShipMonk\PHPStan\Rule\EnforceEnumMatchRule:
         phpstan.rules.rule: %shipmonkRules.enforceEnumMatch.enabled%
     ShipMonk\PHPStan\Rule\EnforceNativeReturnTypehintRule:
@@ -230,6 +239,10 @@ services:
         class: ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule
     -
         class: ShipMonk\PHPStan\Rule\BackedEnumGenericsRule
+    -
+        class: ShipMonk\PHPStan\Rule\ClassSuffixNamingRule
+        arguments:
+            superclassToSuffixMapping: %shipmonkRules.classSuffixNaming.superclassToSuffixMapping%
     -
         class: ShipMonk\PHPStan\Rule\EnforceEnumMatchRule
     -
