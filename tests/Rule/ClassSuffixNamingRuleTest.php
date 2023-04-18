@@ -13,7 +13,11 @@ class ClassSuffixNamingRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new ClassSuffixNamingRule(['ClassSuffixNamingRule\CheckedParent' => 'Suffix']);
+        return new ClassSuffixNamingRule([ // @phpstan-ignore-line ignore non existing class not being class-string
+            'ClassSuffixNamingRule\CheckedParent' => 'Suffix',
+            'ClassSuffixNamingRule\CheckedInterface' => 'Suffix2',
+            'NotExistingClass' => 'Foo',
+        ]);
     }
 
     public function testClass(): void
