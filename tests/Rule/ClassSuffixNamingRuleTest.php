@@ -13,9 +13,7 @@ class ClassSuffixNamingRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        /** @var class-string $superclass */
-        $superclass = 'ClassSuffixNamingRule\CheckedParent'; // @phpstan-ignore-line
-        return new ClassSuffixNamingRule([$superclass => 'Suffix']);
+        return new ClassSuffixNamingRule(['ClassSuffixNamingRule\CheckedParent' => 'Suffix']); // @phpstan-ignore-line
     }
 
     public function testClass(): void
