@@ -89,6 +89,17 @@ parameters:
 
 Few rules are enabled, but do nothing unless configured, those are marked with `*`.
 
+When you try to configure any default array, PHPStan config is **merged by default**,
+so if you want to enforce only your values and not to include our defaults, use `!`:
+
+```neon
+parameters:
+    shipmonkRules:
+        forbidCast:
+            enabled: true
+            blacklist!: ['(unset)'] # force the blacklist to be only (unset)
+```
+
 ### allowComparingOnlyComparableTypes
 - Denies using comparison operators `>,<,<=,>=,<=>` over anything other than `int|string|float|DateTimeInterface`. Null is not allowed.
 - Mixing different types in those operators is also forbidden, only exception is comparing floats with integers
@@ -150,7 +161,7 @@ enum MyEnum: string { // missing @implements tag
 ```neon
     shipmonkRules:
         classSuffixNaming:
-            superclassToSuffixMapping:
+            superclassToSuffixMapping!:
                 \Exception: Exception
                 \PHPStan\Rules\Rule: Rule
                 \PHPUnit\Framework\TestCase: Test
@@ -315,7 +326,7 @@ $notEmpty = (array) 0; // denied cast
 parameters:
     shipmonkRules:
         forbidCast:
-            blacklist: ['(array)', '(object)', '(unset)']
+            blacklist!: ['(array)', '(object)', '(unset)']
 ```
 
 ### forbidCustomFunctions *
@@ -374,7 +385,8 @@ function isEqual(DateTimeImmutable $a, DateTimeImmutable $b): bool {
 parameters:
     shipmonkRules:
         forbidIdenticalClassComparison:
-            blacklist:
+            blacklist!:
+                - DateTimeInterface
                 - Brick\Money\MoneyContainer
                 - Brick\Math\BigNumber
                 - Ramsey\Uuid\UuidInterface
@@ -421,7 +433,7 @@ function getCost(int $cost, ?int $surcharge): int {
 parameters:
     shipmonkRules:
         forbidNullInBinaryOperations:
-            blacklist: [
+            blacklist!: [
                 '**', '!=', '==', '+', 'and', 'or', '&&', '||', '%', '-', '/', '*', # checked by phpstan-strict-rules
                 '>', '>=', '<', '<=', '<=>', # checked by AllowComparingOnlyComparableTypesRule
                 '===', '!==', '??' # valid with null involved
