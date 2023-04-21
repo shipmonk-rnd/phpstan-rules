@@ -24,6 +24,15 @@ class Clazz {
             true => "Bar",
         } ?? null;
 
+        $a = match ($int) {
+            0 => $a = '0',
+            1 => $b = '1',
+            default => match ($bool) {
+                false => "2",
+                true => "3",
+            },
+        };
+
         $this->use(match ($bool) {
             false => new LogicException(),
             true => new RuntimeException(),
