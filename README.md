@@ -375,7 +375,6 @@ parameters:
     shipmonkRules:
         forbidIdenticalClassComparison:
             blacklist:
-                - DateTimeInterface
                 - Brick\Money\MoneyContainer
                 - Brick\Math\BigNumber
 ```
