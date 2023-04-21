@@ -377,6 +377,7 @@ parameters:
             blacklist:
                 - Brick\Money\MoneyContainer
                 - Brick\Math\BigNumber
+                - Ramsey\Uuid\UuidInterface
 ```
 
 ### forbidMatchDefaultArmForEnums
