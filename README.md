@@ -90,7 +90,7 @@ parameters:
 Few rules are enabled, but do nothing unless configured, those are marked with `*`.
 
 When you try to configure any default array, PHPStan config is **merged by default**,
-so if you want to enforce only your values and not to include our defaults, use `!`:
+so if you want to enforce only your values and not to include our defaults, use [exclamation mark](https://doc.nette.org/en/dependency-injection/configuration#toc-merging):
 
 ```neon
 parameters:
