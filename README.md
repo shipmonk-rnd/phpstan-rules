@@ -375,12 +375,9 @@ parameters:
     shipmonkRules:
         forbidIdenticalClassComparison:
             blacklist:
-                - DateTimeInterface
-                - Brick\Money
+                - Brick\Money\MoneyContainer
                 - Brick\Math\BigNumber
-                - Brick\Math\BigInteger
-                - Brick\Math\BigDecimal
-                - Brick\Math\BigRational
+                - Ramsey\Uuid\UuidInterface
 ```
 
 ### forbidMatchDefaultArmForEnums
