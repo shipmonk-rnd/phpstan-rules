@@ -22,5 +22,5 @@ jobs:
                 name: Lint
                 uses: ChristophWurst/xmllint-action@v1
                 with:
-                    xml-file: src/ruleset.xml
+                    xml-file: phpcs.xml.dist
                     xml-schema-file: vendor/squizlabs/php_codesniffer/phpcs.xsd
