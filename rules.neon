@@ -47,6 +47,8 @@ parameters:
             enabled: true
         forbidPhpDocNullabilityMismatchWithNativeTypehint:
             enabled: true
+        forbidProtectedEnumMethod:
+            enabled: true
         forbidVariableTypeOverwriting:
             enabled: true
         forbidUnsetClassField:
@@ -134,6 +136,9 @@ parametersSchema:
         forbidPhpDocNullabilityMismatchWithNativeTypehint: structure([
             enabled: bool()
         ])
+        forbidProtectedEnumMethod: structure([
+            enabled: bool()
+        ])
         forbidVariableTypeOverwriting: structure([
             enabled: bool()
         ])
@@ -202,6 +207,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.forbidNullInInterpolatedString.enabled%
     ShipMonk\PHPStan\Rule\ForbidPhpDocNullabilityMismatchWithNativeTypehintRule:
         phpstan.rules.rule: %shipmonkRules.forbidPhpDocNullabilityMismatchWithNativeTypehint.enabled%
+    ShipMonk\PHPStan\Rule\ForbidProtectedEnumMethodRule:
+        phpstan.rules.rule: %shipmonkRules.forbidProtectedEnumMethod.enabled%
     ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule:
         phpstan.rules.rule: %shipmonkRules.forbidVariableTypeOverwriting.enabled%
     ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule:
@@ -291,6 +298,8 @@ services:
         class: ShipMonk\PHPStan\Rule\ForbidNullInInterpolatedStringRule
     -
         class: ShipMonk\PHPStan\Rule\ForbidPhpDocNullabilityMismatchWithNativeTypehintRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidProtectedEnumMethodRule
     -
         class: ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule
     -
