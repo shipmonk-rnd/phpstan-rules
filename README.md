@@ -68,6 +68,8 @@ parameters:
             enabled: true
         forbidPhpDocNullabilityMismatchWithNativeTypehint:
             enabled: true
+        forbidProtectedEnumMethod:
+            enabled: true
         forbidVariableTypeOverwriting:
             enabled: true
         forbidUnsetClassField:
@@ -464,6 +466,17 @@ public function output(?string $name) {
  * @param string $param
  */
 public function sayHello(?string $param) {} // invalid phpdoc not containing null
+```
+
+
+### forbidProtectedEnumMethod
+- Disallows protected method within enums as those are not extendable anyway
+- Ignore method declared in traits as those might be reused in regular classes
+
+```php
+enum MyEnum {
+    protected function isOpen(): bool {} // protected enum method denied
+}
 ```
 
 ### forbidVariableTypeOverwriting
