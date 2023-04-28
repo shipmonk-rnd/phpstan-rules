@@ -244,7 +244,9 @@
         <severity>5</severity><!-- turned off by PSR2 -> turning on with default severity -->
     </rule>
 
+    <rule ref="SlevomatCodingStandard.Arrays.DisallowPartiallyKeyed"/>
     <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma"/>
+    <rule ref="SlevomatCodingStandard.Classes.BackedEnumTypeSpacing"/>
     <rule ref="SlevomatCodingStandard.Classes.ModernClassNameReference">
         <exclude name="SlevomatCodingStandard.Classes.ModernClassNameReference.ClassNameReferencedViaFunctionCall"/> <!-- after bumping to PHP8 -->
     </rule>
@@ -266,6 +268,7 @@
     <rule ref="SlevomatCodingStandard.Classes.DisallowLateStaticBindingForConstants" />
     <rule ref="SlevomatCodingStandard.Classes.DisallowMultiConstantDefinition" />
     <rule ref="SlevomatCodingStandard.Classes.DisallowMultiPropertyDefinition" />
+    <rule ref="SlevomatCodingStandard.Classes.DisallowStringExpressionPropertyFetch"/>
     <rule ref="SlevomatCodingStandard.Classes.MethodSpacing" />
     <rule ref="SlevomatCodingStandard.Classes.EmptyLinesAroundClassBraces"/>
     <rule ref="SlevomatCodingStandard.Classes.TraitUseDeclaration" />
@@ -273,6 +276,7 @@
     <rule ref="SlevomatCodingStandard.Classes.RequireMultiLineMethodSignature"/>
     <rule ref="SlevomatCodingStandard.Classes.TraitUseSpacing" />
     <rule ref="SlevomatCodingStandard.Classes.DisallowConstructorPropertyPromotion" />
+    <rule ref="SlevomatCodingStandard.Commenting.AnnotationName"/>
     <rule ref="SlevomatCodingStandard.Commenting.DocCommentSpacing">
         <properties>
             <property name="linesCountBeforeFirstContent" value="0"/>
@@ -298,12 +302,29 @@
     <rule ref="SlevomatCodingStandard.ControlStructures.AssignmentInCondition"/>
     <rule ref="SlevomatCodingStandard.ControlStructures.LanguageConstructWithParentheses"/>
     <rule ref="SlevomatCodingStandard.ControlStructures.DisallowYodaComparison"/>
+    <rule ref="SlevomatCodingStandard.ControlStructures.DisallowTrailingMultiLineTernaryOperator"/>
     <rule ref="SlevomatCodingStandard.ControlStructures.NewWithParentheses"/>
     <rule ref="SlevomatCodingStandard.ControlStructures.RequireNullCoalesceOperator"/>
     <rule ref="SlevomatCodingStandard.Exceptions.DeadCatch"/>
-    <rule ref="SlevomatCodingStandard.Exceptions.RequireNonCapturingCatch"/>
+    <rule ref="SlevomatCodingStandard.Exceptions.DisallowNonCapturingCatch"/>
     <rule ref="SlevomatCodingStandard.Exceptions.ReferenceThrowableOnly"/>
     <rule ref="SlevomatCodingStandard.Functions.DisallowNamedArguments"/>
+    <rule ref="SlevomatCodingStandard.Functions.DisallowTrailingCommaInClosureUse">
+        <properties>
+            <property name="onlySingleLine" value="true"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Functions.DisallowTrailingCommaInDeclaration">
+        <properties>
+            <property name="onlySingleLine" value="true"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Functions.DisallowTrailingCommaInCall">
+        <properties>
+            <property name="onlySingleLine" value="true"/>
+        </properties>
+    </rule>
+    <rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInClosureUse"/>
     <rule ref="SlevomatCodingStandard.Functions.RequireTrailingCommaInCall"/>
     <rule ref="SlevomatCodingStandard.Functions.StaticClosure"/>
     <rule ref="SlevomatCodingStandard.Functions.UselessParameterDefaultValue"/>
@@ -353,6 +374,7 @@
     <rule ref="SlevomatCodingStandard.PHP.OptimizedFunctionsWithoutUnpacking"/>
     <rule ref="SlevomatCodingStandard.PHP.ReferenceSpacing"/>
     <rule ref="SlevomatCodingStandard.PHP.RequireNowdoc"/>
+    <rule ref="SlevomatCodingStandard.Strings.DisallowVariableParsing"/>
     <rule ref="SlevomatCodingStandard.TypeHints.DeclareStrictTypes">
         <properties>
             <property name="declareOnFirstLine" value="true"/>
@@ -394,6 +416,7 @@
     <rule ref="SlevomatCodingStandard.TypeHints.LongTypeHints"/>
     <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHintSpacing"/>
     <rule ref="SlevomatCodingStandard.TypeHints.ParameterTypeHintSpacing"/>
+    <rule ref="SlevomatCodingStandard.Variables.DisallowVariableVariable"/>
     <rule ref="SlevomatCodingStandard.Variables.DuplicateAssignmentToVariable"/>
     <rule ref="SlevomatCodingStandard.Variables.UnusedVariable">
         <properties>
