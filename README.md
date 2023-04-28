@@ -44,6 +44,8 @@ parameters:
         forbidCast:
             enabled: true
             blacklist: ['(array)', '(object)', '(unset)']
+        forbidCheckedExceptionInYieldingMethod:
+            enabled: true
         forbidCustomFunctions:
             enabled: true
             list: []
@@ -329,6 +331,21 @@ parameters:
     shipmonkRules:
         forbidCast:
             blacklist!: ['(array)', '(object)', '(unset)']
+```
+
+### forbidCheckedExceptionInYieldingMethod
+- Denies throwing [checked exception](https://phpstan.org/blog/bring-your-exceptions-under-control) within yielding methods as those exceptions are not throw upon method call, but when generator gets iterated.
+- This behaviour cannot be easily reflected within PHPStan exception analysis and may cause [false negatives](https://phpstan.org/r/d07ac0f0-a49d-4f82-b1dd-1939058bbeed).
+
+```php
+class Provider {
+    /** @throws CheckedException */
+    public static function generate(): iterable
+    {
+        yield 1;
+        throw new CheckedException(); // denied, gets thrown once iterated
+    }
+}
 ```
 
 ### forbidCustomFunctions *
