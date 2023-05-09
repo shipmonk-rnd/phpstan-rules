@@ -44,6 +44,10 @@ class ForbidCheckedExceptionInYieldingMethodRule implements Rule
         $errors = [];
 
         foreach ($node->getStatementResult()->getThrowPoints() as $throwPoint) {
+            if (!$throwPoint->isExplicit()) {
+                continue;
+            }
+
             foreach ($throwPoint->getType()->getObjectClassNames() as $exceptionClass) {
                 if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $throwPoint->getScope())) {
                     $errors[] = RuleErrorBuilder::message("Throwing checked exception $exceptionClass in yielding method is denied as it gets thrown upon Generator iteration")
