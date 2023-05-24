@@ -3,7 +3,6 @@
 namespace ForbidIdenticalClassComparisonRule;
 
 use DateTimeImmutable;
-use ShipMonk\Exception\LogicException;
 
 class DateTimeImmutableChild extends DateTimeImmutable {}
 
