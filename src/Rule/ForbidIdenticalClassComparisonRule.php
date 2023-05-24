@@ -13,6 +13,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeUtils;
 use PHPStan\Type\VerbosityLevel;
 use function count;
 
@@ -91,7 +92,9 @@ class ForbidIdenticalClassComparisonRule implements Rule
 
     private function containsClass(Type $type, string $className): bool
     {
-        foreach ($type->getReferencedClasses() as $classNameInType) {
+        $benevolentType = TypeUtils::toBenevolentUnion($type);
+
+        foreach ($benevolentType->getObjectClassNames() as $classNameInType) {
             $classInType = new ObjectType($classNameInType);
 
             if ($classInType->isInstanceOf($className)->yes()) {
