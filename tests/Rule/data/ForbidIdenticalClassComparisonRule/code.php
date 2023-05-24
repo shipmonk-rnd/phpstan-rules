@@ -3,6 +3,7 @@
 namespace ForbidIdenticalClassComparisonRule;
 
 use DateTimeImmutable;
+use ShipMonk\Exception\LogicException;
 
 class DateTimeImmutableChild extends DateTimeImmutable {}
 
@@ -23,16 +24,25 @@ class A
         }
     }
 
+    /**
+     * @param TItem|null $mixedTemplate1
+     * @param TItem|null $mixedTemplate2
+     *
+     * @template TItem
+     */
     public function testProblematicTypes(
         DateTimeImmutable $a,
         mixed $b,
         object $c,
-        callable $d
+        callable $d,
+        mixed $mixedTemplate1,
+        mixed $mixedTemplate2
     ): void
     {
         $a === $b;
         $a === $c;
         $a === $d;
+        $mixedTemplate1 === $mixedTemplate2;
     }
 
     public function testRegular(DateTimeImmutable $a, DateTimeImmutable $b): void
