@@ -11,10 +11,9 @@ use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
-use PHPStan\Type\CallableType;
-use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\ObjectWithoutClassType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeUtils;
 use PHPStan\Type\VerbosityLevel;
 use function count;
 
@@ -25,11 +24,6 @@ class ForbidIdenticalClassComparisonRule implements Rule
 {
 
     private const DEFAULT_BLACKLIST = [DateTimeInterface::class];
-    private const IGNORED_TYPES = [
-        MixedType::class, // mixed is "maybe" accepted by any (denied) class
-        ObjectWithoutClassType::class, // object is "maybe" accepted by any (denied) class
-        CallableType::class, // any non-final class descendant can have __invoke method causing it to be "maybe" accepted by any (denied) class
-    ];
 
     /**
      * @var array<int, class-string<object>>
@@ -80,26 +74,35 @@ class ForbidIdenticalClassComparisonRule implements Rule
             return []; // always-true or always-false, already reported by native PHPStan (like $a === $a)
         }
 
-        foreach (self::IGNORED_TYPES as $ignoredType) {
-            if ($leftType instanceof $ignoredType || $rightType instanceof $ignoredType) {
-                return [];
-            }
-        }
-
         $errors = [];
 
         foreach ($this->blacklist as $className) {
             $forbiddenObjectType = new ObjectType($className);
 
             if (
-                !$forbiddenObjectType->accepts($leftType, $scope->isDeclareStrictTypes())->no()
-                && !$forbiddenObjectType->accepts($rightType, $scope->isDeclareStrictTypes())->no()
+                $this->containsClass($leftType, $className)
+                && $this->containsClass($rightType, $className)
             ) {
                 $errors[] = "Using {$node->getOperatorSigil()} with {$forbiddenObjectType->describe(VerbosityLevel::typeOnly())} is denied";
             }
         }
 
         return $errors;
+    }
+
+    private function containsClass(Type $type, string $className): bool
+    {
+        $benevolentType = TypeUtils::toBenevolentUnion($type);
+
+        foreach ($benevolentType->getObjectClassNames() as $classNameInType) {
+            $classInType = new ObjectType($classNameInType);
+
+            if ($classInType->isInstanceOf($className)->yes()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

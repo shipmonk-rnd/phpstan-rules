@@ -23,16 +23,30 @@ class A
         }
     }
 
+    /**
+     * @param TItem|null $mixedTemplate1
+     * @param TItem|null $mixedTemplate2
+     * @param callable(DateTimeImmutable): void $callable1
+     * @param callable(DateTimeImmutable): void $callable2
+     *
+     * @template TItem
+     */
     public function testProblematicTypes(
         DateTimeImmutable $a,
         mixed $b,
         object $c,
-        callable $d
+        callable $d,
+        mixed $mixedTemplate1,
+        mixed $mixedTemplate2,
+        callable $callable1,
+        callable $callable2
     ): void
     {
         $a === $b;
         $a === $c;
         $a === $d;
+        $mixedTemplate1 === $mixedTemplate2;
+        $callable1 === $callable2;
     }
 
     public function testRegular(DateTimeImmutable $a, DateTimeImmutable $b): void
