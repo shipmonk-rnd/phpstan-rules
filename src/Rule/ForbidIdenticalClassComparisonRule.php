@@ -91,10 +91,10 @@ class ForbidIdenticalClassComparisonRule implements Rule
 
     private function containsClass(Type $type, string $className): bool
     {
-        foreach ($type->getReferencedClasses() as $classNameInLeftType) {
-            $classInLeftType = new ObjectType($classNameInLeftType);
+        foreach ($type->getReferencedClasses() as $classNameInType) {
+            $classInType = new ObjectType($classNameInType);
 
-            if ($classInLeftType->isInstanceOf($className)->yes()) {
+            if ($classInType->isInstanceOf($className)->yes()) {
                 return true;
             }
         }
