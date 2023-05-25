@@ -5,6 +5,7 @@ namespace ShipMonk\PHPStan\Rule;
 use Generator;
 use LogicException;
 use PhpParser\Node;
+use PhpParser\Node\Stmt\Throw_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\FunctionReturnStatementsNode;
@@ -87,8 +88,9 @@ class EnforceNativeReturnTypehintRule implements Rule
 
         $phpDocReturnType = $this->getPhpDocReturnType($node, $scope);
         $returnType = $phpDocReturnType ?? $this->getTypeOfReturnStatements($node);
+        $alwaysThrows = $this->alwaysThrowsException($node);
 
-        $typeHint = $this->getTypehintByType($returnType, $scope, $phpDocReturnType !== null, $node->getStatementResult()->isAlwaysTerminating(), true);
+        $typeHint = $this->getTypehintByType($returnType, $scope, $phpDocReturnType !== null, $alwaysThrows, true);
 
         if ($typeHint === null) {
             return [];
@@ -103,7 +105,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         Type $type,
         Scope $scope,
         bool $typeFromPhpDoc,
-        bool $alwaysTerminating,
+        bool $alwaysThrowsException,
         bool $topLevel
     ): ?string
     {
@@ -116,7 +118,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         }
 
         if ($type instanceof NeverType) {
-            if (($typeFromPhpDoc || $alwaysTerminating) && $this->phpVersion->getVersionId() >= 80_100) {
+            if (($typeFromPhpDoc || $alwaysThrowsException) && $this->phpVersion->getVersionId() >= 80_100) {
                 return 'never';
             }
 
@@ -166,10 +168,10 @@ class EnforceNativeReturnTypehintRule implements Rule
             $typeHint = 'callable';
         } elseif ((new IterableType(new MixedType(), new MixedType()))->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = 'iterable';
-        } elseif ($this->getUnionTypehint($type, $scope, $typeFromPhpDoc, $alwaysTerminating) !== null) {
-            return $this->getUnionTypehint($type, $scope, $typeFromPhpDoc, $alwaysTerminating);
-        } elseif ($this->getIntersectionTypehint($type, $scope, $typeFromPhpDoc, $alwaysTerminating) !== null) {
-            return $this->getIntersectionTypehint($type, $scope, $typeFromPhpDoc, $alwaysTerminating);
+        } elseif ($this->getUnionTypehint($type, $scope, $typeFromPhpDoc, $alwaysThrowsException) !== null) {
+            return $this->getUnionTypehint($type, $scope, $typeFromPhpDoc, $alwaysThrowsException);
+        } elseif ($this->getIntersectionTypehint($type, $scope, $typeFromPhpDoc, $alwaysThrowsException) !== null) {
+            return $this->getIntersectionTypehint($type, $scope, $typeFromPhpDoc, $alwaysThrowsException);
         } elseif ((new ObjectWithoutClassType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = 'object';
         }
@@ -254,7 +256,12 @@ class EnforceNativeReturnTypehintRule implements Rule
         return $scope->getClassReflection()->getName();
     }
 
-    private function getUnionTypehint(Type $type, Scope $scope, bool $typeFromPhpDoc, bool $alwaysTerminating): ?string
+    private function getUnionTypehint(
+        Type $type,
+        Scope $scope,
+        bool $typeFromPhpDoc,
+        bool $alwaysThrowsException
+    ): ?string
     {
         if (!$type instanceof UnionType) {
             return null;
@@ -277,7 +284,7 @@ class EnforceNativeReturnTypehintRule implements Rule
                 $wrap = true;
             }
 
-            $subtypeHint = $this->getTypehintByType($subtype, $scope, $typeFromPhpDoc, $alwaysTerminating, false);
+            $subtypeHint = $this->getTypehintByType($subtype, $scope, $typeFromPhpDoc, $alwaysThrowsException, false);
 
             if ($subtypeHint === null) {
                 return null;
@@ -297,7 +304,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         Type $type,
         Scope $scope,
         bool $typeFromPhpDoc,
-        bool $alwaysTerminating
+        bool $alwaysThrowsException
     ): ?string
     {
         if (!$type instanceof IntersectionType) { // @phpstan-ignore-line ignore instanceof intersection
@@ -321,7 +328,7 @@ class EnforceNativeReturnTypehintRule implements Rule
                 $wrap = true;
             }
 
-            $subtypeHint = $this->getTypehintByType($subtype, $scope, $typeFromPhpDoc, $alwaysTerminating, false);
+            $subtypeHint = $this->getTypehintByType($subtype, $scope, $typeFromPhpDoc, $alwaysThrowsException, false);
 
             if ($subtypeHint === null) {
                 return null;
@@ -335,6 +342,19 @@ class EnforceNativeReturnTypehintRule implements Rule
         }
 
         return implode('&', $typehintParts);
+    }
+
+    private function alwaysThrowsException(ReturnStatementsNode $node): bool
+    {
+        $exitPoints = $node->getStatementResult()->getExitPoints();
+
+        foreach ($exitPoints as $exitPoint) {
+            if (!$exitPoint->getStatement() instanceof Throw_) {
+                return false;
+            }
+        }
+
+        return $exitPoints !== [];
     }
 
 }
