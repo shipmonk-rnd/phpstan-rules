@@ -35,7 +35,7 @@ class ForbidProtectedEnumMethodRule implements Rule
         foreach ($node->getMethods() as $classMethod) {
             if (
                 $classMethod->isProtected()
-                && !$classMethod->isDeclaredInTrait() // @phpstan-ignore-line ignore BC promise
+                && !$classMethod->isDeclaredInTrait()
             ) {
                 $errors[] = RuleErrorBuilder::message('Protected methods within enum makes no sense as you cannot extend them anyway.')
                     ->line($classMethod->getLine())
