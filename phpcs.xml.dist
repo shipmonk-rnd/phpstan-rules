@@ -244,6 +244,7 @@
         <severity>5</severity><!-- turned off by PSR2 -> turning on with default severity -->
     </rule>
 
+    <rule ref="SlevomatCodingStandard.Arrays.ArrayAccess"/>
     <rule ref="SlevomatCodingStandard.Arrays.DisallowPartiallyKeyed"/>
     <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma"/>
     <rule ref="SlevomatCodingStandard.Classes.BackedEnumTypeSpacing"/>
