@@ -3,7 +3,6 @@
 namespace ShipMonk\PHPStan\Rule;
 
 use Generator;
-use Grpc\Call;
 use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Function_;
@@ -19,6 +18,7 @@ use PHPStan\Rules\Rule;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\CallableType;
+use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
@@ -29,18 +29,17 @@ use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ObjectWithoutClassType;
-use PHPStan\Type\StaticType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\UnionType;
-use PHPStan\Type\VerbosityLevel;
 use PHPStan\Type\VoidType;
-use function _PHPStan_532094bc1\RingCentral\Psr7\str;
-use function count;
 use ReflectionClass;
-use function implode;
+use function count;
 use function in_array;
+use function str_replace;
+use function strlen;
+use function substr;
 
 /**
  * @implements Rule<ReturnStatementsNode>
@@ -113,11 +112,19 @@ class EnforceNativeReturnTypehintRule implements Rule
         }
 
         if ($this->enforceNarrowestTypehint) {
+            $actualReturnType = $this->getTypeOfReturnStatements($node);
             $nativeReturnType = $this->getNativeReturnTypehint($node, $scope);
+
+            $typeHintFromActualReturns = $this->getTypehintByType($actualReturnType, $scope, $phpDocReturnType !== null, $alwaysThrows, true);
             $typeHintFromNativeTypehint = $this->getTypehintByType($nativeReturnType, $scope, $phpDocReturnType !== null, $alwaysThrows, true);
 
-            if ($typeHintFromNativeTypehint !== null && $typeHintFromNativeTypehint->isSuperTypeOf($typeHint)->yes() && !$typeHintFromNativeTypehint->equals($typeHint)) {
-                return ["Native return typehint is {$this->toTypehint($typeHintFromNativeTypehint)}, but can be narrowed to {$this->toTypehint($typeHint)}"];
+            if (
+                $typeHintFromActualReturns !== null
+                && $typeHintFromNativeTypehint !== null
+                && $typeHintFromNativeTypehint->isSuperTypeOf($typeHintFromActualReturns)->yes()
+                && !$typeHintFromNativeTypehint->equals($typeHintFromActualReturns)
+            ) {
+                return ["Native return typehint is {$this->toTypehint($typeHintFromNativeTypehint)}, but can be narrowed to {$this->toTypehint($typeHintFromActualReturns)}"];
             }
         }
 
@@ -160,41 +167,43 @@ class EnforceNativeReturnTypehintRule implements Rule
         $typeHint = null;
 
         if ((new BooleanType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
-            if (($typeWithoutNull->isTrue()->yes() || $typeWithoutNull->isFalse()->yes()) && $this->phpVersion->getVersionId() >= 80_200) {
-                $typeHint = $typeWithoutNull->describe(VerbosityLevel::typeOnly());
+            $supportsStandaloneTrue = $this->phpVersion->getVersionId() >= 80_200;
+
+            if ($supportsStandaloneTrue && $typeWithoutNull->isTrue()) {
+                $typeHint = new ConstantBooleanType(true);
+            } elseif ($supportsStandaloneTrue && $typeWithoutNull->isFalse()) {
+                $typeHint = new ConstantBooleanType(false);
             } else {
                 $typeHint = new BooleanType();
             }
         } elseif ((new IntegerType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = new IntegerType();
+
         } elseif ((new FloatType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = new FloatType();
+
         } elseif ((new ArrayType(new MixedType(), new MixedType()))->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = new ArrayType(new MixedType(), new MixedType());
+
         } elseif ((new StringType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = new StringType();
-        } elseif ($typeWithoutNull instanceof StaticType) {
-            if ($this->phpVersion->getVersionId() < 80_000) {
-                $typeHint = new StaticType($typeWithoutNull->getClassReflection()); // TODO self
-            } else {
-                $typeHint = new StaticType($typeWithoutNull->getClassReflection()); // TODO static
-            }
+
         } elseif (count($typeWithoutNull->getObjectClassNames()) === 1) {
             $className = $typeWithoutNull->getObjectClassNames()[0];
+            $typeHint = new ObjectType('\\' . $className);
 
-            if ($className === $this->getClassName($scope)) {
-                $typeHint = new ObjectType('\\' . $className); // TODO self
-            } else {
-                $typeHint = new ObjectType('\\' . $className);
-            }
         } elseif ((new CallableType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = new CallableType();
+
         } elseif ((new IterableType(new MixedType(), new MixedType()))->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = new IterableType(new MixedType(), new MixedType());
+
         } elseif ($this->getUnionTypehint($type, $scope, $typeFromPhpDoc, $alwaysThrowsException) !== null) {
             return $this->getUnionTypehint($type, $scope, $typeFromPhpDoc, $alwaysThrowsException);
+
         } elseif ($this->getIntersectionTypehint($type, $scope, $typeFromPhpDoc, $alwaysThrowsException) !== null) {
             return $this->getIntersectionTypehint($type, $scope, $typeFromPhpDoc, $alwaysThrowsException);
+
         } elseif ((new ObjectWithoutClassType())->accepts($typeWithoutNull, $scope->isDeclareStrictTypes())->yes()) {
             $typeHint = new ObjectWithoutClassType();
         }
@@ -328,14 +337,10 @@ class EnforceNativeReturnTypehintRule implements Rule
         $typehintParts = [];
 
         foreach ($type->getTypes() as $subtype) {
-            $wrap = false;
-
             if ($subtype instanceof IntersectionType) { // @phpstan-ignore-line ignore instanceof intersection
                 if ($this->phpVersion->getVersionId() < 80_200) { // DNF
                     return null;
                 }
-
-                $wrap = true;
             }
 
             $subtypeHint = $this->getTypehintByType($subtype, $scope, $typeFromPhpDoc, $alwaysThrowsException, false);
@@ -351,7 +356,7 @@ class EnforceNativeReturnTypehintRule implements Rule
             $typehintParts[] = $subtypeHint;
         }
 
-        return new UnionType($typehintParts);
+        return TypeCombinator::union(...$typehintParts);
     }
 
     private function getIntersectionTypehint(
@@ -372,14 +377,10 @@ class EnforceNativeReturnTypehintRule implements Rule
         $typehintParts = [];
 
         foreach ($type->getTypes() as $subtype) {
-            $wrap = false;
-
             if ($subtype instanceof UnionType) {
                 if ($this->phpVersion->getVersionId() < 80_200) { // DNF
                     return null;
                 }
-
-                $wrap = true;
             }
 
             $subtypeHint = $this->getTypehintByType($subtype, $scope, $typeFromPhpDoc, $alwaysThrowsException, false);
@@ -395,20 +396,22 @@ class EnforceNativeReturnTypehintRule implements Rule
             $typehintParts[] = $subtypeHint;
         }
 
-        return new IntersectionType($typehintParts);
+        return TypeCombinator::intersect(...$typehintParts);
     }
 
     private function alwaysThrowsException(ReturnStatementsNode $node): bool
     {
-        $exitPoints = $node->getStatementResult()->getExitPoints();
+        if (count($node->getReturnStatements()) > 0) {
+            return false;
+        }
 
-        foreach ($exitPoints as $exitPoint) {
-            if (!$exitPoint->getStatement() instanceof Throw_) {
+        foreach ($node->getExecutionEnds() as $executionEnd) {
+            if (!$executionEnd->getNode() instanceof Throw_) {
                 return false;
             }
         }
 
-        return $exitPoints !== [];
+        return $node->getExecutionEnds() !== [];
     }
 
     private function toTypehint(Type $type): string

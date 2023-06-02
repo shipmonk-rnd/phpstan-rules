@@ -15,13 +15,19 @@ class CallableObject {
 class DeductFromPhpDocs {
 
     /** @return list<string> */
-    public function doNotReportWithTypehint1(): array {}
+    public function doNotReportWithTypehint1(): array {
+        return [];
+    }
 
     /** @return int */
-    public function doNotReportWithTypehint2(): int {}
+    public function doNotReportWithTypehint2(): int {
+        return 1;
+    }
 
     /** @return mixed */
-    public function doNotReportWithTypehint3(): mixed {}
+    public function doNotReportWithTypehint3($a): mixed {
+        return $a;
+    }
 
     /** @return list<string> */
     public function requireArray() {} // error: Missing native return typehint array
@@ -48,13 +54,13 @@ class DeductFromPhpDocs {
     public function requireCallable() {} // error: Missing native return typehint callable
 
     /** @return string|int */
-    public function requireUnionOfScalars() {} // error: Missing native return typehint string|int
+    public function requireUnionOfScalars() {} // error: Missing native return typehint int|string
 
     /** @return string|int|null */
-    public function requireUnionOfScalarsWithNull() {} // error: Missing native return typehint string|int|null
+    public function requireUnionOfScalarsWithNull() {} // error: Missing native return typehint int|string|null
 
     /** @return I&J&A */
-    public function requireIntersection() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\I&\EnforceNativeReturnTypehintRule81\J&\EnforceNativeReturnTypehintRule81\A
+    public function requireIntersection() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\A&\EnforceNativeReturnTypehintRule81\I&\EnforceNativeReturnTypehintRule81\J
 
     /** @return A|B|int */
     public function requireMixedUnion1() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\A|\EnforceNativeReturnTypehintRule81\B|int
@@ -102,13 +108,13 @@ class DeductFromPhpDocs {
     public function requireDnfWithScalarIncluded() {}
 
     /** @return static */
-    public function returnStatic() {} // error: Missing native return typehint static
+    public function returnStatic() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\DeductFromPhpDocs
 
     /** @return $this */
-    public function returnStatic2() {} // error: Missing native return typehint static
+    public function returnStatic2() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\DeductFromPhpDocs
 
     /** @return self */
-    public function returnSelf() {} // error: Missing native return typehint self
+    public function returnSelf() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\DeductFromPhpDocs
 
     /** @return \Traversable */
     public function returnTraversable() {} // error: Missing native return typehint \Traversable
@@ -143,7 +149,7 @@ class DeductFromReturnStatements {
 
     }
 
-    public function requireUnionOfScalars(bool $bool) // error: Missing native return typehint string|int
+    public function requireUnionOfScalars(bool $bool) // error: Missing native return typehint int|string
     {
         if ($bool) {
             return '';
@@ -165,12 +171,29 @@ class DeductFromReturnStatements {
         throw new \LogicException();
     }
 
-    public function returnNewSelf() // error: Missing native return typehint self
+
+    public function notRequireNever(bool $decide) // error: Missing native return typehint void
+    {
+        if ($decide) {
+            return;
+        }
+
+        throw new \LogicException();
+    }
+
+    public function notRequireNever2(bool $decide) // error: Missing native return typehint void
+    {
+        if ($decide) {
+            throw new \LogicException();
+        }
+    }
+
+    public function returnNewSelf() // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\DeductFromReturnStatements
     {
         return new self;
     }
 
-    public function returnThis() // error: Missing native return typehint static
+    public function returnThis() // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\DeductFromReturnStatements
     {
         return $this;
     }
@@ -213,7 +236,7 @@ class DeductFromReturnStatements {
 
     public function testClosureWithoutReturn(): \Closure
     {
-        function () { // error: Missing native return typehint static
+        function () { // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\DeductFromReturnStatements
             return $this;
         };
 
@@ -253,20 +276,14 @@ class EnforceNarrowerTypehint {
         return new \LogicException();
     }
 
-    /**
-     * @return \LogicException|\RuntimeException
-     */
     public function requireUnion(): object // error: Native return typehint is object, but can be narrowed to \LogicException|\RuntimeException
     {
-
+        return rand(0, 1) ? new \LogicException : new \RuntimeException;
     }
 
-    /**
-     * @return \LogicException|\RuntimeException
-     */
     public function requireUnion2(): \Throwable // error: Native return typehint is \Throwable, but can be narrowed to \LogicException|\RuntimeException
     {
-
+        return rand(0, 1) ? new \LogicException : new \RuntimeException;
     }
 
     public function requireNever(): void // error: Native return typehint is void, but can be narrowed to never
@@ -274,7 +291,28 @@ class EnforceNarrowerTypehint {
         throw new \LogicException();
     }
 
-    public function returnThis(): self // error: Native return typehint is self, but can be narrowed to static
+    /**
+     * @return mixed[]
+     */
+    public static function ignorePhpDocWhenNarrowing(): iterable // error: Native return typehint is iterable, but can be narrowed to \Generator
+    {
+        yield 1 => 1;
+    }
+
+    public function returnArrayFalse(int $page): array|bool
+    {
+        if ($page === 1) {
+            return [1, 2, 3, 4];
+        }
+
+        if ($page === 2) {
+            return [5, 6];
+        }
+
+        return false;
+    }
+
+    public function returnThis(): self
     {
         return $this;
     }
