@@ -104,6 +104,8 @@ parameters:
             blacklist!: ['(unset)'] # force the blacklist to be only (unset)
 ```
 
+## Rules:
+
 ### allowComparingOnlyComparableTypes
 - Denies using comparison operators `>,<,<=,>=,<=>` over anything other than `int|string|float|DateTimeInterface`. Null is not allowed.
 - Mixing different types in those operators is also forbidden, only exception is comparing floats with integers
