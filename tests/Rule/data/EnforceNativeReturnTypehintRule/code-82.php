@@ -176,6 +176,13 @@ class DeductFromReturnStatements {
         throw new \LogicException();
     }
 
+    public function notRequireNever2(bool $decide) // error: Missing native return typehint void
+    {
+        if ($decide) {
+            throw new \LogicException();
+        }
+    }
+
     public function returnNewSelf() // error: Missing native return typehint self
     {
         return new self;

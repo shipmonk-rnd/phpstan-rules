@@ -15,16 +15,19 @@ class CallableObject {
 class DeductFromPhpDocs {
 
     /** @return list<string> */
-    public function doNotReportWithTypehint1(): array {}
+    public function doNotReportWithTypehint1(): array {
+        return [];
+    }
 
     /** @return int */
-    public function doNotReportWithTypehint2(): never {}
+    public function doNotReportWithTypehint2(): int {
+        return 1;
+    }
 
-    /** @return int */
-    public function doNotReportWithTypehint3(): mixed {}
-
-    /** @return float */
-    public function doNotReportWithTypehint4(): int {}
+    /** @return mixed */
+    public function doNotReportWithTypehint3($a): mixed {
+        return $a;
+    }
 
     /** @return list<string> */
     public function requireArray() {} // error: Missing native return typehint array
@@ -51,13 +54,13 @@ class DeductFromPhpDocs {
     public function requireCallable() {} // error: Missing native return typehint callable
 
     /** @return string|int */
-    public function requireUnionOfScalars() {} // error: Missing native return typehint string|int
+    public function requireUnionOfScalars() {} // error: Missing native return typehint int|string
 
     /** @return string|int|null */
-    public function requireUnionOfScalarsWithNull() {} // error: Missing native return typehint string|int|null
+    public function requireUnionOfScalarsWithNull() {} // error: Missing native return typehint int|string|null
 
     /** @return I&J&A */
-    public function requireIntersection() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\I&\EnforceNativeReturnTypehintRule81\J&\EnforceNativeReturnTypehintRule81\A
+    public function requireIntersection() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\A&\EnforceNativeReturnTypehintRule81\I&\EnforceNativeReturnTypehintRule81\J
 
     /** @return A|B|int */
     public function requireMixedUnion1() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\A|\EnforceNativeReturnTypehintRule81\B|int
@@ -84,7 +87,7 @@ class DeductFromPhpDocs {
     public function requireVoid() {} // error: Missing native return typehint void
 
     /** @return null */
-    public function requireNullVoid() {}
+    public function requireNull() {}
 
     /** @return never */
     public function requireNever() {} // error: Missing native return typehint never
@@ -105,13 +108,13 @@ class DeductFromPhpDocs {
     public function requireDnfWithScalarIncluded() {}
 
     /** @return static */
-    public function returnStatic() {} // error: Missing native return typehint static
+    public function returnStatic() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\DeductFromPhpDocs
 
     /** @return $this */
-    public function returnStatic2() {} // error: Missing native return typehint static
+    public function returnStatic2() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\DeductFromPhpDocs
 
     /** @return self */
-    public function returnSelf() {} // error: Missing native return typehint self
+    public function returnSelf() {} // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\DeductFromPhpDocs
 
     /** @return \Traversable */
     public function returnTraversable() {} // error: Missing native return typehint \Traversable
@@ -146,7 +149,7 @@ class DeductFromReturnStatements {
 
     }
 
-    public function requireUnionOfScalars(bool $bool) // error: Missing native return typehint string|int
+    public function requireUnionOfScalars(bool $bool) // error: Missing native return typehint int|string
     {
         if ($bool) {
             return '';
@@ -168,12 +171,29 @@ class DeductFromReturnStatements {
         throw new \LogicException();
     }
 
-    public function returnNewSelf() // error: Missing native return typehint self
+
+    public function notRequireNever(bool $decide) // error: Missing native return typehint void
+    {
+        if ($decide) {
+            return;
+        }
+
+        throw new \LogicException();
+    }
+
+    public function notRequireNever2(bool $decide) // error: Missing native return typehint void
+    {
+        if ($decide) {
+            throw new \LogicException();
+        }
+    }
+
+    public function returnNewSelf() // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\DeductFromReturnStatements
     {
         return new self;
     }
 
-    public function returnThis() // error: Missing native return typehint static
+    public function returnThis() // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\DeductFromReturnStatements
     {
         return $this;
     }
@@ -216,13 +236,101 @@ class DeductFromReturnStatements {
 
     public function testClosureWithoutReturn(): \Closure
     {
-        function () { // error: Missing native return typehint static
+        function () { // error: Missing native return typehint \EnforceNativeReturnTypehintRule81\DeductFromReturnStatements
             return $this;
         };
 
         return function () { // error: Missing native return typehint int
             return 1;
         };
+    }
+
+}
+
+class EnforceNarrowerTypehint {
+
+    public function requireIterableObject(): iterable // error: Native return typehint is iterable, but can be narrowed to \ArrayObject
+    {
+        return new \ArrayObject();
+    }
+
+    public function requireCallableObject(): callable // error: Native return typehint is callable, but can be narrowed to \EnforceNativeReturnTypehintRule81\CallableObject
+    {
+        return new CallableObject();
+    }
+
+    public function requireString(): mixed // error: Native return typehint is mixed, but can be narrowed to string
+    {
+        return self::class;
+    }
+
+    public function requireClosure(): callable // error: Native return typehint is callable, but can be narrowed to \Closure
+    {
+        return function (): int {
+            return 1;
+        };
+    }
+
+    public function requireChild(): \Throwable // error: Native return typehint is \Throwable, but can be narrowed to \LogicException
+    {
+        return new \LogicException();
+    }
+
+    public function requireUnion(): object // error: Native return typehint is object, but can be narrowed to \LogicException|\RuntimeException
+    {
+        return rand(0, 1) ? new \LogicException : new \RuntimeException;
+    }
+
+    public function requireUnion2(): \Throwable // error: Native return typehint is \Throwable, but can be narrowed to \LogicException|\RuntimeException
+    {
+        return rand(0, 1) ? new \LogicException : new \RuntimeException;
+    }
+
+    public function requireNever(): void // error: Native return typehint is void, but can be narrowed to never
+    {
+        throw new \LogicException();
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function ignorePhpDocWhenNarrowing(): iterable // error: Native return typehint is iterable, but can be narrowed to \Generator
+    {
+        yield 1 => 1;
+    }
+
+    public function returnArrayFalse(int $page): array|bool
+    {
+        if ($page === 1) {
+            return [1, 2, 3, 4];
+        }
+
+        if ($page === 2) {
+            return [5, 6];
+        }
+
+        return false;
+    }
+
+    public function returnThis(): self
+    {
+        return $this;
+    }
+
+
+    public function requireNullableString2(?string $out): mixed // error: Native return typehint is mixed, but can be narrowed to ?string
+    {
+        return $out;
+    }
+
+    public function dontRequireMixed(mixed $out): string
+    {
+        return $out;
+    }
+
+    public function dontRequireWiderType(mixed $out): string
+    {
+        return $out;
     }
 
 }
