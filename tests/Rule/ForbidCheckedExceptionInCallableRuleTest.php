@@ -45,7 +45,7 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
     public function testImplicit(): void
     {
         $this->checkedExceptions = [];
-        $this->analyseFile(__DIR__ . '/data/ForbidCheckedExceptionInCallableRule/code.php', ['implicit']);
+        $this->analyseFile(__DIR__ . '/data/ForbidCheckedExceptionInCallableRule/code.php');
     }
 
     public function testExplicit(): void
