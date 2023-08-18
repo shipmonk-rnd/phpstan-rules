@@ -1,0 +1,13 @@
+services:
+    -
+        class: ShipMonk\PHPStan\Visitor\ImmediatelyCalledCallableVisitor
+        arguments:
+            immediatelyCalledCallables:
+                'array_map': 0
+                'ForbidCheckedExceptionInCallableRule\ClosureTest::immediateThrow': 0
+                'ForbidCheckedExceptionInCallableRule\FirstClassCallableTest::immediateThrow': 0
+            allowedCheckedExceptionCallables:
+                'ForbidCheckedExceptionInCallableRule\ClosureTest::allowThrow': [0]
+                'ForbidCheckedExceptionInCallableRule\FirstClassCallableTest::allowThrow': [0]
+        tags:
+            - phpstan.parser.richParserNodeVisitor

@@ -23,6 +23,28 @@ parameters:
         forbidCast:
             enabled: true
             blacklist: ['(array)', '(object)', '(unset)']
+        forbidCheckedExceptionInCallable:
+            enabled: true
+            immediatelyCalledCallables:
+                array_reduce: 1
+                array_intersect_ukey: 2
+                array_uintersect: 2
+                array_uintersect_assoc: 2
+                array_intersect_uassoc: 2
+                array_uintersect_uassoc: [2, 3]
+                array_diff_ukey: 2
+                array_udiff: 2
+                array_udiff_assoc: 2
+                array_diff_uassoc: 2
+                array_udiff_uassoc: [2, 3]
+                array_filter: 1
+                array_map: 0
+                array_walk_recursive: 1
+                array_walk: 1
+                uasort: 1
+                uksort: 1
+                usort: 1
+            allowedCheckedExceptionCallables: []
         forbidCheckedExceptionInYieldingMethod:
             enabled: true
         forbidCustomFunctions:
@@ -103,6 +125,11 @@ parametersSchema:
         forbidCast: structure([
             enabled: bool()
             blacklist: arrayOf(string())
+        ])
+        forbidCheckedExceptionInCallable: structure([
+            enabled: bool()
+            immediatelyCalledCallables: arrayOf(anyOf(listOf(int()), int()), string())
+            allowedCheckedExceptionCallables: arrayOf(anyOf(listOf(int()), int()), string())
         ])
         forbidCheckedExceptionInYieldingMethod: structure([
             enabled: bool()
@@ -192,6 +219,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.forbidAssignmentNotMatchingVarDoc.enabled%
     ShipMonk\PHPStan\Rule\ForbidCastRule:
         phpstan.rules.rule: %shipmonkRules.forbidCast.enabled%
+    ShipMonk\PHPStan\Rule\ForbidCheckedExceptionInCallableRule:
+        phpstan.rules.rule: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
     ShipMonk\PHPStan\Rule\ForbidCheckedExceptionInYieldingMethodRule:
         phpstan.rules.rule: %shipmonkRules.forbidCheckedExceptionInYieldingMethod.enabled%
     ShipMonk\PHPStan\Rule\ForbidCustomFunctionsRule:
@@ -235,6 +264,8 @@ conditionalTags:
     ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule:
         phpstan.rules.rule: %shipmonkRules.uselessPrivatePropertyNullability.enabled%
 
+    ShipMonk\PHPStan\Visitor\ImmediatelyCalledCallableVisitor:
+        phpstan.parser.richParserNodeVisitor: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
     ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.allowNamedArgumentOnlyInAttributes.enabled%
     ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor:
@@ -245,6 +276,12 @@ conditionalTags:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.uselessPrivatePropertyDefaultValue.enabled%
     ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.uselessPrivatePropertyNullability.enabled%
+
+# TODO uncomment after https://github.com/phpstan/phpstan-src/pull/2574
+#    ShipMonk\PHPStan\Extension\ImmediatelyCalledCallableThrowTypeExtension:
+#        phpstan.dynamicFunctionThrowTypeExtension: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
+#        phpstan.dynamicMethodThrowTypeExtension: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
+#        phpstan.dynamicStaticMethodThrowTypeExtension: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
 
 services:
     -
@@ -273,6 +310,11 @@ services:
             allowNarrowing: %shipmonkRules.forbidAssignmentNotMatchingVarDoc.allowNarrowing%
     -
         class: ShipMonk\PHPStan\Rule\ForbidCastRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidCheckedExceptionInCallableRule
+        arguments:
+            immediatelyCalledCallables: %shipmonkRules.forbidCheckedExceptionInCallable.immediatelyCalledCallables%
+            allowedCheckedExceptionCallables: %shipmonkRules.forbidCheckedExceptionInCallable.allowedCheckedExceptionCallables%
     -
         class: ShipMonk\PHPStan\Rule\ForbidCheckedExceptionInYieldingMethodRule
     -
@@ -330,7 +372,11 @@ services:
         class: ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule
         arguments:
             reportEvenIfExceptionIsNotAcceptableByRethrownOne: %shipmonkRules.requirePreviousExceptionPass.reportEvenIfExceptionIsNotAcceptableByRethrownOne%
-
+    -
+        class: ShipMonk\PHPStan\Visitor\ImmediatelyCalledCallableVisitor
+        arguments:
+                    immediatelyCalledCallables: %shipmonkRules.forbidCheckedExceptionInCallable.immediatelyCalledCallables%
+                    allowedCheckedExceptionCallables: %shipmonkRules.forbidCheckedExceptionInCallable.allowedCheckedExceptionCallables%
     -
         class: ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor
     -
@@ -341,3 +387,13 @@ services:
         class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
     -
         class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
+
+
+    -
+        class: ShipMonk\PHPStan\Extension\ImmediatelyCalledCallableThrowTypeExtension
+        arguments:
+            immediatelyCalledCallables: %shipmonkRules.forbidCheckedExceptionInCallable.immediatelyCalledCallables%
+        tags: # TODO remove after https://github.com/phpstan/phpstan-src/pull/2574
+            - phpstan.dynamicFunctionThrowTypeExtension
+            - phpstan.dynamicMethodThrowTypeExtension
+            - phpstan.dynamicStaticMethodThrowTypeExtension

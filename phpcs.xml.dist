@@ -18,7 +18,7 @@
     <file>src/</file>
     <file>tests/</file>
 
-    <exclude-pattern>tests/Rule/data/*</exclude-pattern>
+    <exclude-pattern>tests/*/data/*</exclude-pattern>
 
     <config name="installed_paths" value="../../slevomat/coding-standard"/>
 
@@ -404,6 +404,8 @@
                 Doctrine\Common\Collections\Collection
             "/>
         </properties>
+        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification"/><!-- this has problems with vendor libs, PHPStan checks this much more reliably -->
+        <exclude name="SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint"/><!-- this has problems with vendor libs, PHPStan checks this much more reliably -->
     </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint">
         <properties>
