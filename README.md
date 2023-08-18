@@ -1,6 +1,6 @@
 # ShipMonk PHPStan rules
 About **30 super-strict rules** we found useful in ShipMonk.
-We tend to have PHPStan set up as strict as possible (bleedingEdge, strict-rules, checkUninitializedProperties, ...), but that still was not strict enough for us.
+We tend to have PHPStan set up as strict as possible ([bleedingEdge](https://phpstan.org/blog/what-is-bleeding-edge), [strict-rules](https://github.com/phpstan/phpstan-strict-rules), [checkUninitializedProperties](https://phpstan.org/config-reference#checkuninitializedproperties), ...), but that still was not strict enough for us.
 This set of rules should fill the missing gaps we found.
 
 If you find some rules opinionated, you can easily disable them.
@@ -362,7 +362,7 @@ parameters:
 - It allows configuration of functions/methods, where the callable is called immediately, those cases are allowed and are also added to [dynamic throw type extension](https://phpstan.org/developing-extensions/dynamic-throw-type-extensions) which causes those exceptions to be tracked properly in your codebase (!)
   - By default, native functions like `array_map` are present (see above). So it is recommended not to overwrite the defaults here.
 - It allows configuration of functions/methods, where the callable is handling all thrown exceptions and it is safe to throw anything from there; this basically makes such calls ignored by this rule
-- It ignores implicit throws, so it most make sense with `implicitThrows: false` configuration
+- It ignores [implicitly thrown Throwable](https://phpstan.org/blog/bring-your-exceptions-under-control#what-does-absent-%40throws-above-a-function-mean%3F), so it most make sense with `implicitThrows: false` configuration
 
 ```neon
 parameters:
@@ -377,17 +377,19 @@ parameters:
 ```
 
 - Make sure you have enabled [checked exception](https://phpstan.org/blog/bring-your-exceptions-under-control), otherwise, this rule does nothing. We recommend using following config:
+  - Also, [bleedingEdge](https://phpstan.org/blog/what-is-bleeding-edge) enables proper analysis of dead types in multi-catch, so we recommend enabling even that
 
 ```neon
 parameters:
     exceptions:
         check:
             missingCheckedExceptionInThrows: true # enforce checked exceptions to be stated in @throws
-            tooWideThrowType: true # report invalid @throws (exceptions that are not thrown there)
+            tooWideThrowType: true # report invalid @throws (exceptions that are not actually thrown in annotated method)
         implicitThrows: false # no @throws means nothing is thrown (otherwise Throwable is thrown)
         checkedExceptionClasses:
             - YourApp\TopLevelRuntimeException # track only your exceptions (children of some, typically RuntimeException)
 ```
+
 
 ```php
 class UserEditFacade
