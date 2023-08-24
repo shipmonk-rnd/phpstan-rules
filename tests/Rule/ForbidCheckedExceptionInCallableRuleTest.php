@@ -41,7 +41,7 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
                 [],
                 [],
                 [],
-                $this->checkedExceptions,
+                $this->checkedExceptions, // everything is checked when no config is provided
             ),
             $visitorConfig['services'][0]['arguments']['immediatelyCalledCallables'], // @phpstan-ignore-line ignore mixed access
             $visitorConfig['services'][0]['arguments']['allowedCheckedExceptionCallables'], // @phpstan-ignore-line ignore mixed access
