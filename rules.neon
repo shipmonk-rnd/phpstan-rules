@@ -277,11 +277,10 @@ conditionalTags:
     ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.uselessPrivatePropertyNullability.enabled%
 
-# TODO uncomment after https://github.com/phpstan/phpstan-src/pull/2574
-#    ShipMonk\PHPStan\Extension\ImmediatelyCalledCallableThrowTypeExtension:
-#        phpstan.dynamicFunctionThrowTypeExtension: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
-#        phpstan.dynamicMethodThrowTypeExtension: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
-#        phpstan.dynamicStaticMethodThrowTypeExtension: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
+    ShipMonk\PHPStan\Extension\ImmediatelyCalledCallableThrowTypeExtension:
+        phpstan.dynamicFunctionThrowTypeExtension: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
+        phpstan.dynamicMethodThrowTypeExtension: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
+        phpstan.dynamicStaticMethodThrowTypeExtension: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
 
 services:
     -
@@ -388,12 +387,7 @@ services:
     -
         class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
 
-
     -
         class: ShipMonk\PHPStan\Extension\ImmediatelyCalledCallableThrowTypeExtension
         arguments:
             immediatelyCalledCallables: %shipmonkRules.forbidCheckedExceptionInCallable.immediatelyCalledCallables%
-        tags: # TODO remove after https://github.com/phpstan/phpstan-src/pull/2574
-            - phpstan.dynamicFunctionThrowTypeExtension
-            - phpstan.dynamicMethodThrowTypeExtension
-            - phpstan.dynamicStaticMethodThrowTypeExtension
