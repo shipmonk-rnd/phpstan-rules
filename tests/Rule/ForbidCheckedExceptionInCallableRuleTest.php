@@ -15,6 +15,8 @@ use ShipMonk\PHPStan\RuleTestCase;
 class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
 {
 
+    private static ?bool $implicitThrows = null;
+
     /**
      * @var list<string>|null
      */
@@ -24,6 +26,10 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
     {
         if ($this->checkedExceptions === null) {
             throw new LogicException('Missing checkedExceptions');
+        }
+
+        if (self::$implicitThrows === null) {
+            throw new LogicException('Missing implicitThrows');
         }
 
         $visitorConfig = Neon::decodeFile(self::getVisitorConfigFilePath());
@@ -42,16 +48,27 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
         );
     }
 
-    public function testImplicit(): void
+    /**
+     * @param list<string> $checkedExceptions
+     * @dataProvider provideSetup
+     */
+    public function test(bool $implicitThrows, array $checkedExceptions): void
     {
-        $this->checkedExceptions = [];
+        self::$implicitThrows = $implicitThrows;
+        $this->checkedExceptions = $checkedExceptions;
+
         $this->analyseFile(__DIR__ . '/data/ForbidCheckedExceptionInCallableRule/code.php');
     }
 
-    public function testExplicit(): void
+    /**
+     * @return iterable<mixed>
+     */
+    public function provideSetup(): iterable
     {
-        $this->checkedExceptions = ['ForbidCheckedExceptionInCallableRule\CheckedException'];
-        $this->analyseFile(__DIR__ . '/data/ForbidCheckedExceptionInCallableRule/code.php');
+        yield ['implicitThrows' => true, 'checkedExceptions' => []];
+        yield ['implicitThrows' => true, 'checkedExceptions' => ['ForbidCheckedExceptionInCallableRule\CheckedException']];
+        yield ['implicitThrows' => false, 'checkedExceptions' => []];
+        yield ['implicitThrows' => false, 'checkedExceptions' => ['ForbidCheckedExceptionInCallableRule\CheckedException']];
     }
 
     /**
@@ -59,9 +76,15 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
      */
     public static function getAdditionalConfigFiles(): array
     {
-        return [
+        $files = [
             self::getVisitorConfigFilePath(),
         ];
+
+        if (self::$implicitThrows === true) {
+            $files[] = __DIR__ . '/data/ForbidCheckedExceptionInCallableRule/no-implicit-throws.neon';
+        }
+
+        return $files;
     }
 
     private static function getVisitorConfigFilePath(): string
