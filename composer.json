@@ -12,11 +12,12 @@
     "require": {
         "php": "^7.4 || ^8.0",
         "nikic/php-parser": "^4.14.0",
-        "phpstan/phpstan": "^1.10.0"
+        "phpstan/phpstan": "^1.10.30"
     },
     "require-dev": {
         "editorconfig-checker/editorconfig-checker": "^10.3.0",
         "ergebnis/composer-normalize": "^2.28",
+        "nette/neon": "^3.3.1",
         "phpstan/phpstan-phpunit": "^1.1.1",
         "phpstan/phpstan-strict-rules": "^1.2.3",
         "phpunit/phpunit": "^9.5.20",
@@ -33,7 +34,8 @@
             "ShipMonk\\PHPStan\\": "tests/"
         },
         "classmap": [
-            "tests/Rule/data"
+            "tests/Rule/data",
+            "tests/Extension/data"
         ]
     },
     "config": {

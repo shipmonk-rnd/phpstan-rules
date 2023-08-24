@@ -1,0 +1,12 @@
+services:
+    -
+        class: ShipMonk\PHPStan\Extension\ImmediatelyCalledCallableThrowTypeExtension
+        tags:
+            - phpstan.dynamicFunctionThrowTypeExtension
+            - phpstan.dynamicMethodThrowTypeExtension
+            - phpstan.dynamicStaticMethodThrowTypeExtension
+        arguments:
+            immediatelyCalledCallables:
+                array_map: 0
+                ImmediatelyCalledCallableThrowTypeExtension\Immediate::method: [0, 1]
+

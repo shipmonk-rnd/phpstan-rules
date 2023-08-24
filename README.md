@@ -1,6 +1,6 @@
 # ShipMonk PHPStan rules
 About **30 super-strict rules** we found useful in ShipMonk.
-We tend to have PHPStan set up as strict as possible (bleedingEdge, strict-rules, checkUninitializedProperties, ...), but that still was not strict enough for us.
+We tend to have PHPStan set up as strict as possible ([bleedingEdge](https://phpstan.org/blog/what-is-bleeding-edge), [strict-rules](https://github.com/phpstan/phpstan-strict-rules), [checkUninitializedProperties](https://phpstan.org/config-reference#checkuninitializedproperties), ...), but that still was not strict enough for us.
 This set of rules should fill the missing gaps we found.
 
 If you find some rules opinionated, you can easily disable them.
@@ -44,6 +44,28 @@ parameters:
         forbidCast:
             enabled: true
             blacklist: ['(array)', '(object)', '(unset)']
+        forbidCheckedExceptionInCallable:
+            enabled: true
+            immediatelyCalledCallables:
+                array_reduce: 1
+                array_intersect_ukey: 2
+                array_uintersect: 2
+                array_uintersect_assoc: 2
+                array_intersect_uassoc: 2
+                array_uintersect_uassoc: [2, 3]
+                array_diff_ukey: 2
+                array_udiff: 2
+                array_udiff_assoc: 2
+                array_diff_uassoc: 2
+                array_udiff_uassoc: [2, 3]
+                array_filter: 1
+                array_map: 0
+                array_walk_recursive: 1
+                array_walk: 1
+                uasort: 1
+                uksort: 1
+                usort: 1
+            allowedCheckedExceptionCallables: []
         forbidCheckedExceptionInYieldingMethod:
             enabled: true
         forbidCustomFunctions:
@@ -335,9 +357,69 @@ parameters:
             blacklist!: ['(array)', '(object)', '(unset)']
 ```
 
+### forbidCheckedExceptionInCallable
+- Denies throwing [checked exception](https://phpstan.org/blog/bring-your-exceptions-under-control) in callables (Closures and First class callables) as those cannot be tracked as checked by PHPStan analysis, because it is unknown when the callable is about to be called
+- It allows configuration of functions/methods, where the callable is called immediately, those cases are allowed and are also added to [dynamic throw type extension](https://phpstan.org/developing-extensions/dynamic-throw-type-extensions) which causes those exceptions to be tracked properly in your codebase (!)
+  - By default, native functions like `array_map` are present. So it is recommended not to overwrite the defaults here (by `!` char).
+- It allows configuration of functions/methods, where the callable is handling all thrown exceptions and it is safe to throw anything from there; this basically makes such calls ignored by this rule
+- It ignores [implicitly thrown Throwable](https://phpstan.org/blog/bring-your-exceptions-under-control#what-does-absent-%40throws-above-a-function-mean%3F)
+
+```neon
+parameters:
+    shipmonkRules:
+        forbidCheckedExceptionInCallable:
+            immediatellyCalledCallables:
+                'Doctrine\ORM\EntityManager::transactional': 0 # 0 is argument index where the closure appears, you can use list if needed
+                'Symfony\Contracts\Cache\CacheInterface::get': 1
+                'Acme\my_custom_function': 0
+            allowedCheckedExceptionCallables:
+                'Symfony\Component\Console\Question::setValidator': 0 # symfony automatically converts all thrown exceptions to error output, so it is safe to throw anything here
+```
+
+- We recommend using following config for checked exceptions:
+  - Also, [bleedingEdge](https://phpstan.org/blog/what-is-bleeding-edge) enables proper analysis of dead types in multi-catch, so we recommend enabling even that
+
+```neon
+parameters:
+    exceptions:
+        check:
+            missingCheckedExceptionInThrows: true # enforce checked exceptions to be stated in @throws
+            tooWideThrowType: true # report invalid @throws (exceptions that are not actually thrown in annotated method)
+        implicitThrows: false # no @throws means nothing is thrown (otherwise Throwable is thrown)
+        checkedExceptionClasses:
+            - YourApp\TopLevelRuntimeException # track only your exceptions (children of some, typically RuntimeException)
+```
+
+
+```php
+class UserEditFacade
+{
+    /**
+     * @throws UserNotFoundException
+     *  ^ This throws would normally be reported as never thrown in native phpstan, but we know the closure is immediately called
+     */
+    public function updateUserEmail(UserId $userId, Email $email): void
+    {
+        $this->entityManager->transactional(function () use ($userId, $email) {
+            $user = $this->userRepository->get($userId); // throws checked UserNotFoundException
+            $user->updateEmail($email);
+        })
+    }
+
+    public function getUpdateEmailCallback(UserId $userId, Email $email): callable
+    {
+        return function () use ($userId, $email) {
+            $user = $this->userRepository->get($userId); // this usage is denied, it throws checked exception, but you don't know when, thus it cannot be tracked by phpstan
+            $user->updateEmail($email);
+        };
+    }
+}
+```
+
 ### forbidCheckedExceptionInYieldingMethod
 - Denies throwing [checked exception](https://phpstan.org/blog/bring-your-exceptions-under-control) within yielding methods as those exceptions are not throw upon method call, but when generator gets iterated.
 - This behaviour cannot be easily reflected within PHPStan exception analysis and may cause [false negatives](https://phpstan.org/r/d07ac0f0-a49d-4f82-b1dd-1939058bbeed).
+- Make sure you have enabled checked exceptions, otherwise, this rule does nothing
 
 ```php
 class Provider {
