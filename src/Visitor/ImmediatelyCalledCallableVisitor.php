@@ -152,7 +152,7 @@ class ImmediatelyCalledCallableVisitor extends NodeVisitorAbstract
      * @param int|list<int> $argumentIndexes
      * @return list<int>
      */
-    private function normalizeArgumentIndexes(int|array $argumentIndexes): array
+    private function normalizeArgumentIndexes($argumentIndexes): array
     {
         return is_int($argumentIndexes) ? [$argumentIndexes] : $argumentIndexes;
     }
