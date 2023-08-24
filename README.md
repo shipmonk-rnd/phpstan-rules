@@ -368,7 +368,7 @@ parameters:
 parameters:
     shipmonkRules:
         forbidCheckedExceptionInCallable:
-            immediatellyCalledCallables:
+            immediatelyCalledCallables:
                 'Doctrine\ORM\EntityManager::transactional': 0 # 0 is argument index where the closure appears, you can use list if needed
                 'Symfony\Contracts\Cache\CacheInterface::get': 1
                 'Acme\my_custom_function': 0
