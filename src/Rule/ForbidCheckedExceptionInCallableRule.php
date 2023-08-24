@@ -178,7 +178,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     private function processCall(
         Scope $scope,
         Type $callerType,
-        string $methodName,
+        string $methodName
     ): array
     {
         $methodReflection = $scope->getMethodReflection($callerType, $methodName);
@@ -195,7 +195,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      */
     private function processThrowType(
         ?Type $throwType,
-        Scope $scope,
+        Scope $scope
     ): array
     {
         if ($throwType === null) {
