@@ -5,7 +5,9 @@ namespace ShipMonk\PHPStan\Rule;
 use PhpParser\Node;
 use PhpParser\Node\Expr\BinaryOp;
 use PHPStan\Analyser\Scope;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
 use function in_array;
@@ -38,7 +40,7 @@ class ForbidNullInBinaryOperationsRule implements Rule
 
     /**
      * @param BinaryOp $node
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -53,7 +55,10 @@ class ForbidNullInBinaryOperationsRule implements Rule
         $rightTypeDescribed = $rightType->describe(VerbosityLevel::typeOnly());
 
         if (TypeCombinator::containsNull($leftType) || TypeCombinator::containsNull($rightType)) {
-            return ["Null value involved in binary operation: {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed}"];
+            $error = RuleErrorBuilder::message("Null value involved in binary operation: {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed}")
+                ->identifier('binaryOperationWithNull')
+                ->build();
+            return [$error];
         }
 
         return [];

@@ -11,7 +11,9 @@ use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Identifier;
 use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeUtils;
 use function get_class;
@@ -39,7 +41,7 @@ class ForbidFetchOnMixedRule implements Rule
     }
 
     /**
-     * @return list<string> errors
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -82,15 +84,17 @@ class ForbidFetchOnMixedRule implements Rule
                 ? 'Constant'
                 : 'Property';
 
-            return [
-                sprintf(
-                    '%s fetch %s%s is prohibited on unknown type (%s)',
-                    $element,
-                    $this->getFetchToken($node),
-                    $propertyOrConstant,
-                    $this->printer->prettyPrintExpr($caller),
-                ),
-            ];
+            $errorMessage = sprintf(
+                '%s fetch %s%s is prohibited on unknown type (%s)',
+                $element,
+                $this->getFetchToken($node),
+                $propertyOrConstant,
+                $this->printer->prettyPrintExpr($caller),
+            );
+            $error = RuleErrorBuilder::message($errorMessage)
+                ->identifier('propertyFetchOnMixed')
+                ->build();
+            return [$error];
         }
 
         return [];

@@ -11,7 +11,9 @@ use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Analyser\Scope;
 use PHPStan\PhpDoc\ResolvedPhpDocBlock;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NullType;
@@ -40,7 +42,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     }
 
     /**
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -59,7 +61,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     }
 
     /**
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     private function checkReturnTypes(FunctionLike $node, Scope $scope): array
     {
@@ -70,7 +72,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     }
 
     /**
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     private function checkPropertyTypes(Property $node, Scope $scope): array
     {
@@ -81,7 +83,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     }
 
     /**
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     private function checkParamTypes(FunctionLike $node, Scope $scope): array
     {
@@ -198,7 +200,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     }
 
     /**
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     private function comparePhpDocAndNativeType(
         ?Type $phpDocReturnType,
@@ -220,7 +222,10 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
 
         // the inverse check is performed by native PHPStan rule checking that phpdoc is subtype of native type
         if (!$phpDocReturnType->accepts($nullType, $strictTypes)->yes() && $nativeReturnType->accepts($nullType, $strictTypes)->yes()) {
-            return ["The $phpDocIdentification phpdoc does not contain null, but native return type does"];
+            $error = RuleErrorBuilder::message("The $phpDocIdentification phpdoc does not contain null, but native return type does")
+                ->identifier('phpDocNullabilityMismatch')
+                ->build();
+            return [$error];
         }
 
         return [];

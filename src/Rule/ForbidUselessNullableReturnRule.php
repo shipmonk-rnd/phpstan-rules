@@ -7,7 +7,9 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
@@ -27,7 +29,7 @@ class ForbidUselessNullableReturnRule implements Rule
 
     /**
      * @param ReturnStatementsNode $node
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -67,7 +69,10 @@ class ForbidUselessNullableReturnRule implements Rule
         }
 
         if (TypeCombinator::containsNull($declaredType) && !TypeCombinator::containsNull($returnTypeUnion)) {
-            return ["Declared return type {$declaredType->describe($verbosity)} contains null, but it is never returned. Returned types: {$returnTypeUnion->describe($verbosity)}."];
+            $error = RuleErrorBuilder::message("Declared return type {$declaredType->describe($verbosity)} contains null, but it is never returned. Returned types: {$returnTypeUnion->describe($verbosity)}.")
+                ->identifier('uselessNullableReturn')
+                ->build();
+            return [$error];
         }
 
         return [];

@@ -17,8 +17,8 @@ use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\ObjectType;
@@ -52,7 +52,7 @@ class RequirePreviousExceptionPassRule implements Rule
 
     /**
      * @param TryCatch $node
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -95,7 +95,7 @@ class RequirePreviousExceptionPassRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function processExceptionCreation(
         bool $strictTypes,
@@ -141,7 +141,11 @@ class RequirePreviousExceptionPassRule implements Rule
 
         if (!$passed && $accepts) {
             $exceptionName = $caughtExceptionVariableName === null ? "({$caughtExceptionType->describe(VerbosityLevel::typeOnly())})" : "\${$caughtExceptionVariableName}";
-            return [RuleErrorBuilder::message("Exception {$exceptionName} not passed as previous to {$this->printer->prettyPrintExpr($node)}")->line($node->getLine())->build()];
+            $error = RuleErrorBuilder::message("Exception {$exceptionName} not passed as previous to {$this->printer->prettyPrintExpr($node)}")
+                ->line($node->getLine())
+                ->identifier('missingPreviousException')
+                ->build();
+            return [$error];
         }
 
         return [];

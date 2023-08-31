@@ -10,7 +10,9 @@ use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
 use ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor;
 use Throwable;
 
@@ -34,7 +36,7 @@ class ForbidUnusedExceptionRule implements Rule
 
     /**
      * @param Expr $node
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -51,7 +53,7 @@ class ForbidUnusedExceptionRule implements Rule
 
     /**
      * @param MethodCall|StaticCall $node
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     private function processCall(CallLike $node, Scope $scope): array
     {
@@ -60,14 +62,17 @@ class ForbidUnusedExceptionRule implements Rule
         }
 
         if (!$this->isUsed($node)) {
-            return ["Method {$this->printer->prettyPrintExpr($node)} returns exception that was not used in any way."];
+            $error = RuleErrorBuilder::message("Method {$this->printer->prettyPrintExpr($node)} returns exception that was not used in any way.")
+                ->identifier('unusedException')
+                ->build();
+            return [$error];
         }
 
         return [];
     }
 
     /**
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     private function processNew(New_ $node, Scope $scope): array
     {
@@ -76,7 +81,10 @@ class ForbidUnusedExceptionRule implements Rule
         }
 
         if (!$this->isUsed($node)) {
-            return ["Exception {$this->printer->prettyPrintExpr($node)} was not used in any way."];
+            $error = RuleErrorBuilder::message("Exception {$this->printer->prettyPrintExpr($node)} was not used in any way.")
+                ->identifier('unusedException')
+                ->build();
+            return [$error];
         }
 
         return [];

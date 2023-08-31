@@ -5,7 +5,9 @@ namespace ShipMonk\PHPStan\Rule;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassNode;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
 use function strlen;
 use function substr_compare;
 
@@ -35,7 +37,7 @@ class ClassSuffixNamingRule implements Rule
 
     /**
      * @param InClassNode $node
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(
         Node $node,
@@ -60,7 +62,10 @@ class ClassSuffixNamingRule implements Rule
             $className = $classReflection->getName();
 
             if (substr_compare($className, $suffix, -strlen($suffix)) !== 0) {
-                return ["Class name $className should end with $suffix suffix"];
+                $error = RuleErrorBuilder::message("Class name $className should end with $suffix suffix")
+                    ->identifier('invalidClassSuffix')
+                    ->build();
+                return [$error];
             }
         }
 

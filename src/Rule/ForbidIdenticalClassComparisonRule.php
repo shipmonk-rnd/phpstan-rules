@@ -10,7 +10,9 @@ use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeUtils;
@@ -54,7 +56,7 @@ class ForbidIdenticalClassComparisonRule implements Rule
 
     /**
      * @param BinaryOp $node
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -83,7 +85,10 @@ class ForbidIdenticalClassComparisonRule implements Rule
                 $this->containsClass($leftType, $className)
                 && $this->containsClass($rightType, $className)
             ) {
-                $errors[] = "Using {$node->getOperatorSigil()} with {$forbiddenObjectType->describe(VerbosityLevel::typeOnly())} is denied";
+                $errors[] = RuleErrorBuilder::message("Using {$node->getOperatorSigil()} with {$forbiddenObjectType->describe(VerbosityLevel::typeOnly())} is denied")
+                    ->identifier('deniedClassComparison')
+                    ->build();
+
             }
         }
 

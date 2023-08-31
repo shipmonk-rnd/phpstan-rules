@@ -6,8 +6,8 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\MethodReturnStatementsNode;
 use PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
@@ -30,7 +30,7 @@ class ForbidCheckedExceptionInYieldingMethodRule implements Rule
 
     /**
      * @param MethodReturnStatementsNode $node
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(
         Node $node,
@@ -52,6 +52,7 @@ class ForbidCheckedExceptionInYieldingMethodRule implements Rule
                 if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $throwPoint->getScope())) {
                     $errors[] = RuleErrorBuilder::message("Throwing checked exception $exceptionClass in yielding method is denied as it gets thrown upon Generator iteration")
                         ->line($throwPoint->getNode()->getLine())
+                        ->identifier('checkedExceptionInYieldingMethod')
                         ->build();
                 }
             }

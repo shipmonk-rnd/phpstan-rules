@@ -7,8 +7,8 @@ use PhpParser\Node\Expr;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClassPropertiesNode;
 use PHPStan\Node\Property\PropertyWrite;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor;
 
@@ -25,7 +25,7 @@ class UselessPrivatePropertyDefaultValueRule implements Rule
 
     /**
      * @param ClassPropertiesNode $node
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -69,7 +69,10 @@ class UselessPrivatePropertyDefaultValueRule implements Rule
             }
 
             if (isset($noDefaultValueNeededProperties[$propertyName])) {
-                $errors[] = RuleErrorBuilder::message("Property {$className}::{$propertyName} has useless default value (overwritten in constructor)")->line($property->getLine())->build();
+                $errors[] = RuleErrorBuilder::message("Property {$className}::{$propertyName} has useless default value (overwritten in constructor)")
+                    ->line($property->getLine())
+                    ->identifier('uselessPrivatePropertyDefaultValue')
+                    ->build();
             }
         }
 

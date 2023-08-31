@@ -5,8 +5,8 @@ namespace ShipMonk\PHPStan\Rule;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\MatchExpressionNode;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use function count;
 
@@ -23,7 +23,7 @@ class ForbidMatchDefaultArmForEnumsRule implements Rule
 
     /**
      * @param MatchExpressionNode $node
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -36,11 +36,11 @@ class ForbidMatchDefaultArmForEnumsRule implements Rule
 
         foreach ($node->getArms() as $arm) {
             if (count($arm->getConditions()) === 0) {
-                return [
-                    RuleErrorBuilder::message('Default arm is denied for enums in match, list all values so that this case is raised when new enum case is added.')
-                        ->line($arm->getLine())
-                        ->build(),
-                ];
+                $error = RuleErrorBuilder::message('Default arm is denied for enums in match, list all values so that this case is raised when new enum case is added.')
+                    ->line($arm->getLine())
+                    ->identifier('defaultMatchArmWithEnum')
+                    ->build();
+                return [$error];
             }
         }
 

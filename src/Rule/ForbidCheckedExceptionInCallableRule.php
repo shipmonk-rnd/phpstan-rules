@@ -22,8 +22,8 @@ use PHPStan\Node\MethodCallableNode;
 use PHPStan\Node\StaticMethodCallableNode;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Type;
 use ShipMonk\PHPStan\Visitor\ImmediatelyCalledCallableVisitor;
@@ -87,7 +87,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(
         Node $node,
@@ -115,7 +115,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
     /**
      * @param MethodCall|StaticCall|FuncCall $callNode
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processFirstClassCallable(
         CallLike $callNode,
@@ -155,7 +155,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processClosure(
         ClosureReturnStatementsNode $node,
@@ -184,6 +184,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                 if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $throwPoint->getScope())) {
                     $errors[] = RuleErrorBuilder::message("Throwing checked exception $exceptionClass in closure!")
                         ->line($throwPoint->getNode()->getLine())
+                        ->identifier('checkedExceptionInCallable')
                         ->build();
                 }
             }
@@ -193,7 +194,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processArrowFunction(
         ArrowFunction $node,
@@ -254,7 +255,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function processThrowType(
         ?Type $throwType,
@@ -269,7 +270,9 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
         foreach ($throwType->getObjectClassNames() as $exceptionClass) {
             if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $scope)) {
-                $errors[] = RuleErrorBuilder::message("Throwing checked exception $exceptionClass in first-class-callable!")->build();
+                $errors[] = RuleErrorBuilder::message("Throwing checked exception $exceptionClass in first-class-callable!")
+                    ->identifier('checkedExceptionInCallable')
+                    ->build();
             }
         }
 

@@ -9,7 +9,9 @@ use PHPStan\Analyser\ArgumentsNormalizer;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
 use function array_key_exists;
@@ -61,7 +63,7 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
 
     /**
      * @param FuncCall $node
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -102,7 +104,10 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
         if ($wrongArguments !== []) {
             $plural = count($wrongArguments) > 1 ? 's' : '';
             $wrongArgumentsString = implode(', ', $wrongArguments);
-            return ["Argument{$plural} {$wrongArgumentsString} in {$node->name->toString()}() cannot contain enum {$reason}"];
+            $error = RuleErrorBuilder::message("Argument{$plural} {$wrongArgumentsString} in {$node->name->toString()}() cannot contain enum {$reason}")
+                ->identifier('dangerousEnumArgument')
+                ->build();
+            return [$error];
         }
 
         return [];

@@ -8,7 +8,9 @@ use PhpParser\Node\Stmt\Throw_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Php\PhpVersion;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\CallableType;
@@ -62,7 +64,7 @@ class EnforceNativeReturnTypehintRule implements Rule
 
     /**
      * @param ReturnStatementsNode $node
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -92,9 +94,10 @@ class EnforceNativeReturnTypehintRule implements Rule
             return [];
         }
 
-        return [
-            sprintf('Missing native return typehint %s', $typeHint),
-        ];
+        $error = RuleErrorBuilder::message(sprintf('Missing native return typehint %s', $typeHint))
+            ->identifier('missingNativeReturnTypehint')
+            ->build();
+        return [$error];
     }
 
     private function getTypehintByType(
