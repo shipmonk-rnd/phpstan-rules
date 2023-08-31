@@ -2,17 +2,22 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
+use LogicException;
 use PhpParser\Node;
+use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\MixedType;
+use function get_class;
 use function sprintf;
 
 /**
- * @implements Rule<MethodCall>
+ * @implements Rule<CallLike>
  */
 class ForbidMethodCallOnMixedRule implements Rule
 {
@@ -29,11 +34,11 @@ class ForbidMethodCallOnMixedRule implements Rule
 
     public function getNodeType(): string
     {
-        return MethodCall::class;
+        return CallLike::class;
     }
 
     /**
-     * @param MethodCall $node
+     * @param CallLike $node
      * @return list<string> errors
      */
     public function processNode(Node $node, Scope $scope): array
@@ -42,7 +47,26 @@ class ForbidMethodCallOnMixedRule implements Rule
             return []; // already checked by native PHPStan
         }
 
-        $caller = $node->var;
+        // NullsafeMethodCall not present due to https://github.com/phpstan/phpstan/issues/9830
+        if ($node instanceof MethodCall || $node instanceof StaticCall) {
+            return $this->checkCall($node, $scope);
+        }
+
+        return [];
+    }
+
+    /**
+     * @param MethodCall|StaticCall $node
+     * @return list<string>
+     */
+    private function checkCall(CallLike $node, Scope $scope): array
+    {
+        $caller = $node instanceof StaticCall ? $node->class : $node->var;
+
+        if (!$caller instanceof Expr) {
+            return [];
+        }
+
         $callerType = $scope->getType($caller);
 
         if ($callerType instanceof MixedType) {
@@ -51,7 +75,8 @@ class ForbidMethodCallOnMixedRule implements Rule
 
             return [
                 sprintf(
-                    'Method call ->%s() is prohibited on unknown type (%s)',
+                    'Method call %s%s() is prohibited on unknown type (%s)',
+                    $this->getCallToken($node),
                     $method,
                     $this->printer->prettyPrintExpr($caller),
                 ),
@@ -59,6 +84,23 @@ class ForbidMethodCallOnMixedRule implements Rule
         }
 
         return [];
+    }
+
+    /**
+     * @param MethodCall|StaticCall $node
+     */
+    private function getCallToken(CallLike $node): string
+    {
+        switch (get_class($node)) {
+            case StaticCall::class:
+                return '::';
+
+            case MethodCall::class:
+                return '->';
+
+            default:
+                throw new LogicException('Unexpected node given: ' . get_class($node));
+        }
     }
 
 }

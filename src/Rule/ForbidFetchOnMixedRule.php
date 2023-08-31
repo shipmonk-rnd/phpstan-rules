@@ -2,17 +2,21 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
+use LogicException;
 use PhpParser\Node;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Identifier;
 use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\MixedType;
+use function get_class;
 use function sprintf;
 
 /**
- * @implements Rule<PropertyFetch>
+ * @implements Rule<Node>
  */
 class ForbidFetchOnMixedRule implements Rule
 {
@@ -29,11 +33,10 @@ class ForbidFetchOnMixedRule implements Rule
 
     public function getNodeType(): string
     {
-        return PropertyFetch::class;
+        return Node::class;
     }
 
     /**
-     * @param PropertyFetch $node
      * @return list<string> errors
      */
     public function processNode(Node $node, Scope $scope): array
@@ -42,7 +45,27 @@ class ForbidFetchOnMixedRule implements Rule
             return []; // already checked by native PHPStan
         }
 
-        $caller = $node->var;
+        if ($node instanceof PropertyFetch || $node instanceof StaticPropertyFetch) {
+            return $this->processFetch($node, $scope);
+        }
+
+        return [];
+    }
+
+    /**
+     * @param PropertyFetch|StaticPropertyFetch $node
+     * @return list<string>
+     */
+    private function processFetch(Node $node, Scope $scope): array
+    {
+        $caller = $node instanceof PropertyFetch
+            ? $node->var
+            : $node->class;
+
+        if (!$caller instanceof Expr) {
+            return [];
+        }
+
         $callerType = $scope->getType($caller);
 
         if ($callerType instanceof MixedType) {
@@ -53,7 +76,8 @@ class ForbidFetchOnMixedRule implements Rule
 
             return [
                 sprintf(
-                    'Property fetch ->%s is prohibited on unknown type (%s)',
+                    'Property fetch %s%s is prohibited on unknown type (%s)',
+                    $this->getFetchToken($node),
                     $property,
                     $this->printer->prettyPrintExpr($caller),
                 ),
@@ -61,6 +85,23 @@ class ForbidFetchOnMixedRule implements Rule
         }
 
         return [];
+    }
+
+    /**
+     * @param PropertyFetch|StaticPropertyFetch $node
+     */
+    private function getFetchToken(Node $node): string
+    {
+        switch (get_class($node)) {
+            case StaticPropertyFetch::class:
+                return '::';
+
+            case PropertyFetch::class:
+                return '->';
+
+            default:
+                throw new LogicException('Unexpected node given: ' . get_class($node));
+        }
     }
 
 }
