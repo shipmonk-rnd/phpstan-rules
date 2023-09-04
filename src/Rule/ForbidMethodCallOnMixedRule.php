@@ -69,10 +69,7 @@ class ForbidMethodCallOnMixedRule implements Rule
 
         $callerType = $scope->getType($caller);
 
-        if (
-            $callerType instanceof MixedType
-            || ($callerType->isClassStringType()->yes() && $callerType->getClassStringObjectType()->getObjectClassNames() === [])
-        ) {
+        if ($callerType instanceof MixedType) {
             $name = $node->name;
             $method = $name instanceof Identifier ? $this->printer->prettyPrint([$name]) : $this->printer->prettyPrintExpr($name);
 
@@ -82,6 +79,18 @@ class ForbidMethodCallOnMixedRule implements Rule
                     $this->getCallToken($node),
                     $method,
                     $this->printer->prettyPrintExpr($caller),
+                ),
+            ];
+        }
+
+        if ($callerType->isClassStringType()->yes() && $callerType->getClassStringObjectType()->getObjectClassNames() === []) {
+            $name = $node->name;
+            $method = $name instanceof Identifier ? $name->name : $this->printer->prettyPrintExpr($name);
+            return [
+                sprintf(
+                    'Static call %s%s() is prohibited on class-string without its generic type.',
+                    $this->getCallToken($node),
+                    $method,
                 ),
             ];
         }

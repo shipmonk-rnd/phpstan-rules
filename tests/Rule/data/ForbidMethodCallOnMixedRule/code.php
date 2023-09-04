@@ -19,7 +19,7 @@ $fn = function (mixed $mixed, $unknown, array $array, ReflectionClass $reflectio
 
     /** @var class-string $classString */
     $classString = '';
-    $classString::staticMethod(); // error: Method call ::staticMethod() is prohibited on unknown type ($classString)
+    $classString::staticMethod(); // error: Static call ::staticMethod() is prohibited on class-string without its generic type.
 
     /** @var class-string<Foo> $classString2 */
     $classString2 = '';
