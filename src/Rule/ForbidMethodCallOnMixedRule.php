@@ -69,7 +69,10 @@ class ForbidMethodCallOnMixedRule implements Rule
 
         $callerType = $scope->getType($caller);
 
-        if ($callerType instanceof MixedType) {
+        if (
+            $callerType instanceof MixedType
+            || ($callerType->isClassStringType()->yes() && $callerType->getClassStringObjectType()->getObjectClassNames() === [])
+        ) {
             $name = $node->name;
             $method = $name instanceof Identifier ? $this->printer->prettyPrint([$name]) : $this->printer->prettyPrintExpr($name);
 

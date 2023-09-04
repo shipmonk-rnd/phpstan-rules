@@ -17,6 +17,14 @@ $fn = function (mixed $mixed, $unknown, array $array, ReflectionClass $reflectio
     Foo::staticMethod();
     $foo::staticMethod();
 
+    /** @var class-string $classString */
+    $classString = '';
+    $classString::staticMethod(); // error: Method call ::staticMethod() is prohibited on unknown type ($classString)
+
+    /** @var class-string<Foo> $classString2 */
+    $classString2 = '';
+    $classString2::staticMethod();
+
     $mixed->call1(); // error: Method call ->call1() is prohibited on unknown type ($mixed)
     $mixed?->call1(); // error: Method call ->call1() is prohibited on unknown type ($mixed)
     $mixed::call1(); // error: Method call ::call1() is prohibited on unknown type ($mixed)
