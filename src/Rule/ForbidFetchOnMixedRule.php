@@ -11,7 +11,7 @@ use PhpParser\Node\Identifier;
 use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
-use PHPStan\Type\MixedType;
+use PHPStan\Type\TypeUtils;
 use function get_class;
 use function sprintf;
 
@@ -66,9 +66,9 @@ class ForbidFetchOnMixedRule implements Rule
             return [];
         }
 
-        $callerType = $scope->getType($caller);
+        $callerType = TypeUtils::toBenevolentUnion($scope->getType($caller));
 
-        if ($callerType instanceof MixedType) {
+        if ($callerType->getObjectTypeOrClassStringObjectType()->getObjectClassNames() === []) {
             $name = $node->name;
             $property = $name instanceof Identifier
                 ? $this->printer->prettyPrint([$name])
