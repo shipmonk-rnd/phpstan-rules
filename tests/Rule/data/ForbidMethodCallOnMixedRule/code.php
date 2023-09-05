@@ -9,13 +9,18 @@ class Foo {
     public static function staticMethod() {}
 }
 
-$fn = function (mixed $mixed, $unknown, array $array, string $string, ReflectionClass $reflection) {
+$fn = function (mixed $mixed, $unknown, array $array, string $string, ?Foo $fooOrNull, ReflectionClass $reflection) {
 
     $foo = new Foo();
     $foo->method();
     $foo?->method();
     Foo::staticMethod();
     $foo::staticMethod();
+
+    $fooOrNull->method();
+    $fooOrNull?->method();
+    $fooOrNull->staticMethod();
+    $fooOrNull?->staticMethod();
 
     /** @var class-string $classString */
     $classString = '';

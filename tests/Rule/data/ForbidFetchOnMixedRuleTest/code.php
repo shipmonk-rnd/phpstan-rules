@@ -9,7 +9,7 @@ class Foo {
     public static ?int $staticProperty = null;
 }
 
-$fn = function (mixed $mixed, $unknown, string $string, array $array, ReflectionClass $reflection) {
+$fn = function (mixed $mixed, $unknown, string $string, array $array, ReflectionClass $reflection, ?Foo $fooOrNull) {
     (new Foo)->property;
     Foo::$staticProperty;
 
@@ -29,6 +29,8 @@ $fn = function (mixed $mixed, $unknown, string $string, array $array, Reflection
     $unknown::$fetch2; // error: Property fetch ::$fetch2 is prohibited on unknown type ($unknown)
     $array[0]->fetch3; // error: Property fetch ->fetch3 is prohibited on unknown type ($array[0])
 
+    $fooOrNull->property;
+    $fooOrNull?->property;
 
     $reflection->newInstance()->property; // error: Property fetch ->property is prohibited on unknown type ($reflection->newInstance())
     /** @var ReflectionClass<Foo> $reflection */
