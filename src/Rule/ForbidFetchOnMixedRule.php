@@ -5,6 +5,7 @@ namespace ShipMonk\PHPStan\Rule;
 use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Identifier;
@@ -45,7 +46,7 @@ class ForbidFetchOnMixedRule implements Rule
             return []; // already checked by native PHPStan
         }
 
-        if ($node instanceof PropertyFetch || $node instanceof StaticPropertyFetch) {
+        if ($node instanceof PropertyFetch || $node instanceof StaticPropertyFetch || $node instanceof ClassConstFetch) {
             return $this->processFetch($node, $scope);
         }
 
@@ -53,7 +54,7 @@ class ForbidFetchOnMixedRule implements Rule
     }
 
     /**
-     * @param PropertyFetch|StaticPropertyFetch $node
+     * @param PropertyFetch|StaticPropertyFetch|ClassConstFetch $node
      * @return list<string>
      */
     private function processFetch(Node $node, Scope $scope): array
@@ -70,15 +71,19 @@ class ForbidFetchOnMixedRule implements Rule
 
         if ($callerType->getObjectTypeOrClassStringObjectType()->getObjectClassNames() === []) {
             $name = $node->name;
-            $property = $name instanceof Identifier
+            $propertyOrConstant = $name instanceof Identifier
                 ? $this->printer->prettyPrint([$name])
                 : $this->printer->prettyPrintExpr($name);
+            $element = $node instanceof ClassConstFetch
+                ? 'Constant'
+                : 'Property';
 
             return [
                 sprintf(
-                    'Property fetch %s%s is prohibited on unknown type (%s)',
+                    '%s fetch %s%s is prohibited on unknown type (%s)',
+                    $element,
                     $this->getFetchToken($node),
-                    $property,
+                    $propertyOrConstant,
                     $this->printer->prettyPrintExpr($caller),
                 ),
             ];
@@ -88,11 +93,12 @@ class ForbidFetchOnMixedRule implements Rule
     }
 
     /**
-     * @param PropertyFetch|StaticPropertyFetch $node
+     * @param PropertyFetch|StaticPropertyFetch|ClassConstFetch $node
      */
     private function getFetchToken(Node $node): string
     {
         switch (get_class($node)) {
+            case ClassConstFetch::class:
             case StaticPropertyFetch::class:
                 return '::';
 
