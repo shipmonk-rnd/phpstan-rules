@@ -5,12 +5,14 @@ namespace ShipMonk\PHPStan\Rule;
 use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Identifier;
 use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Type\Type;
 use PHPStan\Type\TypeUtils;
 use function get_class;
 use function sprintf;
@@ -45,7 +47,7 @@ class ForbidFetchOnMixedRule implements Rule
             return []; // already checked by native PHPStan
         }
 
-        if ($node instanceof PropertyFetch || $node instanceof StaticPropertyFetch) {
+        if ($node instanceof PropertyFetch || $node instanceof StaticPropertyFetch || $node instanceof ClassConstFetch) {
             return $this->processFetch($node, $scope);
         }
 
@@ -53,7 +55,7 @@ class ForbidFetchOnMixedRule implements Rule
     }
 
     /**
-     * @param PropertyFetch|StaticPropertyFetch $node
+     * @param PropertyFetch|StaticPropertyFetch|ClassConstFetch $node
      * @return list<string>
      */
     private function processFetch(Node $node, Scope $scope): array
@@ -68,17 +70,24 @@ class ForbidFetchOnMixedRule implements Rule
 
         $callerType = TypeUtils::toBenevolentUnion($scope->getType($caller));
 
-        if ($callerType->getObjectTypeOrClassStringObjectType()->getObjectClassNames() === []) {
+        if (
+            $callerType->getObjectTypeOrClassStringObjectType()->getObjectClassNames() === []
+            && !$this->isObjectClassFetch($callerType, $node)
+        ) {
             $name = $node->name;
-            $property = $name instanceof Identifier
+            $propertyOrConstant = $name instanceof Identifier
                 ? $this->printer->prettyPrint([$name])
                 : $this->printer->prettyPrintExpr($name);
+            $element = $node instanceof ClassConstFetch
+                ? 'Constant'
+                : 'Property';
 
             return [
                 sprintf(
-                    'Property fetch %s%s is prohibited on unknown type (%s)',
+                    '%s fetch %s%s is prohibited on unknown type (%s)',
+                    $element,
                     $this->getFetchToken($node),
-                    $property,
+                    $propertyOrConstant,
                     $this->printer->prettyPrintExpr($caller),
                 ),
             ];
@@ -88,11 +97,12 @@ class ForbidFetchOnMixedRule implements Rule
     }
 
     /**
-     * @param PropertyFetch|StaticPropertyFetch $node
+     * @param PropertyFetch|StaticPropertyFetch|ClassConstFetch $node
      */
     private function getFetchToken(Node $node): string
     {
         switch (get_class($node)) {
+            case ClassConstFetch::class:
             case StaticPropertyFetch::class:
                 return '::';
 
@@ -102,6 +112,30 @@ class ForbidFetchOnMixedRule implements Rule
             default:
                 throw new LogicException('Unexpected node given: ' . get_class($node));
         }
+    }
+
+    /**
+     * Detect object::class
+     *
+     * @param PropertyFetch|StaticPropertyFetch|ClassConstFetch $node
+     */
+    private function isObjectClassFetch(Type $callerType, Node $node): bool
+    {
+        $isObjectWithoutClassName = $callerType->isObject()->yes() && $callerType->getObjectClassNames() === [];
+
+        if (!$isObjectWithoutClassName) {
+            return false;
+        }
+
+        if (!$node instanceof ClassConstFetch) {
+            return false;
+        }
+
+        if (!$node->name instanceof Identifier) {
+            return false;
+        }
+
+        return $node->name->name === 'class';
     }
 
 }

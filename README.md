@@ -464,7 +464,7 @@ implode('', [MyEnum::MyCase]); // denied, would fail on implicit toString conver
 
 
 ### forbidFetchOnMixed
-- Denies property fetch on unknown type.
+- Denies constant/property fetch on unknown type.
 - Any property fetch assumes the caller is an object with such property and therefore, the typehint/phpdoc should be fixed.
 - Similar to `forbidMethodCallOnMixed`
 - Makes sense only on PHPStan level 8 or below, gets autodisabled on level 9
