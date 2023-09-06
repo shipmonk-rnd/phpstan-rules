@@ -11,10 +11,11 @@ class Foo {
     public static ?int $staticProperty = null;
 }
 
-$fn = function (mixed $mixed, $unknown, string $string, array $array, ReflectionClass $reflection, ?Foo $fooOrNull) {
+$fn = function (mixed $mixed, $unknown, string $string, array $array, ReflectionClass $reflection, ?Foo $fooOrNull, object $object) {
     (new Foo)->property;
     Foo::$staticProperty;
     Foo::CONST;
+    Foo::class;
 
     /** @var class-string $classString */
     $classString = '';
@@ -31,6 +32,7 @@ $fn = function (mixed $mixed, $unknown, string $string, array $array, Reflection
     $mixed->fetch1; // error: Property fetch ->fetch1 is prohibited on unknown type ($mixed)
     $mixed::$fetch1; // error: Property fetch ::$fetch1 is prohibited on unknown type ($mixed)
     $mixed::CONST; // error: Constant fetch ::CONST is prohibited on unknown type ($mixed)
+    $mixed::class; // error: Constant fetch ::class is prohibited on unknown type ($mixed)
     $unknown->fetch2; // error: Property fetch ->fetch2 is prohibited on unknown type ($unknown)
     $unknown::$fetch2; // error: Property fetch ::$fetch2 is prohibited on unknown type ($unknown)
     $array[0]->fetch3; // error: Property fetch ->fetch3 is prohibited on unknown type ($array[0])
@@ -39,6 +41,10 @@ $fn = function (mixed $mixed, $unknown, string $string, array $array, Reflection
     $fooOrNull?->property;
     $fooOrNull::$staticProperty;
     $fooOrNull::CONST;
+    $fooOrNull::class;
+
+    $object::class;
+    $object::CONST; // error: Constant fetch ::CONST is prohibited on unknown type ($object)
 
     $reflection->newInstance()->property; // error: Property fetch ->property is prohibited on unknown type ($reflection->newInstance())
     $reflection->newInstance()::CONST; // error: Constant fetch ::CONST is prohibited on unknown type ($reflection->newInstance())
