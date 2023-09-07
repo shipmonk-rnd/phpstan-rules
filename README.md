@@ -94,6 +94,9 @@ parameters:
             enabled: true
         forbidProtectedEnumMethod:
             enabled: true
+        forbidReturnValueInYieldingMethod:
+            enabled: true
+            reportRegardlessOfReturnType: false
         forbidVariableTypeOverwriting:
             enabled: true
         forbidUnsetClassField:
@@ -578,6 +581,28 @@ public function sayHello(?string $param) {} // invalid phpdoc not containing nul
 enum MyEnum {
     protected function isOpen(): bool {} // protected enum method denied
 }
+```
+
+### forbidReturnValueInYieldingMethod
+- Disallows returning values in yielding methods unless marked to return Generator as the value is accessible only via [Generator::getReturn](https://www.php.net/manual/en/generator.getreturn.php)
+- To prevent misuse, this rule can be configured to even stricter mode where it reports such returns regardless of return type declared
+
+```php
+class Get {
+    public static function oneTwoThree(): iterable { // marked as iterable, caller cannot access the return value by Generator::getReturn
+        yield 1;
+        yield 2;
+        return 3;
+    }
+}
+
+iterator_to_array(Get::oneTwoThree()); // [1, 2] - see https://3v4l.org/Leu9j
+```
+```neon
+parameters:
+    shipmonkRules:
+        forbidReturnValueInYieldingMethod:
+            reportRegardlessOfReturnType: true # optional stricter mode, defaults to false
 ```
 
 ### forbidVariableTypeOverwriting
