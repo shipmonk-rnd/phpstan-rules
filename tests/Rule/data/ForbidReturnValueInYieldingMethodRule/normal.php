@@ -29,6 +29,16 @@ class Normal {
 
 }
 
+class NoYield {
+    public function returnGeneratorNoYield(): \Generator {
+        return $this->returnGeneratorByYield();
+    }
+
+    public function returnGeneratorByYield(): \Generator {
+        yield 1;
+    }
+}
+
 class NoValue {
     public function returnMixed() {
         yield 1;
