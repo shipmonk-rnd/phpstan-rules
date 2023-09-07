@@ -407,6 +407,7 @@
                 Doctrine\Common\Collections\Collection
             "/>
         </properties>
+        <exclude name="SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingTraversableTypeHintSpecification"/><!-- this has problems with vendor libs, PHPStan checks this much more reliably -->
     </rule>
     <rule ref="SlevomatCodingStandard.TypeHints.LongTypeHints"/>
     <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHintSpacing"/>

@@ -73,6 +73,9 @@ parameters:
             enabled: true
         forbidProtectedEnumMethod:
             enabled: true
+        forbidReturnValueInYieldingMethod:
+            enabled: true
+            reportRegardlessOfReturnType: false
         forbidVariableTypeOverwriting:
             enabled: true
         forbidUnsetClassField:
@@ -171,6 +174,10 @@ parametersSchema:
         forbidProtectedEnumMethod: structure([
             enabled: bool()
         ])
+        forbidReturnValueInYieldingMethod: structure([
+            enabled: bool()
+            reportRegardlessOfReturnType: bool()
+        ])
         forbidVariableTypeOverwriting: structure([
             enabled: bool()
         ])
@@ -245,6 +252,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.forbidPhpDocNullabilityMismatchWithNativeTypehint.enabled%
     ShipMonk\PHPStan\Rule\ForbidProtectedEnumMethodRule:
         phpstan.rules.rule: %shipmonkRules.forbidProtectedEnumMethod.enabled%
+    ShipMonk\PHPStan\Rule\ForbidReturnValueInYieldingMethodRule:
+        phpstan.rules.rule: %shipmonkRules.forbidReturnValueInYieldingMethod.enabled%
     ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule:
         phpstan.rules.rule: %shipmonkRules.forbidVariableTypeOverwriting.enabled%
     ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule:
@@ -350,6 +359,10 @@ services:
         class: ShipMonk\PHPStan\Rule\ForbidPhpDocNullabilityMismatchWithNativeTypehintRule
     -
         class: ShipMonk\PHPStan\Rule\ForbidProtectedEnumMethodRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidReturnValueInYieldingMethodRule
+        arguments:
+            reportRegardlessOfReturnType: %shipmonkRules.forbidReturnValueInYieldingMethod.reportRegardlessOfReturnType%
     -
         class: ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule
     -
