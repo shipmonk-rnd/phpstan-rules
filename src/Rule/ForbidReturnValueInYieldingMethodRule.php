@@ -60,19 +60,21 @@ class ForbidReturnValueInYieldingMethodRule implements Rule
         foreach ($node->getReturnStatements() as $returnStatement) {
             $returnNode = $returnStatement->getReturnNode();
 
-            if ($returnNode->expr !== null) {
-                $suffix = $this->reportRegardlessOfReturnType
-                    ? 'this approach is denied'
-                    : 'but this method is not marked to return Generator';
-
-                $callType = $node instanceof MethodReturnStatementsNode // @phpstan-ignore-line ignore bc promise
-                    ? 'method'
-                    : 'function';
-
-                $errors[] = RuleErrorBuilder::message("Returned value from yielding $callType can be accessed only via Generator::getReturn, $suffix.")
-                    ->line($returnNode->getLine())
-                    ->build();
+            if ($returnNode->expr === null) {
+                continue;
             }
+
+            $suffix = $this->reportRegardlessOfReturnType
+                ? 'this approach is denied'
+                : 'but this method is not marked to return Generator';
+
+            $callType = $node instanceof MethodReturnStatementsNode // @phpstan-ignore-line ignore bc promise
+                ? 'method'
+                : 'function';
+
+            $errors[] = RuleErrorBuilder::message("Returned value from yielding $callType can be accessed only via Generator::getReturn, $suffix.")
+                ->line($returnNode->getLine())
+                ->build();
         }
 
         return $errors;
