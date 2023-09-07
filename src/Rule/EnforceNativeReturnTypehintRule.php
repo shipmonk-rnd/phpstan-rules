@@ -3,13 +3,9 @@
 namespace ShipMonk\PHPStan\Rule;
 
 use Generator;
-use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Throw_;
 use PHPStan\Analyser\Scope;
-use PHPStan\Node\ClosureReturnStatementsNode;
-use PHPStan\Node\FunctionReturnStatementsNode;
-use PHPStan\Node\MethodReturnStatementsNode;
 use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Php\PhpVersion;
 use PHPStan\Rules\Rule;
@@ -74,7 +70,7 @@ class EnforceNativeReturnTypehintRule implements Rule
             return [];
         }
 
-        if ($this->hasNativeReturnTypehint($node)) {
+        if ($node->hasNativeReturnTypehint()) {
             return [];
         }
 
@@ -200,26 +196,6 @@ class EnforceNativeReturnTypehintRule implements Rule
         }
 
         return TypeCombinator::union(...$types);
-    }
-
-    /**
-     * To be removed once we bump phpstan version to 1.9.5+ (https://github.com/phpstan/phpstan-src/pull/2141)
-     */
-    private function hasNativeReturnTypehint(ReturnStatementsNode $node): bool
-    {
-        if ($node instanceof MethodReturnStatementsNode) { // @phpstan-ignore-line ignore bc warning
-            return $node->hasNativeReturnTypehint();
-        }
-
-        if ($node instanceof FunctionReturnStatementsNode) { // @phpstan-ignore-line ignore bc warning
-            return $node->hasNativeReturnTypehint();
-        }
-
-        if ($node instanceof ClosureReturnStatementsNode) { // @phpstan-ignore-line ignore bc warning
-            return $node->getClosureExpr()->returnType !== null;
-        }
-
-        throw new LogicException('Unexpected subtype');
     }
 
     private function getPhpDocReturnType(Node $node, Scope $scope): ?Type
