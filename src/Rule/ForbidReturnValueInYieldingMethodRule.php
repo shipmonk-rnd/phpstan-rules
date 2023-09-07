@@ -5,15 +5,19 @@ namespace ShipMonk\PHPStan\Rule;
 use Generator;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\MethodReturnStatementsNode;
+use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Type\MixedType;
+use PHPStan\Type\Type;
 use function in_array;
 
 /**
- * @implements Rule<MethodReturnStatementsNode>
+ * @implements Rule<ReturnStatementsNode>
  */
 class ForbidReturnValueInYieldingMethodRule implements Rule
 {
@@ -27,11 +31,11 @@ class ForbidReturnValueInYieldingMethodRule implements Rule
 
     public function getNodeType(): string
     {
-        return MethodReturnStatementsNode::class;
+        return ReturnStatementsNode::class;
     }
 
     /**
-     * @param MethodReturnStatementsNode $node
+     * @param ReturnStatementsNode $node
      * @return list<RuleError>
      */
     public function processNode(
@@ -44,7 +48,7 @@ class ForbidReturnValueInYieldingMethodRule implements Rule
         }
 
         if (!$this->reportRegardlessOfReturnType) {
-            $methodReturnType = ParametersAcceptorSelector::selectSingle($node->getMethodReflection()->getVariants())->getReturnType();
+            $methodReturnType = $this->getReturnType($node, $scope);
 
             if (in_array(Generator::class, $methodReturnType->getObjectClassNames(), true)) {
                 return [];
@@ -61,13 +65,32 @@ class ForbidReturnValueInYieldingMethodRule implements Rule
                     ? 'this approach is denied'
                     : 'but this method is not marked to return Generator';
 
-                $errors[] = RuleErrorBuilder::message("Returned value from yielding method can be accessed only via Generator::getReturn, $suffix.")
+                $callType = $node instanceof MethodReturnStatementsNode // @phpstan-ignore-line ignore bc promise
+                    ? 'method'
+                    : 'function';
+
+                $errors[] = RuleErrorBuilder::message("Returned value from yielding $callType can be accessed only via Generator::getReturn, $suffix.")
                     ->line($returnNode->getLine())
                     ->build();
             }
         }
 
         return $errors;
+    }
+
+    private function getReturnType(ReturnStatementsNode $node, Scope $scope): Type
+    {
+        $methodReflection = $scope->getFunction();
+
+        if ($node instanceof ClosureReturnStatementsNode) { // @phpstan-ignore-line ignore bc promise
+            return $scope->getFunctionType($node->getClosureExpr()->getReturnType(), false, false);
+        }
+
+        if ($methodReflection !== null) {
+            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        }
+
+        return new MixedType();
     }
 
 }

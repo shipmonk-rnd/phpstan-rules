@@ -45,3 +45,23 @@ class NoValue {
         return;
     }
 }
+
+function returnIterable(): iterable {
+    yield 1;
+    return 2; // error: Returned value from yielding function can be accessed only via Generator::getReturn, but this method is not marked to return Generator.
+}
+
+function returnGenerator(): \Generator {
+    yield 1;
+    return 2;
+}
+
+function (): iterable {
+    yield 1;
+    return 2; // error: Returned value from yielding function can be accessed only via Generator::getReturn, but this method is not marked to return Generator.
+};
+
+function (): \Generator {
+    yield 1;
+    return 2;
+};
