@@ -28,3 +28,20 @@ class Normal {
     }
 
 }
+
+class NoValue {
+    public function returnMixed() {
+        yield 1;
+        return;
+    }
+
+    public function returnIterable(): iterable {
+        yield 1;
+        return;
+    }
+
+    public function returnGenerator(): \Generator {
+        yield 1;
+        return;
+    }
+}
