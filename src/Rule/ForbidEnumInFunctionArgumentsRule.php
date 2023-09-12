@@ -5,7 +5,10 @@ namespace ShipMonk\PHPStan\Rule;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
+use PHPStan\Analyser\ArgumentsNormalizer;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
@@ -44,6 +47,13 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
         'implode' => [1, self::REASON_IMPLICIT_TO_STRING],
     ];
 
+    private ReflectionProvider $reflectionProvider;
+
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
+        $this->reflectionProvider = $reflectionProvider;
+    }
+
     public function getNodeType(): string
     {
         return FuncCall::class;
@@ -69,7 +79,15 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
 
         $wrongArguments = [];
 
-        foreach ($node->getArgs() as $position => $argument) {
+        $functionReflection = $this->reflectionProvider->getFunction($node->name, $scope);
+        $parametersAcceptor = ParametersAcceptorSelector::selectFromArgs($scope, $node->getArgs(), $functionReflection->getVariants());
+        $funcCall = ArgumentsNormalizer::reorderFuncArguments($parametersAcceptor, $node); // @phpstan-ignore-line ignore bc promise
+
+        if ($funcCall === null) {
+            $funcCall = $node;
+        }
+
+        foreach ($funcCall->getArgs() as $position => $argument) {
             if (!$this->matchesPosition((int) $position, $forbiddenArgumentPosition)) {
                 continue;
             }
