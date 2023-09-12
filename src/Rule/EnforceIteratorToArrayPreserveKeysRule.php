@@ -40,6 +40,14 @@ class EnforceIteratorToArrayPreserveKeysRule implements Rule
             return [];
         }
 
+        if (count($node->getArgs()) === 0) {
+            return [];
+        }
+
+        if ($node->getArgs()[0]->unpack) {
+            return []; // not trying to analyse what is being unpacked as this is very non-standard approach here
+        }
+
         return [RuleErrorBuilder::message('Calling iterator_to_array without 2nd parameter $preserve_keys. Default value true might cause failures or data loss.')
             ->line($node->getLine())
             ->identifier('iteratorToArrayWithoutPreserveKeys')

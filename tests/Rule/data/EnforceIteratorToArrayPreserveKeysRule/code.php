@@ -24,3 +24,4 @@ iterator_to_array($noKeys()); // error: Calling iterator_to_array without 2nd pa
 iterator_to_array($objectAsKey(), false);
 iterator_to_array($dataLoss(), false);
 iterator_to_array($noKeys(), true);
+iterator_to_array(... [$noKeys(), true]);
