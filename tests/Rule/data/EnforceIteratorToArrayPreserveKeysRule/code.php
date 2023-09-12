@@ -25,3 +25,7 @@ iterator_to_array($objectAsKey(), false);
 iterator_to_array($dataLoss(), false);
 iterator_to_array($noKeys(), true);
 iterator_to_array(... [$noKeys(), true]);
+iterator_to_array(
+    preserve_keys: true,
+    iterator: $noKeys()
+);
