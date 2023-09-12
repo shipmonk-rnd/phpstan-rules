@@ -32,6 +32,8 @@ parameters:
             superclassToSuffixMapping: []
         enforceEnumMatch:
             enabled: true
+        enforceIteratorToArrayPreserveKeys:
+            enabled: true
         enforceListReturn:
             enabled: true
         enforceNativeReturnTypehint:
@@ -238,6 +240,19 @@ We believe that this leads to more error-prone code since adding new enum case m
 Very good approach within similar cases is to use `match` construct so that (ideally with `forbidMatchDefaultArmForEnums` enabled) phpstan fails once new case is added.
 PHPStan even adds tip about `match` in those cases since `1.10.11`.
 For those reasons, this rule detects any always-true/false enum comparisons and forces you to rewrite it to `match ($enum)`.
+
+
+### enforceIteratorToArrayPreserveKeys
+- Enforces presence of second parameter in [iterator_to_array](https://www.php.net/manual/en/function.iterator-to-array.php) call (`$preserve_keys`) as the default value `true` is generally dangerous (risk of data loss / failure)
+- You can use both `true` and `false` there, but doing so is intentional choice now
+
+```php
+$fn = function () {
+    yield new stdClass => 1;
+};
+
+iterator_to_array($fn()); // denied, would fail
+```
 
 
 ### enforceListReturn

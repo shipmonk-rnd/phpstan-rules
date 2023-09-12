@@ -11,6 +11,8 @@ parameters:
             superclassToSuffixMapping: []
         enforceEnumMatch:
             enabled: true
+        enforceIteratorToArrayPreserveKeys:
+            enabled: true
         enforceListReturn:
             enabled: true
         enforceNativeReturnTypehint:
@@ -110,6 +112,9 @@ parametersSchema:
             superclassToSuffixMapping: arrayOf(string(), string())
         ])
         enforceEnumMatch: structure([
+            enabled: bool()
+        ])
+        enforceIteratorToArrayPreserveKeys: structure([
             enabled: bool()
         ])
         enforceListReturn: structure([
@@ -216,6 +221,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.classSuffixNaming.enabled%
     ShipMonk\PHPStan\Rule\EnforceEnumMatchRule:
         phpstan.rules.rule: %shipmonkRules.enforceEnumMatch.enabled%
+    ShipMonk\PHPStan\Rule\EnforceIteratorToArrayPreserveKeysRule:
+        phpstan.rules.rule: %shipmonkRules.enforceIteratorToArrayPreserveKeys.enabled%
     ShipMonk\PHPStan\Rule\EnforceNativeReturnTypehintRule:
         phpstan.rules.rule: %shipmonkRules.enforceNativeReturnTypehint.enabled%
     ShipMonk\PHPStan\Rule\EnforceListReturnRule:
@@ -304,6 +311,8 @@ services:
             superclassToSuffixMapping: %shipmonkRules.classSuffixNaming.superclassToSuffixMapping%
     -
         class: ShipMonk\PHPStan\Rule\EnforceEnumMatchRule
+    -
+        class: ShipMonk\PHPStan\Rule\EnforceIteratorToArrayPreserveKeysRule
     -
         class: ShipMonk\PHPStan\Rule\EnforceListReturnRule
     -
