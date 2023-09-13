@@ -21,9 +21,12 @@ use PHPStan\Type\DynamicMethodThrowTypeExtension;
 use PHPStan\Type\DynamicStaticMethodThrowTypeExtension;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use function array_keys;
-use function in_array;
+use function array_merge;
+use function array_unique;
+use function array_values;
+use function explode;
 use function is_int;
+use function strpos;
 
 class ImmediatelyCalledCallableThrowTypeExtension implements DynamicFunctionThrowTypeExtension, DynamicMethodThrowTypeExtension, DynamicStaticMethodThrowTypeExtension
 {
@@ -75,11 +78,7 @@ class ImmediatelyCalledCallableThrowTypeExtension implements DynamicFunctionThro
      */
     private function isCallSupported(object $callReflection): bool
     {
-        return in_array(
-            $this->getCallNotation($callReflection),
-            array_keys($this->immediatelyCalledCallables),
-            true,
-        );
+        return $this->getClosureArgumentPositions($callReflection) !== [];
     }
 
     public function getThrowTypeFromFunctionCall(
@@ -197,28 +196,37 @@ class ImmediatelyCalledCallableThrowTypeExtension implements DynamicFunctionThro
      */
     private function getClosureArgumentPositions(object $callReflection): array
     {
-        $arguments = $this->immediatelyCalledCallables[$this->getCallNotation($callReflection)];
-
-        if (is_int($arguments)) {
-            return [$arguments];
+        if ($callReflection instanceof FunctionReflection) {
+            return $this->normalizeArgumentIndexes($this->immediatelyCalledCallables[$callReflection->getName()] ?? []);
         }
 
-        return $arguments;
+        $argumentPositions = [];
+        $classReflection = $callReflection->getDeclaringClass();
+
+        foreach ($this->immediatelyCalledCallables as $immediateCallerAndMethod => $indexes) {
+            if (strpos($immediateCallerAndMethod, '::') === false) {
+                continue;
+            }
+
+            [$callerClass, $methodName] = explode('::', $immediateCallerAndMethod);
+
+            if ($methodName !== $callReflection->getName() || !$classReflection->is($callerClass)) {
+                continue;
+            }
+
+            $argumentPositions = array_merge($argumentPositions, $this->normalizeArgumentIndexes($indexes));
+        }
+
+        return array_values(array_unique($argumentPositions));
     }
 
     /**
-     * @param FunctionReflection|MethodReflection $callReflection
+     * @param int|list<int> $argumentIndexes
+     * @return list<int>
      */
-    private function getCallNotation(object $callReflection): string
+    private function normalizeArgumentIndexes($argumentIndexes): array
     {
-        if ($callReflection instanceof MethodReflection) {
-            $class = $callReflection->getDeclaringClass()->getName();
-            $method = $callReflection->getName();
-
-            return "{$class}::{$method}";
-        }
-
-        return $callReflection->getName();
+        return is_int($argumentIndexes) ? [$argumentIndexes] : $argumentIndexes;
     }
 
 }
