@@ -23,7 +23,7 @@ class FirstClassCallableTest {
 
         $this->denied($this->throws(...)); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
 
-        $this->immediateThrow($this->throws(...));
+        $this->immediateThrow(42, $this->throws(...));
 
         ($this->throws(...))();
 
@@ -33,9 +33,9 @@ class FirstClassCallableTest {
 
         array_map(throwing_function(...), []);
 
-        $this->allowThrow($this->throws(...));
+        $this->allowThrow(42, $this->throws(...));
 
-        $this->allowThrow(throwing_function(...));
+        $this->allowThrow(42, throwing_function(...));
     }
 
     private function noop(): void
@@ -55,12 +55,12 @@ class FirstClassCallableTest {
 
     }
 
-    public function immediateThrow(callable $callable): void
+    public function immediateThrow(int $dummy, callable $callable): void
     {
         $callable();
     }
 
-    public function allowThrow(callable $callable): void
+    public function allowThrow(int $dummy, callable $callable): void
     {
         try {
             $callable();
