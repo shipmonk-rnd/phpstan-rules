@@ -11,7 +11,7 @@ function throwing_function() {}
 
 class FirstClassCallableTest {
 
-    public function test(): void
+    public function testDeclarations(): void
     {
         $this->noop(...);
 
@@ -20,14 +20,21 @@ class FirstClassCallableTest {
         // $this?->throws(...); // https://github.com/phpstan/phpstan/issues/9746
 
         throwing_function(...); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+    }
 
-        $this->denied($this->throws(...)); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
-
-        $this->immediateThrow(42, $this->throws(...));
-
+    public function testExplicitExecution1(): void
+    {
         ($this->throws(...))();
+    }
 
+    public function testExplicitExecution2(): void
+    {
         (throwing_function(...))();
+    }
+
+    public function testPassedCallbacks(): void
+    {
+        $this->immediateThrow(42, $this->throws(...));
 
         array_map($this->throws(...), []);
 
@@ -36,6 +43,8 @@ class FirstClassCallableTest {
         $this->allowThrow(42, $this->throws(...));
 
         $this->allowThrow(42, throwing_function(...));
+
+        $this->denied($this->throws(...)); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
     }
 
     private function noop(): void
@@ -73,7 +82,7 @@ class FirstClassCallableTest {
 
 class ClosureTest {
 
-    public function test(): void
+    public function testDeclarations(): void
     {
         $fn = function () {
             throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!
@@ -90,15 +99,17 @@ class ClosureTest {
         $fn4 = function (callable $c) {
             $c(); // implicit throw is ignored (https://github.com/phpstan/phpstan/issues/9779)
         };
+    }
 
-        $this->denied(function () {
-            throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!
-        });
+    public function testExplicitExecution(): void
+    {
+        (function () {
+            throw new CheckedException();
+        })();
+    }
 
-        $this?->denied(function () {
-            $this->throws(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!
-        });
-
+    public function testPassedCallbacks(): void
+    {
         $this->immediateThrow(function () {
             throw new CheckedException();
         });
@@ -107,10 +118,6 @@ class ClosureTest {
         $self->immediateThrow(function () {
             throw new CheckedException();
         });
-
-        (function () {
-            throw new CheckedException();
-        })();
 
         array_map(function () {
             throw new CheckedException();
@@ -122,6 +129,14 @@ class ClosureTest {
 
         $this->allowThrow(function () {
             $this->throws();
+        });
+
+        $this->denied(function () {
+            throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!
+        });
+
+        $this?->denied(function () {
+            $this->throws(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!
         });
     }
 
