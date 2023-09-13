@@ -44,6 +44,11 @@ class FirstClassCallableTest {
 
         $this->allowThrow(42, throwing_function(...));
 
+        $this->immediateThrow(
+            $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+            function () {},
+        );
+
         $this->denied($this->throws(...)); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
     }
 
@@ -64,7 +69,7 @@ class FirstClassCallableTest {
 
     }
 
-    public function immediateThrow(int $dummy, callable $callable): void
+    public function immediateThrow(?callable $denied, callable $callable): void
     {
         $callable();
     }
@@ -131,6 +136,13 @@ class ClosureTest {
             $this->throws();
         });
 
+        $this->immediateThrow(
+            function () {},
+            function () {
+                throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!
+            },
+        );
+
         $this->denied(function () {
             throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!
         });
@@ -157,7 +169,7 @@ class ClosureTest {
 
     }
 
-    public function immediateThrow(callable $callable): void
+    public function immediateThrow(callable $callable, ?callable $denied = null): void
     {
         $callable();
     }

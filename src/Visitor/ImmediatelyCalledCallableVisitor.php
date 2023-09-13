@@ -26,6 +26,7 @@ class ImmediatelyCalledCallableVisitor extends NodeVisitorAbstract
     public const CALLABLE_ALLOWING_CHECKED_EXCEPTION = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'callableAllowingCheckedException';
     public const CALLER_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'callerWithCallablePossiblyAllowingCheckedException';
     public const METHOD_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'methodWithCallablePossiblyAllowingCheckedException';
+    public const ARGUMENT_INDEX_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'argumentIndexWithCallablePossiblyAllowingCheckedException';
 
     /**
      * method name => callable argument indexes
@@ -108,6 +109,7 @@ class ImmediatelyCalledCallableVisitor extends NodeVisitorAbstract
             // we cannot decide true/false like in function calls as we dont know caller type yet, this has to be resolved in Rule
             $node->getArgs()[$argumentIndex]->value->setAttribute(self::CALLER_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION, $node instanceof StaticCall ? $node->class : $node->var);
             $node->getArgs()[$argumentIndex]->value->setAttribute(self::METHOD_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION, $node->name->toString());
+            $node->getArgs()[$argumentIndex]->value->setAttribute(self::ARGUMENT_INDEX_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION, $argumentIndex);
         }
     }
 
