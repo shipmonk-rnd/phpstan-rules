@@ -53,4 +53,9 @@ class Test
         sort([$arrayOfEnumsOrNot]); // error: Argument 1 in sort() cannot contain enum as the function causes unexpected results
     }
 
+    public function testArgumentsNormalization()
+    {
+        sort(flags: 0, array: [SomeEnum::Bar]); // error: Argument 1 in sort() cannot contain enum as the function causes unexpected results
+    }
+
 }

@@ -2,6 +2,7 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use ShipMonk\PHPStan\RuleTestCase;
 use const PHP_VERSION_ID;
@@ -14,7 +15,9 @@ class ForbidEnumInFunctionArgumentsRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new ForbidEnumInFunctionArgumentsRule();
+        return new ForbidEnumInFunctionArgumentsRule(
+            self::getContainer()->getByType(ReflectionProvider::class),
+        );
     }
 
     public function test(): void
