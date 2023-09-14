@@ -11,6 +11,5 @@ function test(
     (int) $mixed;
     (string) $mixed;
     (float) $mixed;
-    (real) $mixed;
     (bool) $mixed;
 }

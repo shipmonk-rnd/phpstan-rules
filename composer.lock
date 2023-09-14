@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "092960c7d686a662eb7e0f4df304efda",
+    "content-hash": "f1813d3f445fd02f674451c919a1b12f",
     "packages": [
         {
             "name": "nikic/php-parser",
@@ -721,54 +721,6 @@
             "time": "2022-12-10T14:50:15+00:00"
         },
         {
-            "name": "jetbrains/phpstorm-stubs",
-            "version": "v2022.3",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/JetBrains/phpstorm-stubs.git",
-                "reference": "6b568c153cea002dc6fad96285c3063d07cab18d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/JetBrains/phpstorm-stubs/zipball/6b568c153cea002dc6fad96285c3063d07cab18d",
-                "reference": "6b568c153cea002dc6fad96285c3063d07cab18d",
-                "shasum": ""
-            },
-            "require-dev": {
-                "friendsofphp/php-cs-fixer": "@stable",
-                "nikic/php-parser": "@stable",
-                "php": "^8.0",
-                "phpdocumentor/reflection-docblock": "@stable",
-                "phpunit/phpunit": "@stable"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "PhpStormStubsMap.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "description": "PHP runtime & extensions header files for PhpStorm",
-            "homepage": "https://www.jetbrains.com/phpstorm",
-            "keywords": [
-                "autocomplete",
-                "code",
-                "inference",
-                "inspection",
-                "jetbrains",
-                "phpstorm",
-                "stubs",
-                "type"
-            ],
-            "support": {
-                "source": "https://github.com/JetBrains/phpstorm-stubs/tree/v2022.3"
-            },
-            "time": "2022-10-17T09:21:37+00:00"
-        },
-        {
             "name": "justinrainbow/json-schema",
             "version": "5.2.12",
             "source": {
@@ -1024,6 +976,155 @@
                 "source": "https://github.com/nette/neon/tree/v3.4.0"
             },
             "time": "2023-01-13T03:08:29+00:00"
+        },
+        {
+            "name": "nette/schema",
+            "version": "v1.2.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nette/schema.git",
+                "reference": "c9ff517a53903b3d4e29ec547fb20feecb05b8ab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nette/schema/zipball/c9ff517a53903b3d4e29ec547fb20feecb05b8ab",
+                "reference": "c9ff517a53903b3d4e29ec547fb20feecb05b8ab",
+                "shasum": ""
+            },
+            "require": {
+                "nette/utils": "^2.5.7 || ^3.1.5 ||  ^4.0",
+                "php": "7.1 - 8.3"
+            },
+            "require-dev": {
+                "nette/tester": "^2.3 || ^2.4",
+                "phpstan/phpstan-nette": "^1.0",
+                "tracy/tracy": "^2.7"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause",
+                "GPL-2.0-only",
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "David Grudl",
+                    "homepage": "https://davidgrudl.com"
+                },
+                {
+                    "name": "Nette Community",
+                    "homepage": "https://nette.org/contributors"
+                }
+            ],
+            "description": "📐 Nette Schema: validating data structures against a given Schema.",
+            "homepage": "https://nette.org",
+            "keywords": [
+                "config",
+                "nette"
+            ],
+            "support": {
+                "issues": "https://github.com/nette/schema/issues",
+                "source": "https://github.com/nette/schema/tree/v1.2.4"
+            },
+            "time": "2023-08-05T18:56:25+00:00"
+        },
+        {
+            "name": "nette/utils",
+            "version": "v4.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nette/utils.git",
+                "reference": "9124157137da01b1f5a5a22d6486cb975f26db7e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nette/utils/zipball/9124157137da01b1f5a5a22d6486cb975f26db7e",
+                "reference": "9124157137da01b1f5a5a22d6486cb975f26db7e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.0 <8.4"
+            },
+            "conflict": {
+                "nette/finder": "<3",
+                "nette/schema": "<1.2.2"
+            },
+            "require-dev": {
+                "jetbrains/phpstorm-attributes": "dev-master",
+                "nette/tester": "^2.5",
+                "phpstan/phpstan": "^1.0",
+                "tracy/tracy": "^2.9"
+            },
+            "suggest": {
+                "ext-gd": "to use Image",
+                "ext-iconv": "to use Strings::webalize(), toAscii(), chr() and reverse()",
+                "ext-intl": "to use Strings::webalize(), toAscii(), normalize() and compare()",
+                "ext-json": "to use Nette\\Utils\\Json",
+                "ext-mbstring": "to use Strings::lower() etc...",
+                "ext-tokenizer": "to use Nette\\Utils\\Reflection::getUseStatements()",
+                "ext-xml": "to use Strings::length() etc. when mbstring is not available"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause",
+                "GPL-2.0-only",
+                "GPL-3.0-only"
+            ],
+            "authors": [
+                {
+                    "name": "David Grudl",
+                    "homepage": "https://davidgrudl.com"
+                },
+                {
+                    "name": "Nette Community",
+                    "homepage": "https://nette.org/contributors"
+                }
+            ],
+            "description": "🛠  Nette Utils: lightweight utilities for string & array manipulation, image handling, safe JSON encoding/decoding, validation, slug or strong password generating etc.",
+            "homepage": "https://nette.org",
+            "keywords": [
+                "array",
+                "core",
+                "datetime",
+                "images",
+                "json",
+                "nette",
+                "paginator",
+                "password",
+                "slugify",
+                "string",
+                "unicode",
+                "utf-8",
+                "utility",
+                "validation"
+            ],
+            "support": {
+                "issues": "https://github.com/nette/utils/issues",
+                "source": "https://github.com/nette/utils/tree/v4.0.1"
+            },
+            "time": "2023-07-30T15:42:21+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -1705,120 +1806,6 @@
                 }
             ],
             "time": "2023-08-19T07:10:56+00:00"
-        },
-        {
-            "name": "roave/better-reflection",
-            "version": "6.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Roave/BetterReflection.git",
-                "reference": "cc6e8c4606fb52d3bc2b56dbb6dda72e840bb8b0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Roave/BetterReflection/zipball/cc6e8c4606fb52d3bc2b56dbb6dda72e840bb8b0",
-                "reference": "cc6e8c4606fb52d3bc2b56dbb6dda72e840bb8b0",
-                "shasum": ""
-            },
-            "require": {
-                "ext-json": "*",
-                "jetbrains/phpstorm-stubs": "2022.3",
-                "nikic/php-parser": "^4.15.4",
-                "php": "~8.1.0 || ~8.2.0",
-                "roave/signature": "^1.7"
-            },
-            "conflict": {
-                "thecodingmachine/safe": "<1.1.3"
-            },
-            "require-dev": {
-                "doctrine/coding-standard": "^11.1.0",
-                "phpstan/phpstan": "^1.10.3",
-                "phpstan/phpstan-phpunit": "^1.3.10",
-                "phpunit/phpunit": "10.0.14",
-                "roave/infection-static-analysis-plugin": "^1.29.0",
-                "vimeo/psalm": "5.7.7"
-            },
-            "suggest": {
-                "composer/composer": "Required to use the ComposerSourceLocator"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Roave\\BetterReflection\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "James Titcumb",
-                    "email": "james@asgrim.com",
-                    "homepage": "https://github.com/asgrim"
-                },
-                {
-                    "name": "Marco Pivetta",
-                    "email": "ocramius@gmail.com",
-                    "homepage": "https://ocramius.github.io/"
-                },
-                {
-                    "name": "Gary Hockin",
-                    "email": "gary@roave.com",
-                    "homepage": "https://github.com/geeh"
-                },
-                {
-                    "name": "Jaroslav Hanslík",
-                    "email": "kukulich@kukulich.cz",
-                    "homepage": "https://github.com/kukulich"
-                }
-            ],
-            "description": "Better Reflection - an improved code reflection API",
-            "support": {
-                "issues": "https://github.com/Roave/BetterReflection/issues",
-                "source": "https://github.com/Roave/BetterReflection/tree/6.8.0"
-            },
-            "time": "2023-03-06T09:15:25+00:00"
-        },
-        {
-            "name": "roave/signature",
-            "version": "1.7.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Roave/Signature.git",
-                "reference": "2ab4eadcb9f9d449f673a97b67797403b35eca94"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Roave/Signature/zipball/2ab4eadcb9f9d449f673a97b67797403b35eca94",
-                "reference": "2ab4eadcb9f9d449f673a97b67797403b35eca94",
-                "shasum": ""
-            },
-            "require": {
-                "php": "8.0.*|8.1.*|8.2.*"
-            },
-            "require-dev": {
-                "doctrine/coding-standard": "^10.0.0",
-                "infection/infection": "^0.26.15",
-                "phpunit/phpunit": "^9.5.25",
-                "vimeo/psalm": "^4.28.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Roave\\Signature\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Sign and verify stuff",
-            "support": {
-                "issues": "https://github.com/Roave/Signature/issues",
-                "source": "https://github.com/Roave/Signature/tree/1.7.0"
-            },
-            "time": "2022-10-10T08:44:53+00:00"
         },
         {
             "name": "sebastian/cli-parser",
@@ -2786,20 +2773,22 @@
         },
         {
             "name": "shipmonk/name-collision-detector",
-            "version": "1.1.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shipmonk-rnd/name-collision-detector.git",
-                "reference": "2515d8a97b7f4385215a61d80b4fe5f4018854c9"
+                "reference": "034b32f263edb71d08c15591d35544c2189d9fca"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shipmonk-rnd/name-collision-detector/zipball/2515d8a97b7f4385215a61d80b4fe5f4018854c9",
-                "reference": "2515d8a97b7f4385215a61d80b4fe5f4018854c9",
+                "url": "https://api.github.com/repos/shipmonk-rnd/name-collision-detector/zipball/034b32f263edb71d08c15591d35544c2189d9fca",
+                "reference": "034b32f263edb71d08c15591d35544c2189d9fca",
                 "shasum": ""
             },
             "require": {
-                "roave/better-reflection": "4.* || 5.* || 6.*"
+                "ext-tokenizer": "*",
+                "nette/schema": "^1.1.0",
+                "php": "^7.2 || ^8.0"
             },
             "require-dev": {
                 "editorconfig-checker/editorconfig-checker": "^10.3.0",
@@ -2816,25 +2805,27 @@
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "ShipMonk\\": "src/"
+                    "ShipMonk\\NameCollision\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
-            "description": "Simple tool to find class/function/constant name duplicates within your project.",
+            "description": "Simple tool to find ambiguous classes or any other name duplicates within your project.",
             "keywords": [
+                "ambiguous",
                 "autoload",
+                "autoloading",
                 "classname",
                 "collision",
                 "namespace"
             ],
             "support": {
                 "issues": "https://github.com/shipmonk-rnd/name-collision-detector/issues",
-                "source": "https://github.com/shipmonk-rnd/name-collision-detector/tree/1.1.0"
+                "source": "https://github.com/shipmonk-rnd/name-collision-detector/tree/2.0.0"
             },
-            "time": "2022-12-22T13:08:50+00:00"
+            "time": "2023-09-14T09:44:51+00:00"
         },
         {
             "name": "slevomat/coding-standard",
@@ -3018,5 +3009,5 @@
         "php": "^7.4 || ^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.6.0"
 }
