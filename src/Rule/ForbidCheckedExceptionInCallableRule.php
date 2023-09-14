@@ -23,9 +23,12 @@ use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Type;
 use ShipMonk\PHPStan\Visitor\ImmediatelyCalledCallableVisitor;
+use function array_map;
 use function array_merge;
 use function array_merge_recursive;
 use function explode;
+use function in_array;
+use function is_int;
 
 /**
  * @implements Rule<Node>
@@ -42,7 +45,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      * or
      * function => Closure argument index
      *
-     * @var array<string, int|list<int>>
+     * @var array<string, list<int>>
      */
     private array $callablesAllowingCheckedExceptions;
 
@@ -57,9 +60,14 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         array $allowedCheckedExceptionCallables
     )
     {
-        $this->callablesAllowingCheckedExceptions = array_merge_recursive(
-            $immediatelyCalledCallables,
-            $allowedCheckedExceptionCallables,
+        $this->callablesAllowingCheckedExceptions = array_map(
+            function ($argumentIndexes): array {
+                return $this->normalizeArgumentIndexes($argumentIndexes);
+            },
+            array_merge_recursive(
+                $immediatelyCalledCallables,
+                $allowedCheckedExceptionCallables,
+            ),
         );
         $this->exceptionTypeResolver = $exceptionTypeResolver;
         $this->reflectionProvider = $reflectionProvider;
@@ -222,6 +230,8 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         $callerNodeWithClosureAsArg = $node->getAttribute(ImmediatelyCalledCallableVisitor::CALLER_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION);
         /** @var string|null $methodNameWithClosureAsArg */
         $methodNameWithClosureAsArg = $node->getAttribute(ImmediatelyCalledCallableVisitor::METHOD_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION);
+        /** @var int|null $argumentIndexWithClosureAsArg */
+        $argumentIndexWithClosureAsArg = $node->getAttribute(ImmediatelyCalledCallableVisitor::ARGUMENT_INDEX_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION);
         /** @var true|null $isAllowedToThrow */
         $isAllowedToThrow = $node->getAttribute(ImmediatelyCalledCallableVisitor::CALLABLE_ALLOWING_CHECKED_EXCEPTION);
 
@@ -229,7 +239,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
             return true;
         }
 
-        if ($callerNodeWithClosureAsArg === null || $methodNameWithClosureAsArg === null) {
+        if ($callerNodeWithClosureAsArg === null || $methodNameWithClosureAsArg === null || $argumentIndexWithClosureAsArg === null) {
             return false;
         }
 
@@ -242,8 +252,9 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                 [$callerClass, $methodName] = explode('::', $immediateCallerAndMethod);
 
                 if (
-                    $callerWithClosureAsArgClassReflection->is($callerClass)
-                    && $methodName === $methodNameWithClosureAsArg
+                    $methodName === $methodNameWithClosureAsArg
+                    && in_array($argumentIndexWithClosureAsArg, $indexes, true)
+                    && $callerWithClosureAsArgClassReflection->is($callerClass)
                 ) {
                     return true;
                 }
@@ -251,6 +262,15 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         }
 
         return false;
+    }
+
+    /**
+     * @param int|list<int> $argumentIndexes
+     * @return list<int>
+     */
+    private function normalizeArgumentIndexes($argumentIndexes): array
+    {
+        return is_int($argumentIndexes) ? [$argumentIndexes] : $argumentIndexes;
     }
 
 }

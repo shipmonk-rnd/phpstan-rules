@@ -12,7 +12,10 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\NodeVisitorAbstract;
+use function array_merge;
 use function array_merge_recursive;
+use function array_unique;
+use function array_values;
 use function explode;
 use function is_int;
 use function strpos;
@@ -23,18 +26,19 @@ class ImmediatelyCalledCallableVisitor extends NodeVisitorAbstract
     public const CALLABLE_ALLOWING_CHECKED_EXCEPTION = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'callableAllowingCheckedException';
     public const CALLER_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'callerWithCallablePossiblyAllowingCheckedException';
     public const METHOD_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'methodWithCallablePossiblyAllowingCheckedException';
+    public const ARGUMENT_INDEX_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'argumentIndexWithCallablePossiblyAllowingCheckedException';
 
     /**
      * method name => callable argument indexes
      *
-     * @var array<string, int|list<int>>
+     * @var array<string, list<int>>
      */
     private array $methodsWithAllowedCheckedExceptions = [];
 
     /**
      * function name => callable argument indexes
      *
-     * @var array<string, int|list<int>>
+     * @var array<string, list<int>>
      */
     private array $functionsWithAllowedCheckedExceptions = [];
 
@@ -50,11 +54,14 @@ class ImmediatelyCalledCallableVisitor extends NodeVisitorAbstract
         $callablesWithAllowedCheckedExceptions = array_merge_recursive($immediatelyCalledCallables, $allowedCheckedExceptionCallables);
 
         foreach ($callablesWithAllowedCheckedExceptions as $call => $arguments) {
+            $normalizedArguments = $this->normalizeArgumentIndexes($arguments);
+
             if (strpos($call, '::') !== false) {
                 [, $methodName] = explode('::', $call);
-                $this->methodsWithAllowedCheckedExceptions[$methodName] = $arguments;
+                $existingArguments = $this->methodsWithAllowedCheckedExceptions[$methodName] ?? [];
+                $this->methodsWithAllowedCheckedExceptions[$methodName] = array_values(array_unique(array_merge($existingArguments, $normalizedArguments)));
             } else {
-                $this->functionsWithAllowedCheckedExceptions[$call] = $arguments;
+                $this->functionsWithAllowedCheckedExceptions[$call] = $normalizedArguments;
             }
         }
     }
@@ -88,7 +95,7 @@ class ImmediatelyCalledCallableVisitor extends NodeVisitorAbstract
             return;
         }
 
-        foreach ($this->normalizeArgumentIndexes($argumentIndexes) as $argumentIndex) {
+        foreach ($argumentIndexes as $argumentIndex) {
             $argument = $node->getArgs()[$argumentIndex] ?? null;
 
             if ($argument === null) {
@@ -102,6 +109,7 @@ class ImmediatelyCalledCallableVisitor extends NodeVisitorAbstract
             // we cannot decide true/false like in function calls as we dont know caller type yet, this has to be resolved in Rule
             $node->getArgs()[$argumentIndex]->value->setAttribute(self::CALLER_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION, $node instanceof StaticCall ? $node->class : $node->var);
             $node->getArgs()[$argumentIndex]->value->setAttribute(self::METHOD_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION, $node->name->toString());
+            $node->getArgs()[$argumentIndex]->value->setAttribute(self::ARGUMENT_INDEX_WITH_CALLABLE_POSSIBLY_ALLOWING_CHECKED_EXCEPTION, $argumentIndex);
         }
     }
 
@@ -124,7 +132,7 @@ class ImmediatelyCalledCallableVisitor extends NodeVisitorAbstract
             return;
         }
 
-        foreach ($this->normalizeArgumentIndexes($argumentIndexes) as $argumentIndex) {
+        foreach ($argumentIndexes as $argumentIndex) {
             $argument = $node->getArgs()[$argumentIndex] ?? null;
 
             if ($argument === null) {
