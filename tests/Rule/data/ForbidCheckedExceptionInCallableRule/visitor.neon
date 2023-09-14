@@ -6,10 +6,12 @@ services:
                 'array_map': 0
                 'ForbidCheckedExceptionInCallableRule\ClosureTest::immediateThrow': 0
                 'ForbidCheckedExceptionInCallableRule\FirstClassCallableTest::immediateThrow': 1
+                'ForbidCheckedExceptionInCallableRule\ArrowFunctionTest::immediateThrow': 0
             allowedCheckedExceptionCallables:
                 'ForbidCheckedExceptionInCallableRule\CallableTest::allowThrowInInterface': [0]
                 'ForbidCheckedExceptionInCallableRule\BaseCallableTest::allowThrowInBaseClass': [0]
                 'ForbidCheckedExceptionInCallableRule\ClosureTest::allowThrow': [0]
                 'ForbidCheckedExceptionInCallableRule\FirstClassCallableTest::allowThrow': [1]
+                'ForbidCheckedExceptionInCallableRule\ArrowFunctionTest::allowThrow': [0]
         tags:
             - phpstan.parser.richParserNodeVisitor

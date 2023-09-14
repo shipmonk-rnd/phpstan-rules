@@ -4,6 +4,7 @@ namespace ShipMonk\PHPStan\Rule;
 
 use LogicException;
 use Nette\Neon\Neon;
+use PHPStan\Analyser\NodeScopeResolver;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver;
 use PHPStan\Rules\Rule;
@@ -35,6 +36,7 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
         $visitorConfig = Neon::decodeFile(self::getVisitorConfigFilePath());
 
         return new ForbidCheckedExceptionInCallableRule(
+            self::getContainer()->getByType(NodeScopeResolver::class),
             self::getContainer()->getByType(ReflectionProvider::class),
             new DefaultExceptionTypeResolver( // @phpstan-ignore-line ignore BC promise
                 self::getContainer()->getByType(ReflectionProvider::class),

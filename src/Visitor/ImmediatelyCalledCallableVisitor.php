@@ -3,6 +3,7 @@
 namespace ShipMonk\PHPStan\Visitor;
 
 use PhpParser\Node;
+use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
@@ -102,7 +103,7 @@ class ImmediatelyCalledCallableVisitor extends NodeVisitorAbstract
                 continue;
             }
 
-            if (!$this->isFirstClassCallableOrClosure($argument->value)) {
+            if (!$this->isFirstClassCallableOrClosureOrArrowFunction($argument->value)) {
                 continue;
             }
 
@@ -115,7 +116,7 @@ class ImmediatelyCalledCallableVisitor extends NodeVisitorAbstract
 
     private function resolveFuncCall(FuncCall $node): void
     {
-        if ($this->isFirstClassCallableOrClosure($node->name)) {
+        if ($this->isFirstClassCallableOrClosureOrArrowFunction($node->name)) {
             // phpcs:ignore Squiz.PHP.CommentedOutCode.Found
             $node->name->setAttribute(self::CALLABLE_ALLOWING_CHECKED_EXCEPTION, true); // immediately called closure syntax, e.g. (function(){})()
             return;
@@ -139,7 +140,7 @@ class ImmediatelyCalledCallableVisitor extends NodeVisitorAbstract
                 continue;
             }
 
-            if (!$this->isFirstClassCallableOrClosure($argument->value)) {
+            if (!$this->isFirstClassCallableOrClosureOrArrowFunction($argument->value)) {
                 continue;
             }
 
@@ -147,9 +148,10 @@ class ImmediatelyCalledCallableVisitor extends NodeVisitorAbstract
         }
     }
 
-    private function isFirstClassCallableOrClosure(Node $node): bool
+    private function isFirstClassCallableOrClosureOrArrowFunction(Node $node): bool
     {
         return $node instanceof Closure
+            || $node instanceof ArrowFunction
             || ($node instanceof MethodCall && $node->isFirstClassCallable())
             || ($node instanceof NullsafeMethodCall && $node->isFirstClassCallable())
             || ($node instanceof StaticCall && $node->isFirstClassCallable())
