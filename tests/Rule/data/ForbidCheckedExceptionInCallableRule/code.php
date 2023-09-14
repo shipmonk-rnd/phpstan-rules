@@ -9,7 +9,35 @@ class CheckedException extends \Exception {}
  */
 function throwing_function() {}
 
-class FirstClassCallableTest {
+interface CallableTest {
+
+    public function allowThrowInInterface(callable $callable): void;
+
+}
+
+class BaseCallableTest implements CallableTest {
+
+    public function allowThrowInInterface(callable $callable): void
+    {
+        try {
+            $callable();
+        } catch (\Exception $e) {
+
+        }
+    }
+
+    public function allowThrowInBaseClass(callable $callable): void
+    {
+        try {
+            $callable();
+        } catch (\Exception $e) {
+
+        }
+    }
+
+}
+
+class FirstClassCallableTest extends BaseCallableTest {
 
     public function testDeclarations(): void
     {
@@ -34,7 +62,7 @@ class FirstClassCallableTest {
 
     public function testPassedCallbacks(): void
     {
-        $this->immediateThrow(42, $this->throws(...));
+        $this->immediateThrow(null, $this->throws(...));
 
         array_map($this->throws(...), []);
 
@@ -48,6 +76,10 @@ class FirstClassCallableTest {
             $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
             function () {},
         );
+
+        $this->allowThrowInBaseClass(throwing_function(...));
+
+        $this->allowThrowInInterface(throwing_function(...));
 
         $this->denied($this->throws(...)); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
     }
@@ -85,7 +117,7 @@ class FirstClassCallableTest {
 
 }
 
-class ClosureTest {
+class ClosureTest extends BaseCallableTest {
 
     public function testDeclarations(): void
     {
@@ -142,6 +174,14 @@ class ClosureTest {
                 throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!
             },
         );
+
+        $this->allowThrowInBaseClass(function () {
+            $this->throws();
+        });
+
+        $this->allowThrowInInterface(function () {
+            $this->throws();
+        });
 
         $this->denied(function () {
             throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!

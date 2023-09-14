@@ -5,11 +5,29 @@ namespace ImmediatelyCalledCallableThrowTypeExtension;
 use PHPStan\TrinaryLogic;
 use function PHPStan\Testing\assertVariableCertainty;
 
-class Immediate {
+interface ImmediateInterface {
+
+    public function inheritedMethod(callable $first, callable $second): int;
+
+}
+
+class BaseImmediate implements ImmediateInterface {
+
+    public function inheritedMethod(callable $first, callable $second): int {
+        $first();
+        $second();
+        return 1;
+    }
+
+}
+
+class Immediate extends BaseImmediate {
+
     public static function method(callable $callable): int {
         $callable();
         return 1;
     }
+
 }
 
 class MethodCallExtensionTest
@@ -86,6 +104,27 @@ class MethodCallExtensionTest
             $result = Immediate::method($this->noThrow(...));
         } finally {
             assertVariableCertainty(TrinaryLogic::createYes(), $result);
+        }
+    }
+
+    public function testInheritedMethod(): void
+    {
+        try {
+            $result1 = (new Immediate())->inheritedMethod($this->noThrow(...), $this->noThrow(...));
+        } finally {
+            assertVariableCertainty(TrinaryLogic::createYes(), $result1);
+        }
+
+        try {
+            $result2 = (new Immediate())->inheritedMethod($this->throw(...), $this->noThrow(...));
+        } finally {
+            assertVariableCertainty(TrinaryLogic::createMaybe(), $result2);
+        }
+
+        try {
+            $result3 = (new Immediate())->inheritedMethod($this->noThrow(...), $this->throw(...));
+        } finally {
+            assertVariableCertainty(TrinaryLogic::createMaybe(), $result3);
         }
     }
 

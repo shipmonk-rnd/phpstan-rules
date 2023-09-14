@@ -8,5 +8,7 @@ services:
         arguments:
             immediatelyCalledCallables:
                 array_map: 0
+                ImmediatelyCalledCallableThrowTypeExtension\ImmediateInterface::inheritedMethod: 0
+                ImmediatelyCalledCallableThrowTypeExtension\BaseImmediate::inheritedMethod: 1
                 ImmediatelyCalledCallableThrowTypeExtension\Immediate::method: [0, 1]
 
