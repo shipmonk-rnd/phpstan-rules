@@ -376,7 +376,7 @@ parameters:
 ```
 
 ### forbidCheckedExceptionInCallable
-- Denies throwing [checked exception](https://phpstan.org/blog/bring-your-exceptions-under-control) in callables (Closures and First class callables) as those cannot be tracked as checked by PHPStan analysis, because it is unknown when the callable is about to be called
+- Denies throwing [checked exception](https://phpstan.org/blog/bring-your-exceptions-under-control) in callables (Closures, Arrow functions and First class callables) as those cannot be tracked as checked by PHPStan analysis, because it is unknown when the callable is about to be called
 - It allows configuration of functions/methods, where the callable is called immediately, those cases are allowed and are also added to [dynamic throw type extension](https://phpstan.org/developing-extensions/dynamic-throw-type-extensions) which causes those exceptions to be tracked properly in your codebase (!)
   - By default, native functions like `array_map` are present. So it is recommended not to overwrite the defaults here (by `!` char).
 - It allows configuration of functions/methods, where the callable is handling all thrown exceptions and it is safe to throw anything from there; this basically makes such calls ignored by this rule
