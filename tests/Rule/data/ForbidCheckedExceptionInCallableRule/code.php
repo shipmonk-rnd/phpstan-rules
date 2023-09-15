@@ -224,3 +224,73 @@ class ClosureTest extends BaseCallableTest {
     }
 
 }
+
+class ArrowFunctionTest extends BaseCallableTest {
+
+    public function testDeclarations(): void
+    {
+        $fn = fn () => throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in arrow function!
+
+        $fn2 = fn () => $this->throws(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in arrow function!
+
+        $fn3 = fn () => $this->noop(); // implicit throw is ignored
+
+        $fn4 = fn (callable $c) => $c(); // implicit throw is ignored (https://github.com/phpstan/phpstan/issues/9779)
+    }
+
+    public function testExplicitExecution(): void
+    {
+        (fn ()  => throw new CheckedException())();
+    }
+
+    public function testPassedCallbacks(): void
+    {
+        $this->immediateThrow(fn ()  => throw new CheckedException());
+
+        array_map(fn () => throw new CheckedException(), []);
+
+        array_map(fn () => $this->throws(), []);
+
+        $this->allowThrow(fn () => $this->throws());
+
+        $this->allowThrowInBaseClass(fn () => $this->throws());
+
+        $this->allowThrowInInterface(fn () => $this->throws());
+
+        $this->denied(fn () => throw new CheckedException()); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in arrow function!
+
+        $this?->denied(fn () => throw new CheckedException()); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in arrow function!
+    }
+
+    private function noop(): void
+    {
+    }
+
+    /**
+     * @throws CheckedException
+     */
+    private function throws(): void
+    {
+        throw new CheckedException();
+    }
+
+    private function denied(callable $callable): void
+    {
+
+    }
+
+    public function immediateThrow(callable $callable): void
+    {
+        $callable();
+    }
+
+    public function allowThrow(callable $callable): void
+    {
+        try {
+            $callable();
+        } catch (\Exception $e) {
+
+        }
+    }
+
+}

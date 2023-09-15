@@ -5,12 +5,16 @@ namespace ShipMonk\PHPStan\Rule;
 use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
+use PHPStan\Analyser\ExpressionContext;
+use PHPStan\Analyser\MutatingScope;
+use PHPStan\Analyser\NodeScopeResolver;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\FunctionCallableNode;
@@ -36,6 +40,8 @@ use function is_int;
 class ForbidCheckedExceptionInCallableRule implements Rule
 {
 
+    private NodeScopeResolver $nodeScopeResolver;
+
     private ReflectionProvider $reflectionProvider;
 
     private DefaultExceptionTypeResolver $exceptionTypeResolver;
@@ -54,6 +60,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      * @param array<string, int|list<int>> $allowedCheckedExceptionCallables
      */
     public function __construct(
+        NodeScopeResolver $nodeScopeResolver,
         ReflectionProvider $reflectionProvider,
         DefaultExceptionTypeResolver $exceptionTypeResolver,
         array $immediatelyCalledCallables,
@@ -71,6 +78,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         );
         $this->exceptionTypeResolver = $exceptionTypeResolver;
         $this->reflectionProvider = $reflectionProvider;
+        $this->nodeScopeResolver = $nodeScopeResolver;
     }
 
     public function getNodeType(): string
@@ -96,6 +104,10 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
         if ($node instanceof ClosureReturnStatementsNode) { // @phpstan-ignore-line ignore bc promise
             return $this->processClosure($node, $scope);
+        }
+
+        if ($node instanceof ArrowFunction) {
+            return $this->processArrowFunction($node, $scope);
         }
 
         return [];
@@ -171,6 +183,49 @@ class ForbidCheckedExceptionInCallableRule implements Rule
             foreach ($throwPoint->getType()->getObjectClassNames() as $exceptionClass) {
                 if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $throwPoint->getScope())) {
                     $errors[] = RuleErrorBuilder::message("Throwing checked exception $exceptionClass in closure!")
+                        ->line($throwPoint->getNode()->getLine())
+                        ->build();
+                }
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * @return list<RuleError>
+     */
+    public function processArrowFunction(
+        ArrowFunction $node,
+        Scope $scope
+    ): array
+    {
+        if (!$scope instanceof MutatingScope) { // @phpstan-ignore-line ignore BC promise
+            throw new LogicException('Unexpected scope implementation');
+        }
+
+        if ($this->isAllowedToThrowCheckedException($node, $scope)) {
+            return [];
+        }
+
+        $result = $this->nodeScopeResolver->processExprNode( // @phpstan-ignore-line ignore BC promise
+            $node->expr,
+            $scope->enterArrowFunction($node),
+            static function (): void {
+            },
+            ExpressionContext::createDeep(), // @phpstan-ignore-line ignore BC promise
+        );
+
+        $errors = [];
+
+        foreach ($result->getThrowPoints() as $throwPoint) { // @phpstan-ignore-line ignore BC promise
+            if (!$throwPoint->isExplicit()) {
+                continue;
+            }
+
+            foreach ($throwPoint->getType()->getObjectClassNames() as $exceptionClass) {
+                if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $throwPoint->getScope())) {
+                    $errors[] = RuleErrorBuilder::message("Throwing checked exception $exceptionClass in arrow function!")
                         ->line($throwPoint->getNode()->getLine())
                         ->build();
                 }

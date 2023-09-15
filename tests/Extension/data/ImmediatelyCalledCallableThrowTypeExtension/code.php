@@ -80,6 +80,24 @@ class MethodCallExtensionTest
         }
     }
 
+    public function testArrowFunction(): void
+    {
+        try {
+            $result = Immediate::method(fn () => throw new \Exception());
+        } finally {
+            assertVariableCertainty(TrinaryLogic::createMaybe(), $result);
+        }
+    }
+
+    public function testArrowFunctionWithoutThrow(): void
+    {
+        try {
+            $result = Immediate::method(fn () => 42);
+        } finally {
+            assertVariableCertainty(TrinaryLogic::createYes(), $result);
+        }
+    }
+
     public function testFirstClassCallable(): void
     {
         try {
@@ -176,6 +194,24 @@ class FunctionCallExtensionTest
             $result = array_map(static function (): void {
                 return;
             }, []);
+        } finally {
+            assertVariableCertainty(TrinaryLogic::createYes(), $result);
+        }
+    }
+
+    public function testArrowFunction(): void
+    {
+        try {
+            $result = array_map(fn () => throw new \Exception(), []);
+        } finally {
+            assertVariableCertainty(TrinaryLogic::createMaybe(), $result);
+        }
+    }
+
+    public function testArrowFunctionWithoutThrow(): void
+    {
+        try {
+            $result = array_map(fn () => 42, []);
         } finally {
             assertVariableCertainty(TrinaryLogic::createYes(), $result);
         }

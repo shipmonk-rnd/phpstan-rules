@@ -3,6 +3,7 @@
 namespace ShipMonk\PHPStan\Extension;
 
 use LogicException;
+use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
@@ -141,6 +142,20 @@ class ImmediatelyCalledCallableThrowTypeExtension implements DynamicFunctionThro
                     $call,
                     $argumentValue->getStmts(),
                     $scope->enterAnonymousFunction($argumentValue),
+                    static function (): void {
+                    },
+                );
+
+                foreach ($result->getThrowPoints() as $throwPoint) {
+                    $throwTypes[] = $throwPoint->getType();
+                }
+            }
+
+            if ($argumentValue instanceof ArrowFunction) {
+                $result = $this->nodeScopeResolver->processStmtNodes(
+                    $call,
+                    $argumentValue->getStmts(),
+                    $scope->enterArrowFunction($argumentValue),
                     static function (): void {
                     },
                 );
