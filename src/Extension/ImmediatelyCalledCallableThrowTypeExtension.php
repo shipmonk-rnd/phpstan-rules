@@ -147,7 +147,9 @@ class ImmediatelyCalledCallableThrowTypeExtension implements DynamicFunctionThro
                 );
 
                 foreach ($result->getThrowPoints() as $throwPoint) {
-                    $throwTypes[] = $throwPoint->getType();
+                    if ($throwPoint->isExplicit()) {
+                        $throwTypes[] = $throwPoint->getType();
+                    }
                 }
             }
 
@@ -161,7 +163,9 @@ class ImmediatelyCalledCallableThrowTypeExtension implements DynamicFunctionThro
                 );
 
                 foreach ($result->getThrowPoints() as $throwPoint) {
-                    $throwTypes[] = $throwPoint->getType();
+                    if ($throwPoint->isExplicit()) {
+                        $throwTypes[] = $throwPoint->getType();
+                    }
                 }
             }
 
