@@ -328,16 +328,16 @@
         },
         {
             "name": "ergebnis/composer-normalize",
-            "version": "2.35.0",
+            "version": "2.37.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ergebnis/composer-normalize.git",
-                "reference": "fe5fab007825cdb2640e27726c17dbcf513af0d6"
+                "reference": "25d0fa13545452208fe21216608ed62b637e40f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ergebnis/composer-normalize/zipball/fe5fab007825cdb2640e27726c17dbcf513af0d6",
-                "reference": "fe5fab007825cdb2640e27726c17dbcf513af0d6",
+                "url": "https://api.github.com/repos/ergebnis/composer-normalize/zipball/25d0fa13545452208fe21216608ed62b637e40f0",
+                "reference": "25d0fa13545452208fe21216608ed62b637e40f0",
                 "shasum": ""
             },
             "require": {
@@ -351,17 +351,17 @@
                 "php": "~8.1.0 || ~8.2.0"
             },
             "require-dev": {
-                "composer/composer": "^2.5.8",
-                "ergebnis/license": "^2.1.0",
-                "ergebnis/php-cs-fixer-config": "^5.12.0",
+                "composer/composer": "^2.6.3",
+                "ergebnis/license": "^2.2.0",
+                "ergebnis/php-cs-fixer-config": "^5.15.1",
                 "ergebnis/phpunit-slow-test-detector": "^2.3.0",
                 "fakerphp/faker": "^1.23.0",
                 "infection/infection": "~0.27.0",
-                "phpunit/phpunit": "^10.3.1",
+                "phpunit/phpunit": "^10.3.4",
                 "psalm/plugin-phpunit": "~0.18.4",
-                "rector/rector": "~0.17.12",
+                "rector/rector": "~0.18.3",
                 "symfony/filesystem": "^6.0.13",
-                "vimeo/psalm": "^5.14.1"
+                "vimeo/psalm": "^5.15.0"
             },
             "type": "composer-plugin",
             "extra": {
@@ -400,7 +400,7 @@
                 "security": "https://github.com/ergebnis/composer-normalize/blob/main/.github/SECURITY.md",
                 "source": "https://github.com/ergebnis/composer-normalize"
             },
-            "time": "2023-08-11T09:11:22+00:00"
+            "time": "2023-09-15T09:25:45+00:00"
         },
         {
             "name": "ergebnis/json",
@@ -722,16 +722,16 @@
         },
         {
             "name": "justinrainbow/json-schema",
-            "version": "5.2.12",
+            "version": "v5.2.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/justinrainbow/json-schema.git",
-                "reference": "ad87d5a5ca981228e0e205c2bc7dfb8e24559b60"
+                "reference": "fbbe7e5d79f618997bc3332a6f49246036c45793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/ad87d5a5ca981228e0e205c2bc7dfb8e24559b60",
-                "reference": "ad87d5a5ca981228e0e205c2bc7dfb8e24559b60",
+                "url": "https://api.github.com/repos/justinrainbow/json-schema/zipball/fbbe7e5d79f618997bc3332a6f49246036c45793",
+                "reference": "fbbe7e5d79f618997bc3332a6f49246036c45793",
                 "shasum": ""
             },
             "require": {
@@ -786,9 +786,9 @@
             ],
             "support": {
                 "issues": "https://github.com/justinrainbow/json-schema/issues",
-                "source": "https://github.com/justinrainbow/json-schema/tree/5.2.12"
+                "source": "https://github.com/justinrainbow/json-schema/tree/v5.2.13"
             },
-            "time": "2022-04-13T08:02:27+00:00"
+            "time": "2023-09-26T02:20:38+00:00"
         },
         {
             "name": "localheinz/diff",
