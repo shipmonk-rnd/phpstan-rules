@@ -81,7 +81,7 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
 
         $functionReflection = $this->reflectionProvider->getFunction($node->name, $scope);
         $parametersAcceptor = ParametersAcceptorSelector::selectFromArgs($scope, $node->getArgs(), $functionReflection->getVariants());
-        $funcCall = ArgumentsNormalizer::reorderFuncArguments($parametersAcceptor, $node); // @phpstan-ignore-line ignore bc promise
+        $funcCall = ArgumentsNormalizer::reorderFuncArguments($parametersAcceptor, $node);
 
         if ($funcCall === null) {
             $funcCall = $node;
