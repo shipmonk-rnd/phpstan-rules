@@ -204,7 +204,7 @@ enum MyEnum: string { // missing @implements tag
 
 ### enforceEnumMatchRule
 - Enforces usage of `match ($enum)` instead of exhaustive conditions like `if ($enum === Enum::One) elseif ($enum === Enum::Two)`
-- This rule aims to "fix" a bit problematic behaviour of PHPStan (introduced at 1.10). It understands enum cases very well and forces you to adjust following code:
+- This rule aims to "fix" a bit problematic behaviour of PHPStan (introduced at 1.10.0 and fixed in [1.10.34](https://github.com/phpstan/phpstan-src/commit/fc7c0283176e5dc3867ade26ac835ee7f52599a9)). It understands enum cases very well and forces you to adjust following code:
 ```php
 enum MyEnum {
     case Foo;
@@ -213,7 +213,7 @@ enum MyEnum {
 
 if ($enum === MyEnum::Foo) {
     // ...
-} elseif ($enum === MyEnum::Bar) { // always true reported by phpstan
+} elseif ($enum === MyEnum::Bar) { // always true reported by phpstan (for versions 1.10.0 - 1.10.34)
     // ...
 } else {
     throw new LogicException('Unknown case'); // phpstan knows it cannot happen
@@ -241,6 +241,9 @@ Very good approach within similar cases is to use `match` construct so that (ide
 PHPStan even adds tip about `match` in those cases since `1.10.11`.
 For those reasons, this rule detects any always-true/false enum comparisons and forces you to rewrite it to `match ($enum)`.
 
+Since PHPStan [1.10.34](https://github.com/phpstan/phpstan-src/commit/fc7c0283176e5dc3867ade26ac835ee7f52599a9), the behaviour is much better as it does not report error on the last elseif in case that it is followed by else with thrown exception.
+Such case raises exception in your tests if you add new enum case, but it is [still silent in PHPStan](https://phpstan.org/r/a4fdc0ab-5d1e-4f38-80ab-8da2e71a6205). This leaves space for error being deployed to production.
+So we still believe this rule makes sense even in latest PHPStan.
 
 ### enforceIteratorToArrayPreserveKeys
 - Enforces presence of second parameter in [iterator_to_array](https://www.php.net/manual/en/function.iterator-to-array.php) call (`$preserve_keys`) as the default value `true` is generally dangerous (risk of data loss / failure)

@@ -40,6 +40,19 @@ enum SomeEnum: string
         }
     }
 
+    public function basicExhaustiveWithSafetyException(): int
+    {
+        if ($this === self::Three) {
+            return -1;
+        } elseif ($this === self::Two) {
+            return 0;
+        } elseif ($this === self::One) { // error: This condition contains always-true enum comparison of EnforceEnumMatchRule\SomeEnum::One. Use match expression instead, PHPStan will report unhandled enum cases
+            return 1;
+        } else {
+            throw new \LogicException('cannot happen');
+        }
+    }
+
     public function notExhaustiveWithNegatedConditionInLastElseif(): int
     {
         if ($this === self::Three) {
