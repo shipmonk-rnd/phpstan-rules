@@ -6,6 +6,7 @@ use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrayItem;
 use PhpParser\Node\Expr\Assign;
+use PhpParser\Node\Expr\AssignOp;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\Match_;
 use PhpParser\Node\Expr\MethodCall;
@@ -76,6 +77,7 @@ class UnusedMatchVisitor extends NodeVisitorAbstract
     {
         return $parent instanceof Throw_
             || $parent instanceof Assign
+            || $parent instanceof AssignOp
             || $parent instanceof MethodCall
             || $parent instanceof Return_
             || $parent instanceof Arg

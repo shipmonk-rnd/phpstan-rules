@@ -33,6 +33,11 @@ class Clazz {
             },
         };
 
+        $b += match ($int) {
+            0 => 0,
+            default => 1,
+        };
+
         $this->use(match ($bool) {
             false => new LogicException(),
             true => new RuntimeException(),
