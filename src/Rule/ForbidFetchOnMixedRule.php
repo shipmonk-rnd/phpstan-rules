@@ -58,7 +58,7 @@ class ForbidFetchOnMixedRule implements Rule
 
     /**
      * @param PropertyFetch|StaticPropertyFetch|ClassConstFetch $node
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     private function processFetch(Node $node, Scope $scope): array
     {

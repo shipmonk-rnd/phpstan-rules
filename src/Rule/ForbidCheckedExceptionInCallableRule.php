@@ -228,6 +228,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                 if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $throwPoint->getScope())) {
                     $errors[] = RuleErrorBuilder::message("Throwing checked exception $exceptionClass in arrow function!")
                         ->line($throwPoint->getNode()->getLine())
+                        ->identifier('checkedExceptionInArrowFunction')
                         ->build();
                 }
             }
@@ -237,7 +238,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function processCall(
         Scope $scope,

@@ -59,7 +59,7 @@ class ForbidMethodCallOnMixedRule implements Rule
 
     /**
      * @param MethodCall|StaticCall $node
-     * @return list<string>
+     * @return list<IdentifierRuleError>
      */
     private function checkCall(CallLike $node, Scope $scope): array
     {
