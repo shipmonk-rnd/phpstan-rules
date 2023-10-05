@@ -7,8 +7,8 @@ use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PHPStan\Analyser\Scope;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Enum\EnumCaseObjectType;
 use function array_map;
@@ -29,7 +29,7 @@ class EnforceEnumMatchRule implements Rule
 
     /**
      * @param BinaryOp $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

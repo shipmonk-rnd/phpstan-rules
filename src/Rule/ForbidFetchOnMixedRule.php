@@ -11,8 +11,8 @@ use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Identifier;
 use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeUtils;
@@ -41,7 +41,7 @@ class ForbidFetchOnMixedRule implements Rule
     }
 
     /**
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -58,7 +58,7 @@ class ForbidFetchOnMixedRule implements Rule
 
     /**
      * @param PropertyFetch|StaticPropertyFetch|ClassConstFetch $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     private function processFetch(Node $node, Scope $scope): array
     {

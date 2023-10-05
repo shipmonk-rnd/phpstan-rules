@@ -22,8 +22,8 @@ use PHPStan\Node\MethodCallableNode;
 use PHPStan\Node\StaticMethodCallableNode;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Type;
 use ShipMonk\PHPStan\Visitor\ImmediatelyCalledCallableVisitor;
@@ -87,7 +87,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(
         Node $node,
@@ -115,7 +115,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
     /**
      * @param MethodCall|StaticCall|FuncCall $callNode
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processFirstClassCallable(
         CallLike $callNode,
@@ -155,7 +155,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processClosure(
         ClosureReturnStatementsNode $node,
@@ -194,7 +194,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processArrowFunction(
         ArrowFunction $node,
@@ -238,7 +238,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     private function processCall(
         Scope $scope,
@@ -256,7 +256,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     private function processThrowType(
         ?Type $throwType,

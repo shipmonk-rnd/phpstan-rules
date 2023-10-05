@@ -6,8 +6,8 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClassPropertyNode;
 use PHPStan\Php\PhpVersion;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
@@ -30,7 +30,7 @@ class EnforceReadonlyPublicPropertyRule implements Rule
 
     /**
      * @param ClassPropertyNode $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

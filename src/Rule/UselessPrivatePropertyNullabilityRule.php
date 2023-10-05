@@ -9,8 +9,8 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClassPropertiesNode;
 use PHPStan\Node\Property\PropertyWrite;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\NullType;
 use PHPStan\Type\TypeCombinator;
@@ -29,7 +29,7 @@ class UselessPrivatePropertyNullabilityRule implements Rule
 
     /**
      * @param ClassPropertiesNode $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

@@ -11,8 +11,8 @@ use PhpParser\Node\Expr\BinaryOp\Smaller;
 use PhpParser\Node\Expr\BinaryOp\SmallerOrEqual;
 use PhpParser\Node\Expr\BinaryOp\Spaceship;
 use PHPStan\Analyser\Scope;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
@@ -35,7 +35,7 @@ class AllowComparingOnlyComparableTypesRule implements Rule
 
     /**
      * @param BinaryOp $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

@@ -7,8 +7,8 @@ use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
 use PHPStan\PhpDoc\Tag\VarTag;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\FileTypeMapper;
@@ -46,7 +46,7 @@ class ForbidAssignmentNotMatchingVarDocRule implements Rule
 
     /**
      * @param Assign $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

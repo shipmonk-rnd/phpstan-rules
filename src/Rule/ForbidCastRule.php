@@ -13,8 +13,8 @@ use PhpParser\Node\Expr\Cast\Object_;
 use PhpParser\Node\Expr\Cast\String_;
 use PhpParser\Node\Expr\Cast\Unset_;
 use PHPStan\Analyser\Scope;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use function get_class;
 use function in_array;
@@ -47,7 +47,7 @@ class ForbidCastRule implements Rule
 
     /**
      * @param Cast $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

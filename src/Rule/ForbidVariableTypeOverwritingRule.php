@@ -7,8 +7,8 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Accessory\AccessoryType;
 use PHPStan\Type\Enum\EnumCaseObjectType;
@@ -35,7 +35,7 @@ class ForbidVariableTypeOverwritingRule implements Rule
 
     /**
      * @param Assign $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

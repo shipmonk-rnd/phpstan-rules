@@ -17,8 +17,8 @@ use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\ObjectType;
@@ -52,7 +52,7 @@ class RequirePreviousExceptionPassRule implements Rule
 
     /**
      * @param TryCatch $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -95,7 +95,7 @@ class RequirePreviousExceptionPassRule implements Rule
     }
 
     /**
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     private function processExceptionCreation(
         bool $strictTypes,

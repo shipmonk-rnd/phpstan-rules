@@ -7,8 +7,8 @@ use PhpParser\Node\Expr;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClassPropertiesNode;
 use PHPStan\Node\Property\PropertyWrite;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor;
 
@@ -25,7 +25,7 @@ class UselessPrivatePropertyDefaultValueRule implements Rule
 
     /**
      * @param ClassPropertiesNode $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

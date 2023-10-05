@@ -9,8 +9,8 @@ use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Accessory\AccessoryArrayListType;
 use PHPStan\Type\VerbosityLevel;
@@ -29,7 +29,7 @@ class EnforceListReturnRule implements Rule
 
     /**
      * @param ReturnStatementsNode $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

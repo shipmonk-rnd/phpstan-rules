@@ -5,8 +5,8 @@ namespace ShipMonk\PHPStan\Rule;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\MatchExpressionNode;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use function count;
 
@@ -23,7 +23,7 @@ class ForbidMatchDefaultArmForEnumsRule implements Rule
 
     /**
      * @param MatchExpressionNode $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

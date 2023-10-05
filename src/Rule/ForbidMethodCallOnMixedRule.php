@@ -11,8 +11,8 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\TypeUtils;
 use function get_class;
@@ -41,7 +41,7 @@ class ForbidMethodCallOnMixedRule implements Rule
 
     /**
      * @param CallLike $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -59,7 +59,7 @@ class ForbidMethodCallOnMixedRule implements Rule
 
     /**
      * @param MethodCall|StaticCall $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     private function checkCall(CallLike $node, Scope $scope): array
     {

@@ -7,8 +7,8 @@ use PhpParser\Node\Scalar\Encapsed;
 use PhpParser\Node\Scalar\EncapsedStringPart;
 use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\TypeCombinator;
 
@@ -32,7 +32,7 @@ class ForbidNullInInterpolatedStringRule implements Rule
 
     /**
      * @param Encapsed $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

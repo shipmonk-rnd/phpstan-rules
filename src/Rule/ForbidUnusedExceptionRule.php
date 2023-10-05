@@ -10,8 +10,8 @@ use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor;
 use Throwable;
@@ -36,7 +36,7 @@ class ForbidUnusedExceptionRule implements Rule
 
     /**
      * @param Expr $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -53,7 +53,7 @@ class ForbidUnusedExceptionRule implements Rule
 
     /**
      * @param MethodCall|StaticCall $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     private function processCall(CallLike $node, Scope $scope): array
     {
@@ -72,7 +72,7 @@ class ForbidUnusedExceptionRule implements Rule
     }
 
     /**
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     private function processNew(New_ $node, Scope $scope): array
     {

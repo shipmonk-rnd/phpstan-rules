@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b83f8c8308d04730236c859ba8340386",
+    "content-hash": "f1813d3f445fd02f674451c919a1b12f",
     "packages": [
         {
             "name": "nikic/php-parser",
@@ -64,16 +64,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.11.x-dev",
+            "version": "1.10.36",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "ad05dbec03282630159b0e52a2e5794e756df583"
+                "reference": "ffa3089511121a672e62969404e4fddc753f9b15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ad05dbec03282630159b0e52a2e5794e756df583",
-                "reference": "ad05dbec03282630159b0e52a2e5794e756df583",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/ffa3089511121a672e62969404e4fddc753f9b15",
+                "reference": "ffa3089511121a672e62969404e4fddc753f9b15",
                 "shasum": ""
             },
             "require": {
@@ -82,7 +82,6 @@
             "conflict": {
                 "phpstan/phpstan-shim": "*"
             },
-            "default-branch": true,
             "bin": [
                 "phpstan",
                 "phpstan.phar"
@@ -123,7 +122,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-04T13:27:22+00:00"
+            "time": "2023-09-29T14:07:45+00:00"
         }
     ],
     "packages-dev": [
@@ -3003,9 +3002,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "phpstan/phpstan": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

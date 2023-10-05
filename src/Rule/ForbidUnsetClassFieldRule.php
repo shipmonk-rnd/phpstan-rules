@@ -6,8 +6,8 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Stmt\Unset_;
 use PHPStan\Analyser\Scope;
-use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
@@ -23,7 +23,7 @@ class ForbidUnsetClassFieldRule implements Rule
 
     /**
      * @param Unset_ $node
-     * @return list<IdentifierRuleError>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
