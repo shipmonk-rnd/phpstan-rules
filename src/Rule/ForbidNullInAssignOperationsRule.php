@@ -63,7 +63,7 @@ class ForbidNullInAssignOperationsRule implements Rule
 
         if (TypeCombinator::containsNull($exprType) && !in_array($operator, $this->blacklist, true)) {
             $error = RuleErrorBuilder::message("Null value involved in {$operator} assignment on the right side.")
-                ->identifier('assignmentWithNull')
+                ->identifier('shipmonk.assignmentWithNull')
                 ->build();
             return [$error];
         }

@@ -143,7 +143,7 @@ class RequirePreviousExceptionPassRule implements Rule
             $exceptionName = $caughtExceptionVariableName === null ? "({$caughtExceptionType->describe(VerbosityLevel::typeOnly())})" : "\${$caughtExceptionVariableName}";
             $error = RuleErrorBuilder::message("Exception {$exceptionName} not passed as previous to {$this->printer->prettyPrintExpr($node)}")
                 ->line($node->getLine())
-                ->identifier('missingPreviousException')
+                ->identifier('shipmonk.missingPreviousException')
                 ->build();
             return [$error];
         }

@@ -95,7 +95,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         }
 
         $error = RuleErrorBuilder::message(sprintf('Missing native return typehint %s', $typeHint))
-            ->identifier('missingNativeReturnTypehint')
+            ->identifier('shipmonk.missingNativeReturnTypehint')
             ->build();
         return [$error];
     }

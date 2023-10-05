@@ -55,7 +55,7 @@ class ForbidCastRule implements Rule
 
         if (in_array($castString, $this->blacklist, true)) {
             $error = RuleErrorBuilder::message("Using $castString is discouraged, please avoid using that.")
-                ->identifier('forbiddenCast')
+                ->identifier('shipmonk.forbiddenCast')
                 ->build();
             return [$error];
         }

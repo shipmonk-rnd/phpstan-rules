@@ -92,7 +92,7 @@ class ForbidFetchOnMixedRule implements Rule
                 $this->printer->prettyPrintExpr($caller),
             );
             $error = RuleErrorBuilder::message($errorMessage)
-                ->identifier('propertyFetchOnMixed')
+                ->identifier('shipmonk.propertyFetchOnMixed')
                 ->build();
             return [$error];
         }

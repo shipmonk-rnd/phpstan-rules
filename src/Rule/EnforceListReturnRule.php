@@ -49,7 +49,7 @@ class EnforceListReturnRule implements Rule
                 : 'Function';
 
             $error = RuleErrorBuilder::message("{$callLikeType} {$methodReflection->getName()} always return list, but is marked as {$this->getReturnPhpDoc($methodReflection)}")
-                ->identifier('returnListNotUsed')
+                ->identifier('shipmonk.returnListNotUsed')
                 ->build();
             return [$error];
         }

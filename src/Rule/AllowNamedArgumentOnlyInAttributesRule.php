@@ -36,7 +36,7 @@ class AllowNamedArgumentOnlyInAttributesRule implements Rule
         }
 
         $error = RuleErrorBuilder::message('Named arguments are allowed only within native attributes')
-            ->identifier('namedArgumentOutsideAttribute')
+            ->identifier('shipmonk.namedArgumentOutsideAttribute')
             ->build();
         return [$error];
     }

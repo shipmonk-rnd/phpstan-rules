@@ -53,7 +53,7 @@ class EnforceReadonlyPublicPropertyRule implements Rule
         }
 
         $error = RuleErrorBuilder::message("Public property `{$node->getName()}` not marked as readonly.")
-            ->identifier('publicPropertyNotReadonly')
+            ->identifier('shipmonk.publicPropertyNotReadonly')
             ->build();
         return [$error];
     }

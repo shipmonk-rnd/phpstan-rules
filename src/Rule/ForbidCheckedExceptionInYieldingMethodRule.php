@@ -52,7 +52,7 @@ class ForbidCheckedExceptionInYieldingMethodRule implements Rule
                 if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $throwPoint->getScope())) {
                     $errors[] = RuleErrorBuilder::message("Throwing checked exception $exceptionClass in yielding method is denied as it gets thrown upon Generator iteration")
                         ->line($throwPoint->getNode()->getLine())
-                        ->identifier('checkedExceptionInYieldingMethod')
+                        ->identifier('shipmonk.checkedExceptionInYieldingMethod')
                         ->build();
                 }
             }

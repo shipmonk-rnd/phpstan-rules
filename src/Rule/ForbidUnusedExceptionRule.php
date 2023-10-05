@@ -63,7 +63,7 @@ class ForbidUnusedExceptionRule implements Rule
 
         if (!$this->isUsed($node)) {
             $error = RuleErrorBuilder::message("Method {$this->printer->prettyPrintExpr($node)} returns exception that was not used in any way.")
-                ->identifier('unusedException')
+                ->identifier('shipmonk.unusedException')
                 ->build();
             return [$error];
         }
@@ -82,7 +82,7 @@ class ForbidUnusedExceptionRule implements Rule
 
         if (!$this->isUsed($node)) {
             $error = RuleErrorBuilder::message("Exception {$this->printer->prettyPrintExpr($node)} was not used in any way.")
-                ->identifier('unusedException')
+                ->identifier('shipmonk.unusedException')
                 ->build();
             return [$error];
         }

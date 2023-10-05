@@ -40,7 +40,7 @@ class ForbidReturnInConstructorRule implements Rule
         if ($methodReflection->getName() === '__construct') {
             // needed mainly for UselessPrivatePropertyDefaultValueRule as it expects all top-level calls in constructors are always executed
             $error = RuleErrorBuilder::message('Using return statement in constructor is forbidden to be able to check useless default values. Either create static constructors of use if-else.')
-                ->identifier('returnInConstructor')
+                ->identifier('shipmonk.returnInConstructor')
                 ->build();
             return [$error];
         }

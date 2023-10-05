@@ -105,7 +105,7 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
             $plural = count($wrongArguments) > 1 ? 's' : '';
             $wrongArgumentsString = implode(', ', $wrongArguments);
             $error = RuleErrorBuilder::message("Argument{$plural} {$wrongArgumentsString} in {$node->name->toString()}() cannot contain enum {$reason}")
-                ->identifier('dangerousEnumArgument')
+                ->identifier('shipmonk.dangerousEnumArgument')
                 ->build();
             return [$error];
         }

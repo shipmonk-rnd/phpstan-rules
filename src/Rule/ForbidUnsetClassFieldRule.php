@@ -30,7 +30,7 @@ class ForbidUnsetClassFieldRule implements Rule
         foreach ($node->vars as $item) {
             if ($item instanceof PropertyFetch) {
                 $error = RuleErrorBuilder::message('Unsetting class field is forbidden as it causes un-initialization, assign null instead')
-                    ->identifier('unsettingClassProperty')
+                    ->identifier('shipmonk.unsettingClassProperty')
                     ->build();
                 return [$error]; // https://3v4l.org/V8uuP
             }

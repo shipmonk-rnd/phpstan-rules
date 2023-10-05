@@ -43,7 +43,7 @@ class ForbidUnusedMatchResultRule implements Rule
 
         if ($returnedTypes !== [] && $node->getAttribute(UnusedMatchVisitor::MATCH_RESULT_USED) === null) {
             $error = RuleErrorBuilder::message('Unused match result detected, possible returns: ' . TypeCombinator::union(...$returnedTypes)->describe(VerbosityLevel::typeOnly()))
-                ->identifier('unusedMatchResult')
+                ->identifier('shipmonk.unusedMatchResult')
                 ->build();
             return [$error];
         }

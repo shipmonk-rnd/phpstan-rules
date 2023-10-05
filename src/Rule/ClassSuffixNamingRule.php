@@ -63,7 +63,7 @@ class ClassSuffixNamingRule implements Rule
 
             if (substr_compare($className, $suffix, -strlen($suffix)) !== 0) {
                 $error = RuleErrorBuilder::message("Class name $className should end with $suffix suffix")
-                    ->identifier('invalidClassSuffix')
+                    ->identifier('shipmonk.invalidClassSuffix')
                     ->build();
                 return [$error];
             }

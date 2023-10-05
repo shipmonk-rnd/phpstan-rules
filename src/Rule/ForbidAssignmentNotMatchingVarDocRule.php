@@ -112,13 +112,13 @@ class ForbidAssignmentNotMatchingVarDocRule implements Rule
             }
 
             $error = RuleErrorBuilder::message("Invalid var phpdoc of \${$variableName}. Cannot narrow {$valueTypeString} to {$varPhpDocTypeString}")
-                ->identifier('invalidVarDocAssignment')
+                ->identifier('shipmonk.invalidVarDocAssignment')
                 ->build();
             return [$error];
         }
 
         $error = RuleErrorBuilder::message("Invalid var phpdoc of \${$variableName}. Cannot assign {$valueTypeString} to {$varPhpDocTypeString}")
-            ->identifier('invalidVarDocAssignment')
+            ->identifier('shipmonk.invalidVarDocAssignment')
             ->build();
         return [$error];
     }

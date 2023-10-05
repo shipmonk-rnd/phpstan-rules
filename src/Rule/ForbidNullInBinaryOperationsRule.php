@@ -56,7 +56,7 @@ class ForbidNullInBinaryOperationsRule implements Rule
 
         if (TypeCombinator::containsNull($leftType) || TypeCombinator::containsNull($rightType)) {
             $error = RuleErrorBuilder::message("Null value involved in binary operation: {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed}")
-                ->identifier('binaryOperationWithNull')
+                ->identifier('shipmonk.binaryOperationWithNull')
                 ->build();
             return [$error];
         }

@@ -60,7 +60,7 @@ class EnforceEnumMatchRule implements Rule
 
             $trueFalse = $conditionType->isTrue()->yes() ? 'true' : 'false';
             $error = RuleErrorBuilder::message("This condition contains always-$trueFalse enum comparison of $enumCases[0]. Use match expression instead, PHPStan will report unhandled enum cases")
-                ->identifier('enumMatchNotUsed')
+                ->identifier('shipmonk.enumMatchNotUsed')
                 ->build();
             return [$error];
         }

@@ -82,7 +82,7 @@ class ForbidMethodCallOnMixedRule implements Rule
                 $this->printer->prettyPrintExpr($caller),
             );
             $error = RuleErrorBuilder::message($errorMessage)
-                ->identifier('methodCallOnMixed')
+                ->identifier('shipmonk.methodCallOnMixed')
                 ->build();
             return [$error];
         }

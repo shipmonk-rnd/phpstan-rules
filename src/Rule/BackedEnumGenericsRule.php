@@ -50,7 +50,7 @@ class BackedEnumGenericsRule implements Rule
         }
 
         $error = RuleErrorBuilder::message("Class {$classReflection->getName()} extends generic BackedEnum, but does not specify its type. Use @implements $expectedTag")
-            ->identifier('missingImplementsOnBackedEnum')
+            ->identifier('shipmonk.missingImplementsOnBackedEnum')
             ->build();
         return [$error];
     }

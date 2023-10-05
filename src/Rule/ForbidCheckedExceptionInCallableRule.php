@@ -184,7 +184,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                 if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $throwPoint->getScope())) {
                     $errors[] = RuleErrorBuilder::message("Throwing checked exception $exceptionClass in closure!")
                         ->line($throwPoint->getNode()->getLine())
-                        ->identifier('checkedExceptionInCallable')
+                        ->identifier('shipmonk.checkedExceptionInCallable')
                         ->build();
                 }
             }
@@ -228,7 +228,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                 if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $throwPoint->getScope())) {
                     $errors[] = RuleErrorBuilder::message("Throwing checked exception $exceptionClass in arrow function!")
                         ->line($throwPoint->getNode()->getLine())
-                        ->identifier('checkedExceptionInArrowFunction')
+                        ->identifier('shipmonk.checkedExceptionInArrowFunction')
                         ->build();
                 }
             }
@@ -272,7 +272,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         foreach ($throwType->getObjectClassNames() as $exceptionClass) {
             if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $scope)) {
                 $errors[] = RuleErrorBuilder::message("Throwing checked exception $exceptionClass in first-class-callable!")
-                    ->identifier('checkedExceptionInCallable')
+                    ->identifier('shipmonk.checkedExceptionInCallable')
                     ->build();
             }
         }

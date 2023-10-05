@@ -175,7 +175,7 @@ class ForbidCustomFunctionsRule implements Rule
             if (isset($this->forbiddenFunctions[$ancestorClassName][self::ANY_METHOD])) {
                 $errorMessage = sprintf('Class %s is forbidden. %s', $ancestorClassName, $this->forbiddenFunctions[$ancestorClassName][self::ANY_METHOD]);
                 $errors[] = RuleErrorBuilder::message($errorMessage)
-                    ->identifier('methodCallDenied')
+                    ->identifier('shipmonk.methodCallDenied')
                     ->build();
             }
 
@@ -183,7 +183,7 @@ class ForbidCustomFunctionsRule implements Rule
                 if (isset($this->forbiddenFunctions[$ancestorClassName][$methodName])) {
                     $errorMessage = sprintf('Method %s::%s() is forbidden. %s', $ancestorClassName, $methodName, $this->forbiddenFunctions[$ancestorClassName][$methodName]);
                     $errors[] = RuleErrorBuilder::message($errorMessage)
-                        ->identifier('methodCallDenied')
+                        ->identifier('shipmonk.methodCallDenied')
                         ->build();
                 }
             }
@@ -204,7 +204,7 @@ class ForbidCustomFunctionsRule implements Rule
             if (isset($this->forbiddenFunctions[self::FUNCTION][$functionName])) {
                 $errorMessage = sprintf('Function %s() is forbidden. %s', $functionName, $this->forbiddenFunctions[self::FUNCTION][$functionName]);
                 $errors[] = RuleErrorBuilder::message($errorMessage)
-                    ->identifier('functionCallDenied')
+                    ->identifier('shipmonk.functionCallDenied')
                     ->build();
             }
         }

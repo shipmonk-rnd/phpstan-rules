@@ -223,7 +223,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
         // the inverse check is performed by native PHPStan rule checking that phpdoc is subtype of native type
         if (!$phpDocReturnType->accepts($nullType, $strictTypes)->yes() && $nativeReturnType->accepts($nullType, $strictTypes)->yes()) {
             $error = RuleErrorBuilder::message("The $phpDocIdentification phpdoc does not contain null, but native return type does")
-                ->identifier('phpDocNullabilityMismatch')
+                ->identifier('shipmonk.phpDocNullabilityMismatch')
                 ->build();
             return [$error];
         }

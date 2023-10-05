@@ -70,7 +70,7 @@ class ForbidUselessNullableReturnRule implements Rule
 
         if (TypeCombinator::containsNull($declaredType) && !TypeCombinator::containsNull($returnTypeUnion)) {
             $error = RuleErrorBuilder::message("Declared return type {$declaredType->describe($verbosity)} contains null, but it is never returned. Returned types: {$returnTypeUnion->describe($verbosity)}.")
-                ->identifier('uselessNullableReturn')
+                ->identifier('shipmonk.uselessNullableReturn')
                 ->build();
             return [$error];
         }

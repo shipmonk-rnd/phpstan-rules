@@ -57,14 +57,14 @@ class AllowComparingOnlyComparableTypesRule implements Rule
 
         if (!$this->isComparable($leftType) || !$this->isComparable($rightType)) {
             $error = RuleErrorBuilder::message("Comparison {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed} contains non-comparable type, only int|float|string|DateTimeInterface is allowed.")
-                ->identifier('comparingNonComparableTypes')
+                ->identifier('shipmonk.comparingNonComparableTypes')
                 ->build();
             return [$error];
         }
 
         if (!$this->isComparableTogether($leftType, $rightType)) {
             $error = RuleErrorBuilder::message("Cannot compare different types in {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed}.")
-                ->identifier('comparingNonComparableTypes')
+                ->identifier('shipmonk.comparingNonComparableTypes')
                 ->build();
             return [$error];
         }

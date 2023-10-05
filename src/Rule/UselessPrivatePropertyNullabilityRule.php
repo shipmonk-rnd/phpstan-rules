@@ -94,7 +94,7 @@ class UselessPrivatePropertyNullabilityRule implements Rule
             if ($definitionHasTypehint && $definitionIsNullable && !$nullIsAssigned && !$hasNullDefaultValue && !$isUninitialized) {
                 $errors[] = RuleErrorBuilder::message("Property {$className}::{$propertyName} is defined as nullable, but null is never assigned")
                     ->line($property->getLine())
-                    ->identifier('uselessPrivatePropertyNullability')
+                    ->identifier('shipmonk.uselessPrivatePropertyNullability')
                     ->build();
             }
         }

@@ -45,7 +45,7 @@ class ForbidNullInInterpolatedStringRule implements Rule
 
             if (TypeCombinator::containsNull($scope->getType($part))) {
                 $errors[] = RuleErrorBuilder::message('Null value involved in string interpolation with ' . $this->printer->prettyPrintExpr($part))
-                    ->identifier('stringInterpolationWithNull')
+                    ->identifier('shipmonk.stringInterpolationWithNull')
                     ->build();
 
             }

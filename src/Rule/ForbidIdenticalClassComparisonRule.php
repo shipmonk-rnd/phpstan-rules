@@ -86,7 +86,7 @@ class ForbidIdenticalClassComparisonRule implements Rule
                 && $this->containsClass($rightType, $className)
             ) {
                 $errors[] = RuleErrorBuilder::message("Using {$node->getOperatorSigil()} with {$forbiddenObjectType->describe(VerbosityLevel::typeOnly())} is denied")
-                    ->identifier('deniedClassComparison')
+                    ->identifier('shipmonk.deniedClassComparison')
                     ->build();
 
             }

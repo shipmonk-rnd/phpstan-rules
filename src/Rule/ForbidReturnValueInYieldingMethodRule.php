@@ -74,7 +74,7 @@ class ForbidReturnValueInYieldingMethodRule implements Rule
 
             $errors[] = RuleErrorBuilder::message("Returned value from yielding $callType can be accessed only via Generator::getReturn, $suffix.")
                 ->line($returnNode->getLine())
-                ->identifier('returnValueFromYieldingMethod')
+                ->identifier('shipmonk.returnValueFromYieldingMethod')
                 ->build();
         }
 
