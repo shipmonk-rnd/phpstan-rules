@@ -12,6 +12,8 @@ use PhpParser\Node\Expr\BinaryOp\SmallerOrEqual;
 use PhpParser\Node\Expr\BinaryOp\Spaceship;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
@@ -33,7 +35,7 @@ class AllowComparingOnlyComparableTypesRule implements Rule
 
     /**
      * @param BinaryOp $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -54,11 +56,17 @@ class AllowComparingOnlyComparableTypesRule implements Rule
         $rightTypeDescribed = $rightType->describe(VerbosityLevel::typeOnly());
 
         if (!$this->isComparable($leftType) || !$this->isComparable($rightType)) {
-            return ["Comparison {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed} contains non-comparable type, only int|float|string|DateTimeInterface is allowed."];
+            $error = RuleErrorBuilder::message("Comparison {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed} contains non-comparable type, only int|float|string|DateTimeInterface is allowed.")
+                ->identifier('shipmonk.comparingNonComparableTypes')
+                ->build();
+            return [$error];
         }
 
         if (!$this->isComparableTogether($leftType, $rightType)) {
-            return ["Cannot compare different types in {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed}."];
+            $error = RuleErrorBuilder::message("Cannot compare different types in {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed}.")
+                ->identifier('shipmonk.comparingNonComparableTypes')
+                ->build();
+            return [$error];
         }
 
         return [];

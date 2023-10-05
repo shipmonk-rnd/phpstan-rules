@@ -10,6 +10,8 @@ use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Accessory\AccessoryArrayListType;
 use PHPStan\Type\VerbosityLevel;
 use function count;
@@ -27,7 +29,7 @@ class EnforceListReturnRule implements Rule
 
     /**
      * @param ReturnStatementsNode $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -46,7 +48,10 @@ class EnforceListReturnRule implements Rule
                 ? 'Method'
                 : 'Function';
 
-            return ["{$callLikeType} {$methodReflection->getName()} always return list, but is marked as {$this->getReturnPhpDoc($methodReflection)}"];
+            $error = RuleErrorBuilder::message("{$callLikeType} {$methodReflection->getName()} always return list, but is marked as {$this->getReturnPhpDoc($methodReflection)}")
+                ->identifier('shipmonk.returnListNotUsed')
+                ->build();
+            return [$error];
         }
 
         return [];

@@ -7,6 +7,8 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClassPropertyNode;
 use PHPStan\Php\PhpVersion;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 
 /**
  * @implements Rule<ClassPropertyNode>
@@ -28,7 +30,7 @@ class EnforceReadonlyPublicPropertyRule implements Rule
 
     /**
      * @param ClassPropertyNode $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -50,7 +52,10 @@ class EnforceReadonlyPublicPropertyRule implements Rule
             return [];
         }
 
-        return ["Public property `{$node->getName()}` not marked as readonly."];
+        $error = RuleErrorBuilder::message("Public property `{$node->getName()}` not marked as readonly.")
+            ->identifier('shipmonk.publicPropertyNotReadonly')
+            ->build();
+        return [$error];
     }
 
 }

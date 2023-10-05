@@ -8,6 +8,8 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassNode;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\VerbosityLevel;
 
 /**
@@ -23,7 +25,7 @@ class BackedEnumGenericsRule implements Rule
 
     /**
      * @param InClassNode $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -47,7 +49,10 @@ class BackedEnumGenericsRule implements Rule
             }
         }
 
-        return ["Class {$classReflection->getName()} extends generic BackedEnum, but does not specify its type. Use @implements $expectedTag"];
+        $error = RuleErrorBuilder::message("Class {$classReflection->getName()} extends generic BackedEnum, but does not specify its type. Use @implements $expectedTag")
+            ->identifier('shipmonk.missingImplementsOnBackedEnum')
+            ->build();
+        return [$error];
     }
 
     private function hasGenericsTag(ClassReflection $classReflection, string $expectedTag): bool

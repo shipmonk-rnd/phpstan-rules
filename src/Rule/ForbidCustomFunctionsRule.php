@@ -15,6 +15,8 @@ use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Constant\ConstantStringType;
 use function array_map;
 use function array_merge;
@@ -79,7 +81,7 @@ class ForbidCustomFunctionsRule implements Rule
 
     /**
      * @param CallLike $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -124,7 +126,7 @@ class ForbidCustomFunctionsRule implements Rule
     }
 
     /**
-     * @return list<string>
+     * @return list<RuleError>
      */
     private function validateConstructorWithDynamicString(Expr $expr, Scope $scope): array
     {
@@ -141,7 +143,7 @@ class ForbidCustomFunctionsRule implements Rule
 
     /**
      * @param list<string> $methodNames
-     * @return list<string>
+     * @return list<RuleError>
      */
     private function validateCallOverExpr(array $methodNames, Expr $expr, Scope $scope): array
     {
@@ -161,7 +163,7 @@ class ForbidCustomFunctionsRule implements Rule
 
     /**
      * @param list<string> $methodNames
-     * @return list<string>
+     * @return list<RuleError>
      */
     private function validateMethod(array $methodNames, string $className): array
     {
@@ -171,12 +173,18 @@ class ForbidCustomFunctionsRule implements Rule
             $ancestorClassName = $ancestor->getName();
 
             if (isset($this->forbiddenFunctions[$ancestorClassName][self::ANY_METHOD])) {
-                $errors[] = sprintf('Class %s is forbidden. %s', $ancestorClassName, $this->forbiddenFunctions[$ancestorClassName][self::ANY_METHOD]);
+                $errorMessage = sprintf('Class %s is forbidden. %s', $ancestorClassName, $this->forbiddenFunctions[$ancestorClassName][self::ANY_METHOD]);
+                $errors[] = RuleErrorBuilder::message($errorMessage)
+                    ->identifier('shipmonk.methodCallDenied')
+                    ->build();
             }
 
             foreach ($methodNames as $methodName) {
                 if (isset($this->forbiddenFunctions[$ancestorClassName][$methodName])) {
-                    $errors[] = sprintf('Method %s::%s() is forbidden. %s', $ancestorClassName, $methodName, $this->forbiddenFunctions[$ancestorClassName][$methodName]);
+                    $errorMessage = sprintf('Method %s::%s() is forbidden. %s', $ancestorClassName, $methodName, $this->forbiddenFunctions[$ancestorClassName][$methodName]);
+                    $errors[] = RuleErrorBuilder::message($errorMessage)
+                        ->identifier('shipmonk.methodCallDenied')
+                        ->build();
                 }
             }
         }
@@ -186,7 +194,7 @@ class ForbidCustomFunctionsRule implements Rule
 
     /**
      * @param list<string> $functionNames
-     * @return list<string>
+     * @return list<RuleError>
      */
     private function validateFunction(array $functionNames): array
     {
@@ -194,7 +202,10 @@ class ForbidCustomFunctionsRule implements Rule
 
         foreach ($functionNames as $functionName) {
             if (isset($this->forbiddenFunctions[self::FUNCTION][$functionName])) {
-                $errors[] = sprintf('Function %s() is forbidden. %s', $functionName, $this->forbiddenFunctions[self::FUNCTION][$functionName]);
+                $errorMessage = sprintf('Function %s() is forbidden. %s', $functionName, $this->forbiddenFunctions[self::FUNCTION][$functionName]);
+                $errors[] = RuleErrorBuilder::message($errorMessage)
+                    ->identifier('shipmonk.functionCallDenied')
+                    ->build();
             }
         }
 

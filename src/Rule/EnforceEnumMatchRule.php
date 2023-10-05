@@ -8,6 +8,8 @@ use PhpParser\Node\Expr\BinaryOp\Identical;
 use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Enum\EnumCaseObjectType;
 use function array_map;
 use function array_merge;
@@ -27,7 +29,7 @@ class EnforceEnumMatchRule implements Rule
 
     /**
      * @param BinaryOp $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -57,7 +59,10 @@ class EnforceEnumMatchRule implements Rule
             }
 
             $trueFalse = $conditionType->isTrue()->yes() ? 'true' : 'false';
-            return ["This condition contains always-$trueFalse enum comparison of $enumCases[0]. Use match expression instead, PHPStan will report unhandled enum cases"];
+            $error = RuleErrorBuilder::message("This condition contains always-$trueFalse enum comparison of $enumCases[0]. Use match expression instead, PHPStan will report unhandled enum cases")
+                ->identifier('shipmonk.enumMatchNotUsed')
+                ->build();
+            return [$error];
         }
 
         return [];

@@ -7,6 +7,8 @@ use PhpParser\Node\Stmt\Return_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 
 /**
  * @implements Rule<Return_>
@@ -21,7 +23,7 @@ class ForbidReturnInConstructorRule implements Rule
 
     /**
      * @param Return_ $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -37,7 +39,10 @@ class ForbidReturnInConstructorRule implements Rule
 
         if ($methodReflection->getName() === '__construct') {
             // needed mainly for UselessPrivatePropertyDefaultValueRule as it expects all top-level calls in constructors are always executed
-            return ['Using return statement in constructor is forbidden to be able to check useless default values. Either create static constructors of use if-else.'];
+            $error = RuleErrorBuilder::message('Using return statement in constructor is forbidden to be able to check useless default values. Either create static constructors of use if-else.')
+                ->identifier('shipmonk.returnInConstructor')
+                ->build();
+            return [$error];
         }
 
         return [];

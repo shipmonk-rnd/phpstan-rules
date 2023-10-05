@@ -12,6 +12,8 @@ use PhpParser\Node\Identifier;
 use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\TypeUtils;
 use function get_class;
 use function sprintf;
@@ -39,7 +41,7 @@ class ForbidMethodCallOnMixedRule implements Rule
 
     /**
      * @param CallLike $node
-     * @return list<string> errors
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -57,7 +59,7 @@ class ForbidMethodCallOnMixedRule implements Rule
 
     /**
      * @param MethodCall|StaticCall $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     private function checkCall(CallLike $node, Scope $scope): array
     {
@@ -73,14 +75,16 @@ class ForbidMethodCallOnMixedRule implements Rule
             $name = $node->name;
             $method = $name instanceof Identifier ? $this->printer->prettyPrint([$name]) : $this->printer->prettyPrintExpr($name);
 
-            return [
-                sprintf(
-                    'Method call %s%s() is prohibited on unknown type (%s)',
-                    $this->getCallToken($node),
-                    $method,
-                    $this->printer->prettyPrintExpr($caller),
-                ),
-            ];
+            $errorMessage = sprintf(
+                'Method call %s%s() is prohibited on unknown type (%s)',
+                $this->getCallToken($node),
+                $method,
+                $this->printer->prettyPrintExpr($caller),
+            );
+            $error = RuleErrorBuilder::message($errorMessage)
+                ->identifier('shipmonk.methodCallOnMixed')
+                ->build();
+            return [$error];
         }
 
         return [];

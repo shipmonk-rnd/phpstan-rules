@@ -8,6 +8,8 @@ use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
 use PHPStan\PhpDoc\Tag\VarTag;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\IterableType;
@@ -44,7 +46,7 @@ class ForbidAssignmentNotMatchingVarDocRule implements Rule
 
     /**
      * @param Assign $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -109,14 +111,16 @@ class ForbidAssignmentNotMatchingVarDocRule implements Rule
                 return [];
             }
 
-            return [
-                "Invalid var phpdoc of \${$variableName}. Cannot narrow {$valueTypeString} to {$varPhpDocTypeString}",
-            ];
+            $error = RuleErrorBuilder::message("Invalid var phpdoc of \${$variableName}. Cannot narrow {$valueTypeString} to {$varPhpDocTypeString}")
+                ->identifier('shipmonk.invalidVarDocAssignment')
+                ->build();
+            return [$error];
         }
 
-        return [
-            "Invalid var phpdoc of \${$variableName}. Cannot assign {$valueTypeString} to {$varPhpDocTypeString}",
-        ];
+        $error = RuleErrorBuilder::message("Invalid var phpdoc of \${$variableName}. Cannot assign {$valueTypeString} to {$varPhpDocTypeString}")
+            ->identifier('shipmonk.invalidVarDocAssignment')
+            ->build();
+        return [$error];
     }
 
     private function weakenTypeToKeepShapeOnly(Type $type): Type

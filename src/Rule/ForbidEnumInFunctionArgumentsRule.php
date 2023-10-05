@@ -10,6 +10,8 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
 use function array_key_exists;
@@ -61,7 +63,7 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
 
     /**
      * @param FuncCall $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -102,7 +104,10 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
         if ($wrongArguments !== []) {
             $plural = count($wrongArguments) > 1 ? 's' : '';
             $wrongArgumentsString = implode(', ', $wrongArguments);
-            return ["Argument{$plural} {$wrongArgumentsString} in {$node->name->toString()}() cannot contain enum {$reason}"];
+            $error = RuleErrorBuilder::message("Argument{$plural} {$wrongArgumentsString} in {$node->name->toString()}() cannot contain enum {$reason}")
+                ->identifier('shipmonk.dangerousEnumArgument')
+                ->build();
+            return [$error];
         }
 
         return [];

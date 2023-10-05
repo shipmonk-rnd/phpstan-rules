@@ -8,6 +8,8 @@ use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Accessory\AccessoryType;
 use PHPStan\Type\Enum\EnumCaseObjectType;
 use PHPStan\Type\GeneralizePrecision;
@@ -33,7 +35,7 @@ class ForbidVariableTypeOverwritingRule implements Rule
 
     /**
      * @param Assign $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -62,7 +64,10 @@ class ForbidVariableTypeOverwritingRule implements Rule
             !$previousVariableType->isSuperTypeOf($newVariableType)->yes() // allow narrowing
             && !$newVariableType->isSuperTypeOf($previousVariableType)->yes() // allow generalization
         ) {
-            return ["Overwriting variable \$$variableName while changing its type from {$previousVariableType->describe(VerbosityLevel::precise())} to {$newVariableType->describe(VerbosityLevel::precise())}"];
+            $error = RuleErrorBuilder::message("Overwriting variable \$$variableName while changing its type from {$previousVariableType->describe(VerbosityLevel::precise())} to {$newVariableType->describe(VerbosityLevel::precise())}")
+                ->identifier('shipmonk.variableTypeOverwritten')
+                ->build();
+            return [$error];
         }
 
         return [];

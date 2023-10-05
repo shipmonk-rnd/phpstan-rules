@@ -7,6 +7,8 @@ use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Match_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
@@ -25,7 +27,7 @@ class ForbidUnusedMatchResultRule implements Rule
 
     /**
      * @param Match_ $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -40,7 +42,10 @@ class ForbidUnusedMatchResultRule implements Rule
         }
 
         if ($returnedTypes !== [] && $node->getAttribute(UnusedMatchVisitor::MATCH_RESULT_USED) === null) {
-            return ['Unused match result detected, possible returns: ' . TypeCombinator::union(...$returnedTypes)->describe(VerbosityLevel::typeOnly())];
+            $error = RuleErrorBuilder::message('Unused match result detected, possible returns: ' . TypeCombinator::union(...$returnedTypes)->describe(VerbosityLevel::typeOnly()))
+                ->identifier('shipmonk.unusedMatchResult')
+                ->build();
+            return [$error];
         }
 
         return [];

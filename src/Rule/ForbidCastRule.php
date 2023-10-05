@@ -14,6 +14,8 @@ use PhpParser\Node\Expr\Cast\String_;
 use PhpParser\Node\Expr\Cast\Unset_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use function get_class;
 use function in_array;
 
@@ -45,14 +47,17 @@ class ForbidCastRule implements Rule
 
     /**
      * @param Cast $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
         $castString = $this->getCastString($node);
 
         if (in_array($castString, $this->blacklist, true)) {
-            return ["Using $castString is discouraged, please avoid using that."];
+            $error = RuleErrorBuilder::message("Using $castString is discouraged, please avoid using that.")
+                ->identifier('shipmonk.forbiddenCast')
+                ->build();
+            return [$error];
         }
 
         return [];

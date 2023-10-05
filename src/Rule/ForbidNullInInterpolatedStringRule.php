@@ -8,6 +8,8 @@ use PhpParser\Node\Scalar\EncapsedStringPart;
 use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\TypeCombinator;
 
 /**
@@ -30,7 +32,7 @@ class ForbidNullInInterpolatedStringRule implements Rule
 
     /**
      * @param Encapsed $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -42,7 +44,10 @@ class ForbidNullInInterpolatedStringRule implements Rule
             }
 
             if (TypeCombinator::containsNull($scope->getType($part))) {
-                $errors[] = 'Null value involved in string interpolation with ' . $this->printer->prettyPrintExpr($part);
+                $errors[] = RuleErrorBuilder::message('Null value involved in string interpolation with ' . $this->printer->prettyPrintExpr($part))
+                    ->identifier('shipmonk.stringInterpolationWithNull')
+                    ->build();
+
             }
         }
 

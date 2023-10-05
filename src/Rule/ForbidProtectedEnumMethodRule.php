@@ -39,6 +39,7 @@ class ForbidProtectedEnumMethodRule implements Rule
             ) {
                 $errors[] = RuleErrorBuilder::message('Protected methods within enum makes no sense as you cannot extend them anyway.')
                     ->line($classMethod->getLine())
+                    ->identifier('shipmonk.protectedEnumMethod')
                     ->build();
             }
         }

@@ -36,11 +36,11 @@ class ForbidMatchDefaultArmForEnumsRule implements Rule
 
         foreach ($node->getArms() as $arm) {
             if (count($arm->getConditions()) === 0) {
-                return [
-                    RuleErrorBuilder::message('Default arm is denied for enums in match, list all values so that this case is raised when new enum case is added.')
-                        ->line($arm->getLine())
-                        ->build(),
-                ];
+                $error = RuleErrorBuilder::message('Default arm is denied for enums in match, list all values so that this case is raised when new enum case is added.')
+                    ->line($arm->getLine())
+                    ->identifier('shipmonk.defaultMatchArmWithEnum')
+                    ->build();
+                return [$error];
             }
         }
 

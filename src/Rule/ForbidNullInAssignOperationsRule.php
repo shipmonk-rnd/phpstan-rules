@@ -20,6 +20,8 @@ use PhpParser\Node\Expr\AssignOp\ShiftLeft;
 use PhpParser\Node\Expr\AssignOp\ShiftRight;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\TypeCombinator;
 use function get_class;
 use function in_array;
@@ -52,7 +54,7 @@ class ForbidNullInAssignOperationsRule implements Rule
 
     /**
      * @param AssignOp $node
-     * @return list<string>
+     * @return list<RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -60,7 +62,10 @@ class ForbidNullInAssignOperationsRule implements Rule
         $operator = $this->getOperatorString($node);
 
         if (TypeCombinator::containsNull($exprType) && !in_array($operator, $this->blacklist, true)) {
-            return ["Null value involved in {$operator} assignment on the right side."];
+            $error = RuleErrorBuilder::message("Null value involved in {$operator} assignment on the right side.")
+                ->identifier('shipmonk.assignmentWithNull')
+                ->build();
+            return [$error];
         }
 
         return [];
