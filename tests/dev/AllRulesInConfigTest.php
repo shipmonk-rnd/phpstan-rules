@@ -20,7 +20,7 @@ class AllRulesInConfigTest extends PHPStanTestCase
     {
         return array_merge(
             parent::getAdditionalConfigFiles(),
-            [__DIR__ . '/../rules.neon'],
+            [__DIR__ . '/../../rules.neon'],
         );
     }
 
@@ -28,7 +28,7 @@ class AllRulesInConfigTest extends PHPStanTestCase
     {
         self::expectNotToPerformAssertions();
 
-        $existingRules = new DirectoryIterator(__DIR__ . '/../src/Rule');
+        $existingRules = new DirectoryIterator(__DIR__ . '/../../src/lib/Rule');
         $existingRuleClassNames = [];
 
         /** @var DirectoryIterator $existingRule */

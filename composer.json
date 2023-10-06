@@ -26,16 +26,23 @@
     },
     "autoload": {
         "psr-4": {
-            "ShipMonk\\PHPStan\\": "src/"
+            "ShipMonk\\PHPStan\\": [
+                "src/lib/",
+                "src/dev/"
+            ]
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ShipMonk\\PHPStan\\": "tests/"
+            "ShipMonk\\PHPStan\\": [
+                "tests/lib/",
+                "tests/dev/"
+            ]
         },
         "classmap": [
-            "tests/Rule/data",
-            "tests/Extension/data"
+            "tests/lib/Rule/data",
+            "tests/lib/Extension/data",
+            "tests/dev/Rule/data"
         ]
     },
     "config": {

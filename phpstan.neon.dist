@@ -44,3 +44,7 @@ parameters:
         -
             message: "#but it's missing from the PHPDoc @throws tag\\.$#" # allow uncatched exceptions in tests
             path: tests/*
+
+# non-OS rules to check internal rules within this library itself, all should remain in src/dev
+rules:
+    - ShipMonk\PHPStan\Rule\EnforceErrorIdentifierPrefixRule
