@@ -26,15 +26,13 @@
     },
     "autoload": {
         "psr-4": {
-            "ShipMonk\\PHPStan\\": [
-                "src/lib/",
-                "src/dev/"
-            ]
+            "ShipMonk\\PHPStan\\": "src/lib/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "ShipMonk\\PHPStan\\": [
+                "src/dev/",
                 "tests/lib/",
                 "tests/dev/"
             ]
