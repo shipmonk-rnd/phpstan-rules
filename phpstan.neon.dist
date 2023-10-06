@@ -25,6 +25,9 @@ parameters:
         uncheckedExceptionClasses:
             - LogicException
 
+    editorUrl: 'jetbrains://php-storm/navigate/reference?project=phpstan-rules&path=%%relFile%%:%%line%%' # requires usage of JetBrains Toolbox
+    editorUrlTitle: '%%relFile%%:%%line%%'
+
     shipmonkRules:
         classSuffixNaming:
             superclassToSuffixMapping:

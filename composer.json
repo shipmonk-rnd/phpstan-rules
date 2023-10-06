@@ -68,7 +68,7 @@
         "check:ec": "ec src tests",
         "check:readme": "php bin/verify-readme-default-config.php",
         "check:tests": "phpunit -vvv tests",
-        "check:types": "phpstan analyse -vvv",
+        "check:types": "phpstan analyse -vvv --ansi",
         "fix:cs": "phpcbf"
     }
 }
