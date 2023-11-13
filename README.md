@@ -80,6 +80,8 @@ parameters:
         forbidIdenticalClassComparison:
             enabled: true
             blacklist: ['DateTimeInterface']
+        forbidIncrementDecrementOnNonInteger:
+            enabled: true
         forbidMatchDefaultArmForEnums:
             enabled: true
         forbidMethodCallOnMixed:
