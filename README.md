@@ -516,6 +516,15 @@ parameters:
                 - Ramsey\Uuid\UuidInterface
 ```
 
+### forbidIncrementDecrementOnNonInteger
+- Denies using `$i++`, `$i--`, `++$i`, `--$i` with any non-integer
+- PHP itself is leading towards stricter behaviour here and soft-deprecated **some** non-integer usages in 8.3, see [RFC](https://wiki.php.net/rfc/saner-inc-dec-operators)
+
+```php
+$value = '2e0';
+$value++; // would be float(3), denied
+```
+
 ### forbidMatchDefaultArmForEnums
 - Denies using default arm in `match()` construct when native enum is passed as subject
 - This rules makes sense only as a complement of [native phpstan rule](https://github.com/phpstan/phpstan-src/blob/1.7.x/src/Rules/Comparison/MatchExpressionRule.php#L94) that guards that all enum cases are handled in match arms
