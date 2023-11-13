@@ -59,6 +59,8 @@ parameters:
         forbidIdenticalClassComparison:
             enabled: true
             blacklist: ['DateTimeInterface']
+        forbidIncrementDecrementOnNonInteger:
+            enabled: true
         forbidMatchDefaultArmForEnums:
             enabled: true
         forbidMethodCallOnMixed:
@@ -156,6 +158,9 @@ parametersSchema:
             enabled: bool()
             blacklist: arrayOf(string())
         ])
+        forbidIncrementDecrementOnNonInteger: structure([
+            enabled: bool()
+        ])
         forbidMatchDefaultArmForEnums: structure([
             enabled: bool()
         ])
@@ -245,6 +250,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.forbidFetchOnMixed.enabled%
     ShipMonk\PHPStan\Rule\ForbidIdenticalClassComparisonRule:
         phpstan.rules.rule: %shipmonkRules.forbidIdenticalClassComparison.enabled%
+    ShipMonk\PHPStan\Rule\ForbidIncrementDecrementOnNonIntegerRule:
+        phpstan.rules.rule: %shipmonkRules.forbidIncrementDecrementOnNonInteger.enabled%
     ShipMonk\PHPStan\Rule\ForbidMatchDefaultArmForEnumsRule:
         phpstan.rules.rule: %shipmonkRules.forbidMatchDefaultArmForEnums.enabled%
     ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule:
@@ -348,6 +355,8 @@ services:
         class: ShipMonk\PHPStan\Rule\ForbidIdenticalClassComparisonRule
         arguments:
             blacklist: %shipmonkRules.forbidIdenticalClassComparison.blacklist%
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidIncrementDecrementOnNonIntegerRule
     -
         class: ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule
         arguments:
