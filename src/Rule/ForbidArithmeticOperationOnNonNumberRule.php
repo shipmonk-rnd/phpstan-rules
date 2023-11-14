@@ -16,7 +16,10 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Type\FloatType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\Type;
+use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 use function sprintf;
 
@@ -107,9 +110,14 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
 
     private function isNumeric(Type $type): bool
     {
-        return $type->isInteger()->yes() ||
-            $type->isFloat()->yes() ||
-            $type->isNumericString()->yes();
+        $int = new IntegerType();
+        $float = new FloatType();
+        $intOrFloat = new UnionType([$int, $float]);
+
+        return $int->isSuperTypeOf($type)->yes()
+            || $float->isSuperTypeOf($type)->yes()
+            || $intOrFloat->isSuperTypeOf($type)->yes()
+            || $type->isNumericString()->yes();
     }
 
     /**

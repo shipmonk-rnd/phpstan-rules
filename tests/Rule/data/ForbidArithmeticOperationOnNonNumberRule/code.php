@@ -119,5 +119,30 @@ class Ari {
         $x = $a % $b; // error: Using % over non-integer (array % array)
         $x = $a ** $b; // error: Using ** over non-number (array ** array)
     }
+
+    public function testUnions(
+        int|string $intString,
+        int|float $intFloat,
+        int|float|string $intFloatString,
+        int|array $intArray
+    ) {
+        -$intString; // error: Using - over non-number (int|string)
+        -$intFloat;
+        -$intFloatString; // error: Using - over non-number (float|int|string)
+        -$intArray; // error: Using - over non-number (array|int)
+    }
+
+    /**
+     * @param positive-int $int
+     * @param positive-int|float $intFloat
+     * @param int-mask<1, 2, 4> $intMask
+     */
+    public function testSpecialTypes(int $int, int|float $intFloat, int $intMask)
+    {
+        -$int;
+        -$intFloat;
+        -$intMask;
+    }
+
 }
 
