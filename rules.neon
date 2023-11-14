@@ -19,6 +19,8 @@ parameters:
             enabled: true
         enforceReadonlyPublicProperty:
             enabled: true
+        forbidArithmeticOperationOnNonNumber:
+            enabled: true
         forbidAssignmentNotMatchingVarDoc:
             enabled: true
             allowNarrowing: false
@@ -128,6 +130,9 @@ parametersSchema:
         enforceReadonlyPublicProperty: structure([
             enabled: bool()
         ])
+        forbidArithmeticOperationOnNonNumber: structure([
+            enabled: bool()
+        ])
         forbidAssignmentNotMatchingVarDoc: structure([
             enabled: bool()
             allowNarrowing: bool()
@@ -234,6 +239,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.enforceListReturn.enabled%
     ShipMonk\PHPStan\Rule\EnforceReadonlyPublicPropertyRule:
         phpstan.rules.rule: %shipmonkRules.enforceReadonlyPublicProperty.enabled%
+    ShipMonk\PHPStan\Rule\ForbidArithmeticOperationOnNonNumberRule:
+        phpstan.rules.rule: %shipmonkRules.forbidArithmeticOperationOnNonNumber.enabled%
     ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule:
         phpstan.rules.rule: %shipmonkRules.forbidAssignmentNotMatchingVarDoc.enabled%
     ShipMonk\PHPStan\Rule\ForbidCastRule:
@@ -328,6 +335,8 @@ services:
             treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
     -
         class: ShipMonk\PHPStan\Rule\EnforceReadonlyPublicPropertyRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidArithmeticOperationOnNonNumberRule
     -
         class: ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule
         arguments:

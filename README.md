@@ -40,6 +40,8 @@ parameters:
             enabled: true
         enforceReadonlyPublicProperty:
             enabled: true
+        forbidArithmeticOperationOnNonNumber:
+            enabled: true
         forbidAssignmentNotMatchingVarDoc:
             enabled: true
             allowNarrowing: false
@@ -304,6 +306,11 @@ class EnforceReadonlyPublicPropertyRule {
     public readonly int $bar;
 }
 ```
+
+### forbidArithmeticOperationOnNonNumber
+- Allows using [arithmetic operators](https://www.php.net/manual/en/language.operators.arithmetic.php) with non-numeric types (only float, int and numeric string is allowed)
+- Modulo operator (`%`) allows only integers as it [emits deprecation otherwise](https://3v4l.org/VpVoq)
+- Plus operator is allowed for merging arrays
 
 
 ### forbidAssignmentNotMatchingVarDoc
