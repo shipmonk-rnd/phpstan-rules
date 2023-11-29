@@ -29,6 +29,13 @@ use function sprintf;
 class ForbidArithmeticOperationOnNonNumberRule implements Rule
 {
 
+    private bool $allowNumericString;
+
+    public function __construct(bool $allowNumericString)
+    {
+        $this->allowNumericString = $allowNumericString;
+    }
+
     public function getNodeType(): string
     {
         return Node::class;
@@ -117,7 +124,7 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
         return $int->isSuperTypeOf($type)->yes()
             || $float->isSuperTypeOf($type)->yes()
             || $intOrFloat->isSuperTypeOf($type)->yes()
-            || $type->isNumericString()->yes();
+            || ($this->allowNumericString && $type->isNumericString()->yes());
     }
 
     /**

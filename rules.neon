@@ -21,6 +21,7 @@ parameters:
             enabled: true
         forbidArithmeticOperationOnNonNumber:
             enabled: true
+            allowNumericString: false
         forbidAssignmentNotMatchingVarDoc:
             enabled: true
             allowNarrowing: false
@@ -132,6 +133,7 @@ parametersSchema:
         ])
         forbidArithmeticOperationOnNonNumber: structure([
             enabled: bool()
+            allowNumericString: bool()
         ])
         forbidAssignmentNotMatchingVarDoc: structure([
             enabled: bool()
@@ -337,6 +339,8 @@ services:
         class: ShipMonk\PHPStan\Rule\EnforceReadonlyPublicPropertyRule
     -
         class: ShipMonk\PHPStan\Rule\ForbidArithmeticOperationOnNonNumberRule
+        arguments:
+            allowNumericString: %shipmonkRules.forbidArithmeticOperationOnNonNumber.allowNumericString%
     -
         class: ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule
         arguments:
