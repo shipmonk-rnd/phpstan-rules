@@ -40,6 +40,9 @@ parameters:
             enabled: true
         enforceReadonlyPublicProperty:
             enabled: true
+        forbidArithmeticOperationOnNonNumber:
+            enabled: true
+            allowNumericString: false
         forbidAssignmentNotMatchingVarDoc:
             enabled: true
             allowNarrowing: false
@@ -305,6 +308,17 @@ class EnforceReadonlyPublicPropertyRule {
 }
 ```
 
+### forbidArithmeticOperationOnNonNumber
+- Allows using [arithmetic operators](https://www.php.net/manual/en/language.operators.arithmetic.php) with non-numeric types (only float and int is allowed)
+- You can allow even numeric-string by using `allowNumericString: true` configuration
+- Modulo operator (`%`) allows only integers as it [emits deprecation otherwise](https://3v4l.org/VpVoq)
+- Plus operator is allowed for merging arrays
+
+```php
+function add(string $a, string $b) {
+    return $a + $b; // denied, non-numeric types are allowed
+}
+```
 
 ### forbidAssignmentNotMatchingVarDoc
 - Verifies if defined type in `@var` phpdoc accepts the assigned type during assignment

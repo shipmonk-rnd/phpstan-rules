@@ -97,7 +97,7 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
             $argumentType = $scope->getType($argument->value);
 
             if ($this->containsEnum($argumentType)) {
-                $wrongArguments[] = $position + 1;
+                $wrongArguments[] = (int) $position + 1;
             }
         }
 
