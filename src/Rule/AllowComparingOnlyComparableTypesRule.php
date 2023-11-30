@@ -19,8 +19,9 @@ use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
-use PHPStan\Type\UnionType;
+use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
+use function count;
 
 /**
  * @implements Rule<BinaryOp>
@@ -52,11 +53,11 @@ class AllowComparingOnlyComparableTypesRule implements Rule
         $leftType = $scope->getType($node->left);
         $rightType = $scope->getType($node->right);
 
-        $leftTypeDescribed = $leftType->describe(VerbosityLevel::typeOnly());
-        $rightTypeDescribed = $rightType->describe(VerbosityLevel::typeOnly());
+        $leftTypeDescribed = $leftType->describe($leftType->isArray()->no() ? VerbosityLevel::typeOnly() : VerbosityLevel::value());
+        $rightTypeDescribed = $rightType->describe($rightType->isArray()->no() ? VerbosityLevel::typeOnly() : VerbosityLevel::value());
 
         if (!$this->isComparable($leftType) || !$this->isComparable($rightType)) {
-            $error = RuleErrorBuilder::message("Comparison {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed} contains non-comparable type, only int|float|string|DateTimeInterface is allowed.")
+            $error = RuleErrorBuilder::message("Comparison {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed} contains non-comparable type, only int|float|string|DateTimeInterface or comparable tuple is allowed.")
                 ->identifier('shipmonk.comparingNonComparableTypes')
                 ->build();
             return [$error];
@@ -79,7 +80,23 @@ class AllowComparingOnlyComparableTypesRule implements Rule
         $stringType = new StringType();
         $dateTimeType = new ObjectType(DateTimeInterface::class);
 
-        return $this->containsOnlyTypes($type, [$intType, $floatType, $stringType, $dateTimeType]);
+        if ($this->containsOnlyTypes($type, [$intType, $floatType, $stringType, $dateTimeType])) {
+            return true;
+        }
+
+        if (!$type->isConstantArray()->yes() || !$type->isList()->yes()) {
+            return false;
+        }
+
+        foreach ($type->getConstantArrays() as $constantArray) {
+            foreach ($constantArray->getValueTypes() as $valueType) {
+                if (!$this->isComparable($valueType)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private function isComparableTogether(Type $leftType, Type $rightType): bool
@@ -89,9 +106,44 @@ class AllowComparingOnlyComparableTypesRule implements Rule
         $stringType = new StringType();
         $dateTimeType = new ObjectType(DateTimeInterface::class);
 
-        return ($this->containsOnlyTypes($leftType, [$intType, $floatType]) && $this->containsOnlyTypes($rightType, [$intType, $floatType]))
-            || ($this->containsOnlyTypes($leftType, [$stringType]) && $this->containsOnlyTypes($rightType, [$stringType]))
-            || ($this->containsOnlyTypes($leftType, [$dateTimeType]) && $this->containsOnlyTypes($rightType, [$dateTimeType]));
+        if ($this->containsOnlyTypes($leftType, [$intType, $floatType])) {
+            return $this->containsOnlyTypes($rightType, [$intType, $floatType]);
+        }
+
+        if ($this->containsOnlyTypes($leftType, [$stringType])) {
+            return $this->containsOnlyTypes($rightType, [$stringType]);
+        }
+
+        if ($this->containsOnlyTypes($leftType, [$dateTimeType])) {
+            return $this->containsOnlyTypes($rightType, [$dateTimeType]);
+        }
+
+        if ($leftType->isConstantArray()->yes()) {
+            if (!$rightType->isConstantArray()->yes()) {
+                return false;
+            }
+
+            foreach ($leftType->getConstantArrays() as $leftConstantArray) {
+                foreach ($rightType->getConstantArrays() as $rightConstantArray) {
+                    $leftValueTypes = $leftConstantArray->getValueTypes();
+                    $rightValueTypes = $rightConstantArray->getValueTypes();
+
+                    if (count($leftValueTypes) !== count($rightValueTypes)) {
+                        return false;
+                    }
+
+                    for ($i = 0; $i < count($leftValueTypes); $i++) {
+                        if (!$this->isComparableTogether($leftValueTypes[$i], $rightValueTypes[$i])) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -99,26 +151,8 @@ class AllowComparingOnlyComparableTypesRule implements Rule
      */
     private function containsOnlyTypes(Type $checkedType, array $allowedTypes): bool
     {
-        $typesToCheck = $checkedType instanceof UnionType
-            ? $checkedType->getTypes()
-            : [$checkedType];
-
-        foreach ($typesToCheck as $typeToCheck) {
-            $isWithinAllowed = false;
-
-            foreach ($allowedTypes as $allowedType) {
-                if ($allowedType->isSuperTypeOf($typeToCheck)->yes()) {
-                    $isWithinAllowed = true;
-                    break;
-                }
-            }
-
-            if (!$isWithinAllowed) {
-                return false;
-            }
-        }
-
-        return true;
+        $allowedType = TypeCombinator::union(...$allowedTypes);
+        return $allowedType->isSuperTypeOf($checkedType)->yes();
     }
 
 }

@@ -139,7 +139,7 @@ parameters:
 ## Rules:
 
 ### allowComparingOnlyComparableTypes
-- Denies using comparison operators `>,<,<=,>=,<=>` over anything other than `int|string|float|DateTimeInterface`. Null is not allowed.
+- Denies using comparison operators `>,<,<=,>=,<=>` over anything other than `int|string|float|DateTimeInterface` or same size tuples containing comparable types. Null is not allowed.
 - Mixing different types in those operators is also forbidden, only exception is comparing floats with integers
 - Mainly targets to accidental comparisons of objects, enums or arrays which is valid in PHP, but very tricky
 
