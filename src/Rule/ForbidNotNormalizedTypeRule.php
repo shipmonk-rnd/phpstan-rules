@@ -14,10 +14,9 @@ use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\UnionType;
 use PhpParser\NodeTraverser;
-use PhpParser\PrettyPrinter\Standard;
+use PhpParser\PrettyPrinter\Standard as PhpParserPrinter;
 use PHPStan\Analyser\NameScope;
 use PHPStan\Analyser\Scope;
-use PHPStan\Node\VirtualNode;
 use PHPStan\PhpDoc\ResolvedPhpDocBlock;
 use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDocParser\Ast\Node as PhpDocRootNode;
@@ -43,6 +42,7 @@ use function implode;
 use function is_array;
 use function is_object;
 use function is_string;
+use function spl_object_hash;
 
 /**
  * @implements Rule<PhpParserNode>
@@ -54,16 +54,22 @@ class ForbidNotNormalizedTypeRule implements Rule
 
     private TypeNodeResolver $typeNodeResolver;
 
-    private Standard $phpParserPrinter;
+    private PhpParserPrinter $phpParserPrinter;
+
+    /**
+     * @var array<string, true>
+     */
+    private array $processedDocComments = [];
 
     public function __construct(
         FileTypeMapper $fileTypeMapper,
-        TypeNodeResolver $typeNodeResolver
+        TypeNodeResolver $typeNodeResolver,
+        PhpParserPrinter $phpParserPrinter
     )
     {
         $this->fileTypeMapper = $fileTypeMapper;
         $this->typeNodeResolver = $typeNodeResolver;
-        $this->phpParserPrinter = new Standard();
+        $this->phpParserPrinter = $phpParserPrinter;
     }
 
     public function getNodeType(): string
@@ -214,8 +220,16 @@ class ForbidNotNormalizedTypeRule implements Rule
      */
     private function checkInlineVarDoc(PhpParserNode $node, Scope $scope): array
     {
-        if ($node instanceof VirtualNode) { // @phpstan-ignore-line
+        $docComment = $node->getDocComment();
+
+        if ($docComment === null) {
             return [];
+        }
+
+        $docCommendHash = spl_object_hash($docComment);
+
+        if (isset($this->processedDocComments[$docCommendHash])) {
+            return []; // the instance is shared in all nodes where this vardoc is used (e.g. Expression, Assign, Variable for $a = $b)
         }
 
         $resolvedPhpDoc = $this->resolvePhpDoc($node, $scope);
@@ -235,6 +249,8 @@ class ForbidNotNormalizedTypeRule implements Rule
         foreach ($resolvedPhpDoc->getPhpDocNodes() as $phpdocNode) {
             $errors = array_merge($errors, $this->processVarTags($node, $phpdocNode->getVarTagValues(), $nameScope));
         }
+
+        $this->processedDocComments[$docCommendHash] = true;
 
         return $errors;
     }
@@ -281,9 +297,9 @@ class ForbidNotNormalizedTypeRule implements Rule
         $errors = [];
 
         foreach ($paramTagValues as $paramTagValue) {
-            foreach ($this->extractUnionAndIntersectionPhpDocTypeNodes($paramTagValue->type) as $unionTypeNode) {
+            foreach ($this->extractUnionAndIntersectionPhpDocTypeNodes($paramTagValue->type) as $multiTypeNode) {
                 $newErrors = $this->processMultiTypePhpDocNode(
-                    $unionTypeNode,
+                    $multiTypeNode,
                     $nameSpace,
                     "parameter {$paramTagValue->parameterName}",
                     $this->getPhpDocLine($sourceNode, $paramTagValue),
@@ -360,15 +376,7 @@ class ForbidNotNormalizedTypeRule implements Rule
             }
 
             if ($typeNode instanceof NullableTypeNode) {
-                $union = new UnionTypeNode([$typeNode->type, new IdentifierTypeNode('null')]);
-
-                foreach (['startLine', 'endLine'] as $attributeName) {
-                    if ($typeNode->hasAttribute($attributeName)) {
-                        $union->setAttribute($attributeName, $typeNode->getAttribute($attributeName));
-                    }
-                }
-
-                $nodes[] = $union;
+                $nodes[] = new UnionTypeNode([$typeNode->type, new IdentifierTypeNode('null')]);
             }
         });
         return $nodes;

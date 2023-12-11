@@ -2,6 +2,8 @@
 
 namespace ForbidNotNormalizedTypeRule;
 
+use function WrongVariableNameVarTag\doFoo;
+
 interface MyInterface {}
 
 abstract class BaseClass  {}
@@ -15,6 +17,12 @@ class B {}
 
 class Example
 {
+
+    /**
+     * @var string|non-empty-string  // error: Found non-normalized type (string | non-empty-string): non-empty-string is a subtype of string.
+     */
+    public const TEST = 'str';
+
 
     /**
      * @var ChildOne|BaseClass $a  // error: Found non-normalized type (ChildOne | BaseClass) for variable $a: ChildOne is a subtype of BaseClass.
@@ -58,9 +66,34 @@ class Example
     {
     }
 
-    public function testInlineVarDoc($mixed) {
+    public function testInlineVarDoc() {
         /** @var mixed|null $a */  // error: Found non-normalized type (mixed | null) for variable $a: null is a subtype of mixed.
-        $a = $mixed;
+        $a = $mixed1;
+
+        /** @var int[]|list<int> $mixed2 */ // error: Found non-normalized type (int[] | list<int>) for variable $mixed2: list<int> is a subtype of int[].
+        foreach ($mixed2 as $key => $var) {}
+
+        /**
+         * @var int|positive-int $key // error: Found non-normalized type (int | positive-int) for variable $key: positive-int is a subtype of int.
+         * @var int|positive-int $foo // error: Found non-normalized type (int | positive-int) for variable $foo: positive-int is a subtype of int.
+         * @var int|positive-int $baz // error: Found non-normalized type (int | positive-int) for variable $baz: positive-int is a subtype of int.
+         */
+        foreach ($mixed3 as $key => [$foo, [$baz]]) {
+
+        }
+
+        /** @var int|0 $var */ // error: Found non-normalized type (int | 0) for variable $var: 0 is a subtype of int.
+        static $var;
+
+        /** @var int|0 $var2 */ // error: Found non-normalized type (int | 0) for variable $var2: 0 is a subtype of int.
+        $var2 = doFoo();
+
+        /**
+         * @var int|0           // error: Found non-normalized type (int | 0): 0 is a subtype of int.
+         * @phpstan-var int|0
+         * @psalm-var int|0
+         */
+        $var3 = doFoo(); // OK
     }
 
     /**

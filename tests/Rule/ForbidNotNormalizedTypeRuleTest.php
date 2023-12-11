@@ -2,6 +2,7 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
+use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Broker\AnonymousClassNameHelper;
 use PHPStan\File\FileHelper;
 use PHPStan\PhpDoc\PhpDocNodeResolver;
@@ -42,6 +43,7 @@ class ForbidNotNormalizedTypeRuleTest extends RuleTestCase
                 self::getContainer()->getByType(FileHelper::class),
             ),
             self::getContainer()->getByType(TypeNodeResolver::class),
+            self::getContainer()->getByType(Standard::class),
         );
     }
 
