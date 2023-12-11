@@ -109,8 +109,9 @@ class Example
      * @param InterfaceImplementor|MyInterface $j   // error: Found non-normalized type (InterfaceImplementor | MyInterface) for parameter $j: InterfaceImplementor is a subtype of MyInterface.
      * @param callable(mixed|null): mixed $k        // error: Found non-normalized type (mixed | null) for parameter $k: null is a subtype of mixed.
      * @param callable(): (mixed|null) $l           // error: Found non-normalized type (mixed | null) for parameter $l: null is a subtype of mixed.
+     * @param MyInterface|MyInterface $m            // error: Found non-normalized type (MyInterface | MyInterface) for parameter $m: MyInterface is a subtype of MyInterface.
      */
-    public function testPhpDocUnions($a, $b, $c, $d, $e, $f, $g, $h, $i, $j, $k, $l): void
+    public function testPhpDocUnions($a, $b, $c, $d, $e, $f, $g, $h, $i, $j, $k, $l, $m): void
     {
     }
 
@@ -125,8 +126,9 @@ class Example
      * @param list<int>&array<int> $h             // error: Found non-normalized type (list<int> & array<int>) for parameter $h: list<int> is a subtype of array<int>.
      * @param ChildOne&MyInterface $i
      * @param InterfaceImplementor&MyInterface $j // error: Found non-normalized type (InterfaceImplementor & MyInterface) for parameter $j: InterfaceImplementor is a subtype of MyInterface.
+     * @param MyInterface&MyInterface $k          // error: Found non-normalized type (MyInterface & MyInterface) for parameter $k: MyInterface is a subtype of MyInterface.
      */
-    public function testPhpDocIntersections($a, $b, $c, $d, $f, $g, $h, $i, $j): void
+    public function testPhpDocIntersections($a, $b, $c, $d, $f, $g, $h, $i, $j, $k): void
     {
     }
 
