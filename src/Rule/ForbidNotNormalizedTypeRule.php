@@ -42,7 +42,7 @@ use function implode;
 use function is_array;
 use function is_object;
 use function is_string;
-use function spl_object_hash;
+use function spl_object_id;
 
 /**
  * @implements Rule<PhpParserNode>
@@ -59,7 +59,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     private bool $checkDisjunctiveNormalForm;
 
     /**
-     * @var array<string, true>
+     * @var array<int, true>
      */
     private array $processedDocComments = [];
 
@@ -230,9 +230,9 @@ class ForbidNotNormalizedTypeRule implements Rule
             return [];
         }
 
-        $docCommendHash = spl_object_hash($docComment);
+        $docCommendSplId = spl_object_id($docComment);
 
-        if (isset($this->processedDocComments[$docCommendHash])) {
+        if (isset($this->processedDocComments[$docCommendSplId])) {
             return []; // the instance is shared in all nodes where this vardoc is used (e.g. Expression, Assign, Variable for $a = $b)
         }
 
@@ -254,7 +254,7 @@ class ForbidNotNormalizedTypeRule implements Rule
             $errors = array_merge($errors, $this->processVarTags($node, $phpdocNode->getVarTagValues(), $nameScope));
         }
 
-        $this->processedDocComments[$docCommendHash] = true;
+        $this->processedDocComments[$docCommendSplId] = true;
 
         return $errors;
     }
