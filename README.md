@@ -1,6 +1,6 @@
 # ShipMonk PHPStan rules
-About **30 super-strict rules** we found useful in ShipMonk.
-We tend to have PHPStan set up as strict as possible ([bleedingEdge](https://phpstan.org/blog/what-is-bleeding-edge), [strict-rules](https://github.com/phpstan/phpstan-strict-rules), [checkUninitializedProperties](https://phpstan.org/config-reference#checkuninitializedproperties), ...), but that still was not strict enough for us.
+About **40 super-strict rules** we found useful in ShipMonk.
+We tend to have PHPStan set up as strict as possible, but that still was not strict enough for us.
 This set of rules should fill the missing gaps we found.
 
 If you find some rules opinionated, you can easily disable them.
@@ -774,6 +774,22 @@ class Example
         $this->field = $value;
     }
 }
+```
+
+## Native PHPStan extra strictness
+Some strict behaviour in PHPStan is not enabled by default, consider enabling extra strictness even there:
+
+```neon
+includes:
+    - phar://phpstan.phar/conf/config.levelmax.neon
+    - phar://phpstan.phar/conf/bleedingEdge.neon      # https://phpstan.org/blog/what-is-bleeding-edge
+    - vendor/phpstan/phpstan-strict-rules/rules.neon  # https://github.com/phpstan/phpstan-strict-rules
+parameters:
+    checkImplicitMixed: true                                  # https://phpstan.org/config-reference#checkimplicitmixed
+    checkBenevolentUnionTypes: true                           # https://phpstan.org/config-reference#checkbenevolentuniontypes
+    checkUninitializedProperties: true                        # https://phpstan.org/config-reference#checkuninitializedproperties
+    checkMissingCallableSignature: true                       # https://phpstan.org/config-reference#vague-typehints
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true  # https://phpstan.org/config-reference#checktoowidereturntypesinprotectedandpublicmethods
 ```
 
 ## Contributing
