@@ -15,14 +15,16 @@ class EnforceClosureParamNativeTypehintRuleTest extends RuleTestCase
 
     private ?bool $allowMissingTypeWhenInferred = null;
 
+    private ?PhpVersion $phpVersion = null;
+
     protected function getRule(): Rule
     {
-        if ($this->allowMissingTypeWhenInferred === null) {
-            throw new LogicException('Missing $allowMissingTypeWhenInferred');
+        if ($this->allowMissingTypeWhenInferred === null || $this->phpVersion === null) {
+            throw new LogicException('Missing phpVersion or allowMissingTypeWhenInferred');
         }
 
         return new EnforceClosureParamNativeTypehintRule(
-            self::getContainer()->getByType(PhpVersion::class),
+            $this->phpVersion,
             $this->allowMissingTypeWhenInferred,
         );
     }
@@ -30,13 +32,33 @@ class EnforceClosureParamNativeTypehintRuleTest extends RuleTestCase
     public function testAllowInferring(): void
     {
         $this->allowMissingTypeWhenInferred = true;
+        $this->phpVersion = $this->createPhpVersion(80_000);
+
         $this->analyseFile(__DIR__ . '/data/EnforceClosureParamNativeTypehintRule/allow-inferring.php');
     }
 
     public function testEnforceEverywhere(): void
     {
         $this->allowMissingTypeWhenInferred = false;
+        $this->phpVersion = $this->createPhpVersion(80_000);
+
         $this->analyseFile(__DIR__ . '/data/EnforceClosureParamNativeTypehintRule/enforce-everywhere.php');
+    }
+
+    public function testNoErrorOnPhp74(): void
+    {
+        $this->allowMissingTypeWhenInferred = false;
+        $this->phpVersion = $this->createPhpVersion(70_400);
+
+        self::assertEmpty($this->processActualErrors($this->gatherAnalyserErrors([
+            __DIR__ . '/data/EnforceClosureParamNativeTypehintRule/allow-inferring.php',
+            __DIR__ . '/data/EnforceClosureParamNativeTypehintRule/enforce-everywhere.php',
+        ])));
+    }
+
+    private function createPhpVersion(int $version): PhpVersion
+    {
+        return new PhpVersion($version); // @phpstan-ignore-line ignore bc promise
     }
 
 }

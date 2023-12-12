@@ -35,7 +35,7 @@ abstract class RuleTestCase extends OriginalRuleTestCase
      * @param list<Error> $actualErrors
      * @return list<string>
      */
-    private function processActualErrors(array $actualErrors): array
+    protected function processActualErrors(array $actualErrors): array
     {
         $resultToAssert = [];
 
