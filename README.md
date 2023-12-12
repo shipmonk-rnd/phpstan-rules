@@ -89,6 +89,9 @@ parameters:
             enabled: true
         forbidMethodCallOnMixed:
             enabled: true
+        forbidNotNormalizedTypeRule:
+            enabled: true
+            checkDisjunctiveNormalForm: true
         forbidNullInAssignOperations:
             enabled: true
             blacklist: ['??=']
@@ -560,6 +563,24 @@ match ($enum) {
 ```php
 function example($unknown) {
     $unknown->call(); // cannot call method on mixed
+}
+```
+
+### forbidNotNormalizedType
+- Reports any PhpDoc or native type that is not normalized, which can be:
+  - when child and parent appears in its union or intersection
+  - when same type appears multiple times in its union or intersection
+  - when DNF is not used
+    - configurable by `checkDisjunctiveNormalForm`
+- Main motivation here is that PHPStan normalizes all types before analysis, so it is better to see it in codebase the same way PHPStan does
+
+```php
+/**
+ * @return mixed|false   // denied, this is still just mixed
+ */
+public function getAttribute(string $name)
+{
+    return $this->attributes[$name] ?? false;
 }
 ```
 
