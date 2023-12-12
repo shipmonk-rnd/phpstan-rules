@@ -136,6 +136,7 @@ class Example
         ChildOne|BaseClass $i, // error: Found non-normalized type \ForbidNotNormalizedTypeRule\ChildOne|\ForbidNotNormalizedTypeRule\BaseClass for parameter $i: \ForbidNotNormalizedTypeRule\ChildOne is a subtype of \ForbidNotNormalizedTypeRule\BaseClass.
         ChildOne|MyInterface $j,
         InterfaceImplementor|MyInterface $k, // error: Found non-normalized type \ForbidNotNormalizedTypeRule\InterfaceImplementor|\ForbidNotNormalizedTypeRule\MyInterface for parameter $k: \ForbidNotNormalizedTypeRule\InterfaceImplementor is a subtype of \ForbidNotNormalizedTypeRule\MyInterface.
+        InterfaceImplementor|MyInterface|null $l, // error: Found non-normalized type \ForbidNotNormalizedTypeRule\InterfaceImplementor|\ForbidNotNormalizedTypeRule\MyInterface|null for parameter $l: \ForbidNotNormalizedTypeRule\InterfaceImplementor is a subtype of \ForbidNotNormalizedTypeRule\MyInterface.
 
 
         // following are fatal errors, some reported even by native phpstan

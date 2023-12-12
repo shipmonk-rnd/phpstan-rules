@@ -7,13 +7,14 @@ use PhpParser\Node as PhpParserNode;
 use PhpParser\Node\ComplexType;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\FunctionLike;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\IntersectionType;
+use PhpParser\Node\NullableType;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\UnionType;
-use PhpParser\NodeTraverser;
 use PhpParser\PrettyPrinter\Standard as PhpParserPrinter;
 use PHPStan\Analyser\NameScope;
 use PHPStan\Analyser\Scope;
@@ -33,7 +34,6 @@ use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\VerbosityLevel;
-use ShipMonk\PHPStan\Visitor\UnionIntersectionExtractorVisitor;
 use function array_merge;
 use function array_values;
 use function count;
@@ -387,12 +387,27 @@ class ForbidNotNormalizedTypeRule implements Rule
      */
     private function extractUnionIntersectionPhpParserNodes(PhpParserNode $node): array
     {
-        $extractor = new UnionIntersectionExtractorVisitor();
-        $phpParserNodeTraverser = new NodeTraverser();
-        $phpParserNodeTraverser->addVisitor($extractor);
-        $phpParserNodeTraverser->traverse([$node]);
+        $multiTypeNodes = [];
 
-        return $extractor->getNodes();
+        if ($node instanceof NullableType) {
+            $multiTypeNodes[] = new UnionType([$node->type, new Identifier('null')], $node->getAttributes());
+        }
+
+        if ($node instanceof UnionType) {
+            $multiTypeNodes[] = $node;
+
+            foreach ($node->types as $innerType) {
+                if ($innerType instanceof IntersectionType) {
+                    $multiTypeNodes[] = $innerType;
+                }
+            }
+        }
+
+        if ($node instanceof IntersectionType) {
+            $multiTypeNodes[] = $node;
+        }
+
+        return $multiTypeNodes;
     }
 
     /**
