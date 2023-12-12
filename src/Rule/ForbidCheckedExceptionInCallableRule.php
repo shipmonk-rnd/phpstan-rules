@@ -67,14 +67,14 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         array $allowedCheckedExceptionCallables
     )
     {
+        /** @var array<string, int|list<int>> $callablesWithAllowedCheckedExceptions */
+        $callablesWithAllowedCheckedExceptions = array_merge_recursive($immediatelyCalledCallables, $allowedCheckedExceptionCallables);
+
         $this->callablesAllowingCheckedExceptions = array_map(
             function ($argumentIndexes): array {
                 return $this->normalizeArgumentIndexes($argumentIndexes);
             },
-            array_merge_recursive(
-                $immediatelyCalledCallables,
-                $allowedCheckedExceptionCallables,
-            ),
+            $callablesWithAllowedCheckedExceptions,
         );
         $this->exceptionTypeResolver = $exceptionTypeResolver;
         $this->reflectionProvider = $reflectionProvider;

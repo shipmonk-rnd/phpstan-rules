@@ -52,6 +52,7 @@ class ImmediatelyCalledCallableVisitor extends NodeVisitorAbstract
         array $allowedCheckedExceptionCallables = []
     )
     {
+        /** @var array<string, int|list<int>> $callablesWithAllowedCheckedExceptions */
         $callablesWithAllowedCheckedExceptions = array_merge_recursive($immediatelyCalledCallables, $allowedCheckedExceptionCallables);
 
         foreach ($callablesWithAllowedCheckedExceptions as $call => $arguments) {

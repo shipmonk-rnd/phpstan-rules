@@ -16,6 +16,8 @@ parameters:
     tmpDir: cache/phpstan/
     checkMissingCallableSignature: true
     checkUninitializedProperties: true
+    checkBenevolentUnionTypes: true
+    checkImplicitMixed: true
     checkTooWideReturnTypesInProtectedAndPublicMethods: true
     exceptions:
         check:
@@ -34,6 +36,8 @@ parameters:
                 PHPStan\Rules\Rule: Rule
                 PhpParser\NodeVisitor: Visitor
                 ShipMonk\PHPStan\RuleTestCase: RuleTest
+        forbidAssignmentNotMatchingVarDoc:
+            enabled: false # native check is better now; this rule will be dropped / reworked in 3.0
 
     ignoreErrors:
         -
