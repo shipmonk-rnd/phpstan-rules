@@ -415,9 +415,7 @@ class ForbidNotNormalizedTypeRule implements Rule
         }
 
         if (is_object($type)) {
-            foreach (get_object_vars($type) as $item) {
-                $this->traversePhpDocTypeNode($item, $callback);
-            }
+            $this->traversePhpDocTypeNode(get_object_vars($type), $callback);
         }
     }
 
