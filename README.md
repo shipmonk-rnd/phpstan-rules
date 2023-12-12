@@ -1,6 +1,6 @@
 # ShipMonk PHPStan rules
 About **40 super-strict rules** we found useful in ShipMonk.
-We tend to have PHPStan set up as strict as possible, but that still was not strict enough for us.
+We tend to have PHPStan set up [as strict as possible](#native-phpstan-extra-strictness), but that still was not strict enough for us.
 This set of rules should fill the missing gaps we found.
 
 If you find some rules opinionated, you can easily disable them.
