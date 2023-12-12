@@ -91,6 +91,7 @@ parameters:
             enabled: true
         forbidNotNormalizedTypeRule:
             enabled: true
+            checkDisjunctiveNormalForm: true
         forbidNullInAssignOperations:
             enabled: true
             blacklist: ['??=']
@@ -565,11 +566,12 @@ function example($unknown) {
 }
 ```
 
-### forbidNotNormalizedTypeRule
+### forbidNotNormalizedType
 - Reports any PhpDoc or native type that is not normalized, which can be:
   - when child and parent appears in its union or intersection
   - when same type appears multiple times in its union or intersection
   - when DNF is not used
+    - configurable by `checkDisjunctiveNormalForm`
 - Main motivation here is that PHPStan normalizes all types before analysis, so it is better to see it in codebase the same way PHPStan does
 
 ```php

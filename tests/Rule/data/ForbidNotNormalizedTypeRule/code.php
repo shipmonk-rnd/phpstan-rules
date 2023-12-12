@@ -40,6 +40,11 @@ class Example
      */
     public $notDnf;
 
+    /**
+     * @var (I&A)|(I&B)
+     */
+    public $dnf;
+
 
 
     public ChildOne|BaseClass $i, $j; // error: Found non-normalized type \ForbidNotNormalizedTypeRule\ChildOne|\ForbidNotNormalizedTypeRule\BaseClass for property $i,j: \ForbidNotNormalizedTypeRule\ChildOne is a subtype of \ForbidNotNormalizedTypeRule\BaseClass.

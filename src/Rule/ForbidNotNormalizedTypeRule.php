@@ -56,6 +56,8 @@ class ForbidNotNormalizedTypeRule implements Rule
 
     private PhpParserPrinter $phpParserPrinter;
 
+    private bool $checkDisjunctiveNormalForm;
+
     /**
      * @var array<string, true>
      */
@@ -64,12 +66,14 @@ class ForbidNotNormalizedTypeRule implements Rule
     public function __construct(
         FileTypeMapper $fileTypeMapper,
         TypeNodeResolver $typeNodeResolver,
-        PhpParserPrinter $phpParserPrinter
+        PhpParserPrinter $phpParserPrinter,
+        bool $checkDisjunctiveNormalForm
     )
     {
         $this->fileTypeMapper = $fileTypeMapper;
         $this->typeNodeResolver = $typeNodeResolver;
         $this->phpParserPrinter = $phpParserPrinter;
+        $this->checkDisjunctiveNormalForm = $checkDisjunctiveNormalForm;
     }
 
     public function getNodeType(): string
@@ -503,7 +507,7 @@ class ForbidNotNormalizedTypeRule implements Rule
         $innerTypeNodes = array_values($multiTypeNode->types); // ensure list
         $forWhat = $identification !== null ? " for $identification" : '';
 
-        if ($multiTypeNode instanceof IntersectionTypeNode) {
+        if ($this->checkDisjunctiveNormalForm && $multiTypeNode instanceof IntersectionTypeNode) {
             foreach ($multiTypeNode->types as $type) {
                 if ($type instanceof UnionTypeNode) {
                     $dnf = $this->typeNodeResolver->resolve($multiTypeNode, $nameSpace)->describe(VerbosityLevel::typeOnly());

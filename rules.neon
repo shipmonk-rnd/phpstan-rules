@@ -70,6 +70,7 @@ parameters:
             enabled: true
         forbidNotNormalizedTypeRule:
             enabled: true
+            checkDisjunctiveNormalForm: true
         forbidNullInAssignOperations:
             enabled: true
             blacklist: ['??=']
@@ -178,6 +179,7 @@ parametersSchema:
         ])
         forbidNotNormalizedTypeRule: structure([
             enabled: bool()
+            checkDisjunctiveNormalForm: bool()
         ])
         forbidNullInAssignOperations: structure([
             enabled: bool()
@@ -384,6 +386,8 @@ services:
 
     -
         class: ShipMonk\PHPStan\Rule\ForbidNotNormalizedTypeRule
+        arguments:
+            checkDisjunctiveNormalForm: %shipmonkRules.forbidNotNormalizedTypeRule.checkDisjunctiveNormalForm%
     -
         class: ShipMonk\PHPStan\Rule\ForbidMatchDefaultArmForEnumsRule
     -

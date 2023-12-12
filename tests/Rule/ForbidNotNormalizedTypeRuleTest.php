@@ -44,6 +44,7 @@ class ForbidNotNormalizedTypeRuleTest extends RuleTestCase
             ),
             self::getContainer()->getByType(TypeNodeResolver::class),
             self::getContainer()->getByType(Standard::class),
+            true,
         );
     }
 
