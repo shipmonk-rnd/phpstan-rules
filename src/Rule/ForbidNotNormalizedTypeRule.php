@@ -451,6 +451,7 @@ class ForbidNotNormalizedTypeRule implements Rule
                 if ($typeA->isSuperTypeOf($typeB)->yes()) {
                     $errors[] = RuleErrorBuilder::message("Found non-normalized type {$multiTypeNodeString} for {$identification}: {$typeNodeBString} is a subtype of {$typeNodeAString}.")
                         ->line($multiTypeNode->getLine())
+                        ->identifier('shipmonk.nonNormalizedType')
                         ->build();
                     continue;
                 }
@@ -458,6 +459,7 @@ class ForbidNotNormalizedTypeRule implements Rule
                 if ($typeB->isSuperTypeOf($typeA)->yes()) {
                     $errors[] = RuleErrorBuilder::message("Found non-normalized type {$multiTypeNodeString} for {$identification}: {$typeNodeAString} is a subtype of {$typeNodeBString}.")
                         ->line($multiTypeNode->getLine())
+                        ->identifier('shipmonk.nonNormalizedType')
                         ->build();
                 }
             }
@@ -495,6 +497,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
                     $errors[] = RuleErrorBuilder::message("Found non-normalized type {$multiTypeNode}{$forWhat}: this is not disjunctive normal form, use {$dnf}")
                         ->line($line)
+                        ->identifier('shipmonk.nonNormalizedType')
                         ->build();
                 }
             }
@@ -511,16 +514,18 @@ class ForbidNotNormalizedTypeRule implements Rule
                 $typeB = $this->typeNodeResolver->resolve($typeNodeB, $nameSpace);
 
                 if ($typeA->isSuperTypeOf($typeB)->yes()) {
-                    $errors[] = RuleErrorBuilder::message(
-                        "Found non-normalized type {$multiTypeNode}{$forWhat}: {$typeNodeB} is a subtype of {$typeNodeA}.",
-                    )->line($line)->build();
+                    $errors[] = RuleErrorBuilder::message("Found non-normalized type {$multiTypeNode}{$forWhat}: {$typeNodeB} is a subtype of {$typeNodeA}.")
+                        ->line($line)
+                        ->identifier('shipmonk.nonNormalizedType')
+                        ->build();
                     continue;
                 }
 
                 if ($typeB->isSuperTypeOf($typeA)->yes()) {
-                    $errors[] = RuleErrorBuilder::message(
-                        "Found non-normalized type {$multiTypeNode}{$forWhat}: {$typeNodeA} is a subtype of {$typeNodeB}.",
-                    )->line($line)->build();
+                    $errors[] = RuleErrorBuilder::message("Found non-normalized type {$multiTypeNode}{$forWhat}: {$typeNodeA} is a subtype of {$typeNodeB}.")
+                        ->line($line)
+                        ->identifier('shipmonk.nonNormalizedType')
+                        ->build();
                 }
             }
         }
