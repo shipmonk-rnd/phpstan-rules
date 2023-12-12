@@ -30,6 +30,9 @@ parameters:
         classSuffixNaming:
             enabled: true
             superclassToSuffixMapping: []
+        enforceClosureParamNativeTypehint:
+            enabled: true
+            allowMissingTypeWhenInferred: false
         enforceEnumMatch:
             enabled: true
         enforceIteratorToArrayPreserveKeys:
@@ -207,6 +210,27 @@ enum MyEnum: string { // missing @implements tag
                 \PHPStan\Rules\Rule: Rule
                 \PHPUnit\Framework\TestCase: Test
                 \Symfony\Component\Console\Command\Command: Command
+```
+
+
+### enforceClosureParamNativeTypehint
+- Enforces usage of native typehints for closure & arrow function parameters
+- Does nothing on PHP 7.4 and below as native `mixed` is not available there
+- Can be configured by `allowMissingTypeWhenInferred: true` to allow missing typehint when it can be inferred from the context
+
+```php
+/**
+ * @param list<Entity> $entities
+ * @return list<Uuid>
+ */
+public function getIds(array $entities): array {
+    return array_map(
+        function ($entity) { // missing native typehint; not reported with allowMissingTypeWhenInferred: true
+            return $entity->id;
+        },
+        $entities
+    );
+}
 ```
 
 

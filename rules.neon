@@ -9,6 +9,9 @@ parameters:
         classSuffixNaming:
             enabled: true
             superclassToSuffixMapping: []
+        enforceClosureParamNativeTypehint:
+            enabled: true
+            allowMissingTypeWhenInferred: false
         enforceEnumMatch:
             enabled: true
         enforceIteratorToArrayPreserveKeys:
@@ -118,6 +121,10 @@ parametersSchema:
         classSuffixNaming: structure([
             enabled: bool()
             superclassToSuffixMapping: arrayOf(string(), string())
+        ])
+        enforceClosureParamNativeTypehint: structure([
+            enabled: bool()
+            allowMissingTypeWhenInferred: bool()
         ])
         enforceEnumMatch: structure([
             enabled: bool()
@@ -238,6 +245,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.backedEnumGenerics.enabled%
     ShipMonk\PHPStan\Rule\ClassSuffixNamingRule:
         phpstan.rules.rule: %shipmonkRules.classSuffixNaming.enabled%
+    ShipMonk\PHPStan\Rule\EnforceClosureParamNativeTypehintRule:
+        phpstan.rules.rule: %shipmonkRules.enforceClosureParamNativeTypehint.enabled%
     ShipMonk\PHPStan\Rule\EnforceEnumMatchRule:
         phpstan.rules.rule: %shipmonkRules.enforceEnumMatch.enabled%
     ShipMonk\PHPStan\Rule\EnforceIteratorToArrayPreserveKeysRule:
@@ -334,6 +343,10 @@ services:
         class: ShipMonk\PHPStan\Rule\ClassSuffixNamingRule
         arguments:
             superclassToSuffixMapping: %shipmonkRules.classSuffixNaming.superclassToSuffixMapping%
+    -
+        class: ShipMonk\PHPStan\Rule\EnforceClosureParamNativeTypehintRule
+        arguments:
+            allowMissingTypeWhenInferred: %shipmonkRules.enforceClosureParamNativeTypehint.allowMissingTypeWhenInferred%
     -
         class: ShipMonk\PHPStan\Rule\EnforceEnumMatchRule
     -
