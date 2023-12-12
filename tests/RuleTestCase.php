@@ -40,6 +40,7 @@ abstract class RuleTestCase extends OriginalRuleTestCase
 
         foreach ($fileDataLines as $line => $row) {
             $matches = [];
+            /** @var array{0: list<string>, 1: list<string>} $matches */
             $matched = preg_match_all('#// error:(.+)#', $row, $matches);
 
             if ($matched === false) {

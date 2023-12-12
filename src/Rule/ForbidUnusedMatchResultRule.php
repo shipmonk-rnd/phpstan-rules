@@ -10,6 +10,7 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\NeverType;
+use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
 use ShipMonk\PHPStan\Visitor\UnusedMatchVisitor;
@@ -35,11 +36,10 @@ class ForbidUnusedMatchResultRule implements Rule
         $returnedTypes = [];
 
         foreach ($node->arms as $arm) {
-            if (method_exists($scope, 'getKeepVoidType')) { // Needed since https://github.com/phpstan/phpstan/releases/tag/1.10.49
-                $armType = $scope->getKeepVoidType($arm->body);
-            } else {
-                $armType = $scope->getType($arm->body);
-            }
+            /** @var Type $armType */
+            $armType = method_exists($scope, 'getKeepVoidType') // Needed since https://github.com/phpstan/phpstan/releases/tag/1.10.49, can be dropped once we bump PHPStan version gte that
+                ? $scope->getKeepVoidType($arm->body)
+                : $scope->getType($arm->body);
 
             if (!$armType->isVoid()->yes() && !$armType instanceof NeverType && !$arm->body instanceof Assign) {
                 $returnedTypes[] = $armType;
