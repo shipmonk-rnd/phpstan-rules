@@ -36,6 +36,11 @@ class Example
     public $c;
 
     /**
+     * @var never|null // error: Found non-normalized type (never | null): never is a subtype of null.
+     */
+    public $d;
+
+    /**
      * @var I&(A|B) // error: Found non-normalized type (I & (A | B)): this is not disjunctive normal form, use (ForbidNotNormalizedTypeRule\A&ForbidNotNormalizedTypeRule\I)|(ForbidNotNormalizedTypeRule\B&ForbidNotNormalizedTypeRule\I)
      */
     public $notDnf;
