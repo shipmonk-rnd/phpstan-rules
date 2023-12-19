@@ -92,7 +92,7 @@ parameters:
             enabled: true
         forbidMethodCallOnMixed:
             enabled: true
-        forbidNotNormalizedTypeRule:
+        forbidNotNormalizedType:
             enabled: true
             checkDisjunctiveNormalForm: true
         forbidNullInAssignOperations:
