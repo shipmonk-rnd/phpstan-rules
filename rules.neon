@@ -71,7 +71,7 @@ parameters:
             enabled: true
         forbidMethodCallOnMixed:
             enabled: true
-        forbidNotNormalizedTypeRule:
+        forbidNotNormalizedType:
             enabled: true
             checkDisjunctiveNormalForm: true
         forbidNullInAssignOperations:
@@ -184,7 +184,7 @@ parametersSchema:
         forbidMethodCallOnMixed: structure([
             enabled: bool()
         ])
-        forbidNotNormalizedTypeRule: structure([
+        forbidNotNormalizedType: structure([
             enabled: bool()
             checkDisjunctiveNormalForm: bool()
         ])
@@ -282,7 +282,7 @@ conditionalTags:
     ShipMonk\PHPStan\Rule\ForbidMethodCallOnMixedRule:
         phpstan.rules.rule: %shipmonkRules.forbidMethodCallOnMixed.enabled%
     ShipMonk\PHPStan\Rule\ForbidNotNormalizedTypeRule:
-        phpstan.rules.rule: %shipmonkRules.forbidNotNormalizedTypeRule.enabled%
+        phpstan.rules.rule: %shipmonkRules.forbidNotNormalizedType.enabled%
     ShipMonk\PHPStan\Rule\ForbidNullInAssignOperationsRule:
         phpstan.rules.rule: %shipmonkRules.forbidNullInAssignOperations.enabled%
     ShipMonk\PHPStan\Rule\ForbidNullInBinaryOperationsRule:
@@ -400,7 +400,7 @@ services:
     -
         class: ShipMonk\PHPStan\Rule\ForbidNotNormalizedTypeRule
         arguments:
-            checkDisjunctiveNormalForm: %shipmonkRules.forbidNotNormalizedTypeRule.checkDisjunctiveNormalForm%
+            checkDisjunctiveNormalForm: %shipmonkRules.forbidNotNormalizedType.checkDisjunctiveNormalForm%
     -
         class: ShipMonk\PHPStan\Rule\ForbidMatchDefaultArmForEnumsRule
     -
