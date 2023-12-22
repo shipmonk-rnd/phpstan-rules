@@ -17,6 +17,7 @@ use PHPStan\Type\UnionType;
 use function array_key_exists;
 use function count;
 use function implode;
+use const SORT_REGULAR;
 
 /**
  * @template-implements Rule<FuncCall>
@@ -30,6 +31,9 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
     private const REASON_UNPREDICTABLE_RESULT = 'as the function causes unexpected results'; // https://3v4l.org/YtGVa
     private const REASON_SKIPS_ENUMS = 'as the function will skip any enums and produce warning';
 
+    /**
+     * Function name -> [forbidden argument position, reason]]
+     */
     private const FUNCTION_MAP = [
         'array_intersect' => [self::ANY_ARGUMENT, self::REASON_IMPLICIT_TO_STRING],
         'array_intersect_assoc' => [self::ANY_ARGUMENT, self::REASON_IMPLICIT_TO_STRING],
@@ -90,11 +94,15 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
         }
 
         foreach ($funcCall->getArgs() as $position => $argument) {
+            $argumentType = $scope->getType($argument->value);
+
+            if ($functionName === 'array_unique' && $position === 1 && $argumentType->getConstantScalarValues() === [SORT_REGULAR]) {
+                return []; // this edgecase seems to be working fine
+            }
+
             if (!$this->matchesPosition((int) $position, $forbiddenArgumentPosition)) {
                 continue;
             }
-
-            $argumentType = $scope->getType($argument->value);
 
             if ($this->containsEnum($argumentType)) {
                 $wrongArguments[] = (int) $position + 1;
