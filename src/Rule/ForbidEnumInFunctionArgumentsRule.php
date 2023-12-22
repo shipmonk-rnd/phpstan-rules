@@ -45,6 +45,7 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
         'asort' => [0, self::REASON_UNPREDICTABLE_RESULT],
         'arsort' => [0, self::REASON_UNPREDICTABLE_RESULT],
         'natsort' => [0, self::REASON_IMPLICIT_TO_STRING],
+        'natcasesort' => [0, self::REASON_IMPLICIT_TO_STRING],
         'array_count_values' => [0, self::REASON_SKIPS_ENUMS],
         'array_fill_keys' => [0, self::REASON_IMPLICIT_TO_STRING],
         'array_flip' => [0, self::REASON_SKIPS_ENUMS],

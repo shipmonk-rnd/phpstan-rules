@@ -32,6 +32,7 @@ class Test
         asort($enums1); // error: Argument 1 in asort() cannot contain enum as the function causes unexpected results
         arsort($enums1); // error: Argument 1 in arsort() cannot contain enum as the function causes unexpected results
         natsort($enums1); // error: Argument 1 in natsort() cannot contain enum as the function causes implicit __toString conversion which is not supported for enums
+        natcasesort($enums1); // error: Argument 1 in natcasesort() cannot contain enum as the function causes implicit __toString conversion which is not supported for enums
         array_count_values($enums1); // error: Argument 1 in array_count_values() cannot contain enum as the function will skip any enums and produce warning
         array_fill_keys($enums1, 1); // error: Argument 1 in array_fill_keys() cannot contain enum as the function causes implicit __toString conversion which is not supported for enums
         array_flip($enums1); // error: Argument 1 in array_flip() cannot contain enum as the function will skip any enums and produce warning
