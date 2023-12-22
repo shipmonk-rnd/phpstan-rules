@@ -58,4 +58,9 @@ class Test
         sort(flags: 0, array: [SomeEnum::Bar]); // error: Argument 1 in sort() cannot contain enum as the function causes unexpected results
     }
 
+    public function testArrayUniqueWithSortRegular() {
+        $enums = [SomeEnum::Bar, SomeEnum::Baz, SomeEnum::Bar];
+        array_unique($enums, SORT_REGULAR); // https://3v4l.org/XF7Ua
+    }
+
 }
