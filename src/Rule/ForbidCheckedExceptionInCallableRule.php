@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Expression;
 use PHPStan\Analyser\ExpressionContext;
 use PHPStan\Analyser\MutatingScope;
 use PHPStan\Analyser\NodeScopeResolver;
@@ -22,8 +23,8 @@ use PHPStan\Node\MethodCallableNode;
 use PHPStan\Node\StaticMethodCallableNode;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Type;
 use ShipMonk\PHPStan\Visitor\ImmediatelyCalledCallableVisitor;
@@ -91,7 +92,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(
         Node $node,
@@ -119,7 +120,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
     /**
      * @param MethodCall|StaticCall|FuncCall $callNode
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processFirstClassCallable(
         CallLike $callNode,
@@ -159,7 +160,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processClosure(
         ClosureReturnStatementsNode $node,
@@ -198,7 +199,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processArrowFunction(
         ArrowFunction $node,
@@ -214,6 +215,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         }
 
         $result = $this->nodeScopeResolver->processExprNode( // @phpstan-ignore-line ignore BC promise
+            new Expression($node->expr),
             $node->expr,
             $scope->enterArrowFunction($node),
             static function (): void {
@@ -242,7 +244,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function processCall(
         Scope $scope,
@@ -260,7 +262,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function processThrowType(
         ?Type $throwType,

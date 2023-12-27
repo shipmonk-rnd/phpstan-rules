@@ -11,8 +11,8 @@ use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Analyser\Scope;
 use PHPStan\PhpDoc\ResolvedPhpDocBlock;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\MixedType;
@@ -42,7 +42,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -61,7 +61,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function checkReturnTypes(FunctionLike $node, Scope $scope): array
     {
@@ -72,7 +72,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function checkPropertyTypes(Property $node, Scope $scope): array
     {
@@ -83,7 +83,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function checkParamTypes(FunctionLike $node, Scope $scope): array
     {
@@ -200,7 +200,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function comparePhpDocAndNativeType(
         ?Type $phpDocReturnType,

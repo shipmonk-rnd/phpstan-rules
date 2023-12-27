@@ -13,8 +13,8 @@ use PhpParser\Node\Expr\BinaryOp\Pow;
 use PhpParser\Node\Expr\UnaryMinus;
 use PhpParser\Node\Expr\UnaryPlus;
 use PHPStan\Analyser\Scope;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
@@ -42,7 +42,7 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -68,7 +68,7 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function processUnary(Expr $expr, Scope $scope, string $operator): array
     {
@@ -90,7 +90,7 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function processBinary(Expr $left, Expr $right, Scope $scope, string $operator): array
     {
@@ -128,7 +128,7 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function buildBinaryErrors(string $operator, string $type, Type $leftType, Type $rightType): array
     {

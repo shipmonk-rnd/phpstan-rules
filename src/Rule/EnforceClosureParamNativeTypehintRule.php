@@ -8,8 +8,8 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Node\InArrowFunctionNode;
 use PHPStan\Node\InClosureNode;
 use PHPStan\Php\PhpVersion;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\MixedType;
 use function is_string;
@@ -39,7 +39,7 @@ class EnforceClosureParamNativeTypehintRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(
         Node $node,
