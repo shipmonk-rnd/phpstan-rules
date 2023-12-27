@@ -23,8 +23,6 @@ parameters:
     shipmonkRules:
         allowComparingOnlyComparableTypes:
             enabled: true
-        allowNamedArgumentOnlyInAttributes:
-            enabled: true
         backedEnumGenerics:
             enabled: true
         classSuffixNaming:
@@ -46,9 +44,6 @@ parameters:
         forbidArithmeticOperationOnNonNumber:
             enabled: true
             allowNumericString: false
-        forbidAssignmentNotMatchingVarDoc:
-            enabled: true
-            allowNarrowing: false
         forbidCast:
             enabled: true
             blacklist: ['(array)', '(object)', '(unset)']
@@ -113,7 +108,7 @@ parameters:
             enabled: true
         forbidReturnValueInYieldingMethod:
             enabled: true
-            reportRegardlessOfReturnType: false
+            reportRegardlessOfReturnType: true
         forbidVariableTypeOverwriting:
             enabled: true
         forbidUnsetClassField:
@@ -160,27 +155,6 @@ function example1(Money $fee1, Money $fee2) {
 
 new DateTime() > '2040-01-02'; // comparing different types is denied
 200 > '1e2'; // comparing different types is denied
-```
-
-### allowNamedArgumentOnlyInAttributes
-- Allows usage of named arguments only in native attributes
-- Before native attributes, we used [DisallowNamedArguments](https://github.com/slevomat/coding-standard/blob/master/doc/functions.md#slevomatcodingstandardfunctionsdisallownamedarguments) sniff. But we used Doctrine annotations, which almost "require" named arguments when converted to native attributes.
-```php
-class User {
-    #[Column(type: Types::STRING, nullable: false)] // allowed
-    private string $email;
-
-    public function __construct(string $email) {
-        $this->setEmail(email: $email); // forbidden
-    }
-}
-```
-- This one is highly opinionated and will probably be disabled/dropped next major version as it does not provide any extra strictness, you can disable it by:
-```neon
-parameters:
-    shipmonkRules:
-        allowNamedArgumentOnlyInAttributes:
-            enabled: false
 ```
 
 ### backedEnumGenerics *
@@ -350,58 +324,6 @@ class EnforceReadonlyPublicPropertyRule {
 function add(string $a, string $b) {
     return $a + $b; // denied, non-numeric types are allowed
 }
-```
-
-### forbidAssignmentNotMatchingVarDoc
-- Verifies if defined type in `@var` phpdoc accepts the assigned type during assignment
-- No other places except assignment are checked
-
-```php
-/** @var string $foo */
-$foo = $this->methodReturningInt(); // invalid var phpdoc
-```
-
-- For reasons of imperfect implementation of [type infering in phpstan-doctrine](https://github.com/phpstan/phpstan-doctrine#query-type-inference), there is an option to check only array-shapes and forget all other types by using `check-shape-only`
-- This is helpful for cases where field nullability is eliminated by WHERE field IS NOT NULL which is not propagated to the inferred types
-```php
-/** @var array<array{id: int}> $result check-shape-only */
-$result = $queryBuilder->select('t.id')
-    ->from(Table::class, 't')
-    ->andWhere('t.id IS NOT NULL')
-    ->getResult();
-```
-
-- It is possible to explicitly allow narrowing of types by `@var` phpdoc by using `allow-narrowing`
-```php
-/** @var SomeClass $result allow-narrowing */
-$result = $service->getSomeClassOrNull();
-```
-- Or you can enable it widely by using:
-```neon
-parameters:
-    shipmonkRules:
-        forbidAssignmentNotMatchingVarDoc:
-            allowNarrowing: true
-```
-
-#### Differences with native check:
-
-- Since `phpstan/phpstan:1.10.0` with bleedingEdge, there is a [very similar check within PHPStan itself](https://phpstan.org/blog/phpstan-1-10-comes-with-lie-detector#validate-inline-phpdoc-%40var-tag-type).
-- The main difference is that it allows only subtype (narrowing), not supertype (widening) in `@var` phpdoc.
-- This rule allows only widening, narrowing is allowed only when marked by `allow-narrowing` or configured by `allowNarrowing: true`.
-- Basically, **there are 3 ways for you to check inline `@var` phpdoc**:
-  - allow only narrowing
-    - this rule disabled, native check enabled
-  - allow narrowing and widening
-    - this rule enabled with `allowNarrowing: true`, native check disabled
-  - allow only widening
-    - this rule enabled, native check disabled
-
-- You can disable native check while keeping bleedingEdge by:
-```neon
-parameters:
-    featureToggles:
-        varTagType: false
 ```
 
 ### forbidCast

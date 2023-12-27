@@ -2,8 +2,6 @@ parameters:
     shipmonkRules:
         allowComparingOnlyComparableTypes:
             enabled: true
-        allowNamedArgumentOnlyInAttributes:
-            enabled: true
         backedEnumGenerics:
             enabled: true
         classSuffixNaming:
@@ -25,9 +23,6 @@ parameters:
         forbidArithmeticOperationOnNonNumber:
             enabled: true
             allowNumericString: false
-        forbidAssignmentNotMatchingVarDoc:
-            enabled: true
-            allowNarrowing: false
         forbidCast:
             enabled: true
             blacklist: ['(array)', '(object)', '(unset)']
@@ -92,7 +87,7 @@ parameters:
             enabled: true
         forbidReturnValueInYieldingMethod:
             enabled: true
-            reportRegardlessOfReturnType: false
+            reportRegardlessOfReturnType: true
         forbidVariableTypeOverwriting:
             enabled: true
         forbidUnsetClassField:
@@ -114,9 +109,6 @@ parameters:
 parametersSchema:
     shipmonkRules: structure([
         allowComparingOnlyComparableTypes: structure([
-            enabled: bool()
-        ])
-        allowNamedArgumentOnlyInAttributes: structure([
             enabled: bool()
         ])
         backedEnumGenerics: structure([
@@ -148,10 +140,6 @@ parametersSchema:
         forbidArithmeticOperationOnNonNumber: structure([
             enabled: bool()
             allowNumericString: bool()
-        ])
-        forbidAssignmentNotMatchingVarDoc: structure([
-            enabled: bool()
-            allowNarrowing: bool()
         ])
         forbidCast: structure([
             enabled: bool()
@@ -243,8 +231,6 @@ parametersSchema:
 conditionalTags:
     ShipMonk\PHPStan\Rule\AllowComparingOnlyComparableTypesRule:
         phpstan.rules.rule: %shipmonkRules.allowComparingOnlyComparableTypes.enabled%
-    ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule:
-        phpstan.rules.rule: %shipmonkRules.allowNamedArgumentOnlyInAttributes.enabled%
     ShipMonk\PHPStan\Rule\BackedEnumGenericsRule:
         phpstan.rules.rule: %shipmonkRules.backedEnumGenerics.enabled%
     ShipMonk\PHPStan\Rule\ClassSuffixNamingRule:
@@ -263,8 +249,6 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.enforceReadonlyPublicProperty.enabled%
     ShipMonk\PHPStan\Rule\ForbidArithmeticOperationOnNonNumberRule:
         phpstan.rules.rule: %shipmonkRules.forbidArithmeticOperationOnNonNumber.enabled%
-    ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule:
-        phpstan.rules.rule: %shipmonkRules.forbidAssignmentNotMatchingVarDoc.enabled%
     ShipMonk\PHPStan\Rule\ForbidCastRule:
         phpstan.rules.rule: %shipmonkRules.forbidCast.enabled%
     ShipMonk\PHPStan\Rule\ForbidCheckedExceptionInCallableRule:
@@ -320,8 +304,6 @@ conditionalTags:
 
     ShipMonk\PHPStan\Visitor\ImmediatelyCalledCallableVisitor:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
-    ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor:
-        phpstan.parser.richParserNodeVisitor: %shipmonkRules.allowNamedArgumentOnlyInAttributes.enabled%
     ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.forbidUnusedException.enabled%
     ShipMonk\PHPStan\Visitor\UnusedMatchVisitor:
@@ -339,8 +321,6 @@ conditionalTags:
 services:
     -
         class: ShipMonk\PHPStan\Rule\AllowComparingOnlyComparableTypesRule
-    -
-        class: ShipMonk\PHPStan\Rule\AllowNamedArgumentOnlyInAttributesRule
     -
         class: ShipMonk\PHPStan\Rule\BackedEnumGenericsRule
     -
@@ -367,10 +347,6 @@ services:
         class: ShipMonk\PHPStan\Rule\ForbidArithmeticOperationOnNonNumberRule
         arguments:
             allowNumericString: %shipmonkRules.forbidArithmeticOperationOnNonNumber.allowNumericString%
-    -
-        class: ShipMonk\PHPStan\Rule\ForbidAssignmentNotMatchingVarDocRule
-        arguments:
-            allowNarrowing: %shipmonkRules.forbidAssignmentNotMatchingVarDoc.allowNarrowing%
     -
         class: ShipMonk\PHPStan\Rule\ForbidCastRule
     -
@@ -449,10 +425,8 @@ services:
     -
         class: ShipMonk\PHPStan\Visitor\ImmediatelyCalledCallableVisitor
         arguments:
-                    immediatelyCalledCallables: %shipmonkRules.forbidCheckedExceptionInCallable.immediatelyCalledCallables%
-                    allowedCheckedExceptionCallables: %shipmonkRules.forbidCheckedExceptionInCallable.allowedCheckedExceptionCallables%
-    -
-        class: ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor
+            immediatelyCalledCallables: %shipmonkRules.forbidCheckedExceptionInCallable.immediatelyCalledCallables%
+            allowedCheckedExceptionCallables: %shipmonkRules.forbidCheckedExceptionInCallable.allowedCheckedExceptionCallables%
     -
         class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor
     -
