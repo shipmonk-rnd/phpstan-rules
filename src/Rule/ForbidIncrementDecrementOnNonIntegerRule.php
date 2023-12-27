@@ -9,8 +9,8 @@ use PhpParser\Node\Expr\PostInc;
 use PhpParser\Node\Expr\PreDec;
 use PhpParser\Node\Expr\PreInc;
 use PHPStan\Analyser\Scope;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\VerbosityLevel;
 use function get_class;
@@ -28,7 +28,7 @@ class ForbidIncrementDecrementOnNonIntegerRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -46,7 +46,7 @@ class ForbidIncrementDecrementOnNonIntegerRule implements Rule
 
     /**
      * @param PostInc|PostDec|PreInc|PreDec $node
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function process(Node $node, Scope $scope): array
     {

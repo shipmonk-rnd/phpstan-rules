@@ -35,4 +35,9 @@ class ForbidArithmeticOperationOnNonNumberRuleTest extends RuleTestCase
         $this->analyseFile(__DIR__ . '/data/ForbidArithmeticOperationOnNonNumberRule/no-numeric-string.php');
     }
 
+    protected function shouldFailOnPhpErrors(): bool
+    {
+        return false; // https://github.com/phpstan/phpstan-src/pull/3031
+    }
+
 }
