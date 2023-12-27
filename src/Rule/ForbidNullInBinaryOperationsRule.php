@@ -5,8 +5,8 @@ namespace ShipMonk\PHPStan\Rule;
 use PhpParser\Node;
 use PhpParser\Node\Expr\BinaryOp;
 use PHPStan\Analyser\Scope;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
@@ -40,7 +40,7 @@ class ForbidNullInBinaryOperationsRule implements Rule
 
     /**
      * @param BinaryOp $node
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

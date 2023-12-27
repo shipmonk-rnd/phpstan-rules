@@ -8,8 +8,8 @@ use PhpParser\Node\Stmt\Throw_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Php\PhpVersion;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
@@ -64,7 +64,7 @@ class EnforceNativeReturnTypehintRule implements Rule
 
     /**
      * @param ReturnStatementsNode $node
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {

@@ -14,8 +14,8 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Constant\ConstantStringType;
 use function array_map;
@@ -85,7 +85,7 @@ class ForbidCustomFunctionsRule implements Rule
 
     /**
      * @param CallLike $node
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -130,7 +130,7 @@ class ForbidCustomFunctionsRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function validateConstructorWithDynamicString(Expr $expr, Scope $scope): array
     {
@@ -147,7 +147,7 @@ class ForbidCustomFunctionsRule implements Rule
 
     /**
      * @param list<string> $methodNames
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function validateCallOverExpr(array $methodNames, Expr $expr, Scope $scope): array
     {
@@ -167,7 +167,7 @@ class ForbidCustomFunctionsRule implements Rule
 
     /**
      * @param list<string> $methodNames
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function validateMethod(array $methodNames, string $className): array
     {
@@ -198,7 +198,7 @@ class ForbidCustomFunctionsRule implements Rule
 
     /**
      * @param list<string> $functionNames
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function validateFunction(array $functionNames): array
     {

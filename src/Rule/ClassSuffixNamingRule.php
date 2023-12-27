@@ -7,8 +7,8 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassNode;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use function strlen;
 use function substr_compare;
@@ -45,7 +45,7 @@ class ClassSuffixNamingRule implements Rule
 
     /**
      * @param InClassNode $node
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(
         Node $node,

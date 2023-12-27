@@ -5,8 +5,8 @@ namespace ShipMonk\PHPStan\Rule;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClassMethodsNode;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
@@ -22,7 +22,7 @@ class ForbidProtectedEnumMethodRule implements Rule
 
     /**
      * @param ClassMethodsNode $node
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
