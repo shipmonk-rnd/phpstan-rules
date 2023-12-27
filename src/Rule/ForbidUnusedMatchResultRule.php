@@ -36,10 +36,7 @@ class ForbidUnusedMatchResultRule implements Rule
         $returnedTypes = [];
 
         foreach ($node->arms as $arm) {
-            /** @var Type $armType */
-            $armType = method_exists($scope, 'getKeepVoidType') // Needed since https://github.com/phpstan/phpstan/releases/tag/1.10.49, can be dropped once we bump PHPStan version gte that
-                ? $scope->getKeepVoidType($arm->body)
-                : $scope->getType($arm->body);
+            $armType = $scope->getKeepVoidType($arm->body);
 
             if (!$armType->isVoid()->yes() && !$armType instanceof NeverType && !$arm->body instanceof Assign) {
                 $returnedTypes[] = $armType;
