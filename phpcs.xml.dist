@@ -21,6 +21,7 @@
     <exclude-pattern>tests/*/data/*</exclude-pattern>
 
     <config name="installed_paths" value="../../slevomat/coding-standard"/>
+    <config name="php_version" value="70400"/>
 
     <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
     <rule ref="Generic.Classes.DuplicateClassName"/>
@@ -248,9 +249,7 @@
     <rule ref="SlevomatCodingStandard.Arrays.DisallowPartiallyKeyed"/>
     <rule ref="SlevomatCodingStandard.Arrays.TrailingArrayComma"/>
     <rule ref="SlevomatCodingStandard.Classes.BackedEnumTypeSpacing"/>
-    <rule ref="SlevomatCodingStandard.Classes.ModernClassNameReference">
-        <exclude name="SlevomatCodingStandard.Classes.ModernClassNameReference.ClassNameReferencedViaFunctionCall"/> <!-- after bumping to PHP8 -->
-    </rule>
+    <rule ref="SlevomatCodingStandard.Classes.ModernClassNameReference"/>
     <rule ref="SlevomatCodingStandard.Classes.ClassConstantVisibility" />
     <rule ref="SlevomatCodingStandard.Classes.ClassStructure">
         <properties>
