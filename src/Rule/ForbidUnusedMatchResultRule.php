@@ -10,11 +10,9 @@ use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\NeverType;
-use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
 use ShipMonk\PHPStan\Visitor\UnusedMatchVisitor;
-use function method_exists;
 
 /**
  * @implements Rule<Match_>
