@@ -1,5 +1,0 @@
-services:
-    -
-        class: ShipMonk\PHPStan\Visitor\NamedArgumentSourceVisitor
-        tags:
-            - phpstan.parser.richParserNodeVisitor

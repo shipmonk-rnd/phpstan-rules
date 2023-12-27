@@ -70,6 +70,10 @@ class ForbidCustomFunctionsRule implements Rule
                 throw new LogicException("Unexpected format of forbidden function {$forbiddenFunction}, expected Namespace\Class::methodName");
             }
 
+            if ($className !== self::FUNCTION && !$reflectionProvider->hasClass($className)) {
+                throw new LogicException("Class {$className} used in 'forbiddenFunctions' does not exist");
+            }
+
             $this->forbiddenFunctions[$className][$methodName] = $description;
         }
     }

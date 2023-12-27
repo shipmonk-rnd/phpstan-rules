@@ -42,7 +42,7 @@ class ForbidIdenticalClassComparisonRule implements Rule
     {
         foreach ($blacklist as $className) {
             if (!$reflectionProvider->hasClass($className)) {
-                throw new LogicException("Class {$className} does not exist.");
+                throw new LogicException("Class {$className} used in 'forbidIdenticalClassComparison' does not exist.");
             }
         }
 
