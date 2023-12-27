@@ -2,9 +2,11 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
+use LogicException;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassNode;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -25,8 +27,14 @@ class ClassSuffixNamingRule implements Rule
     /**
      * @param array<class-string, string> $superclassToSuffixMapping
      */
-    public function __construct(array $superclassToSuffixMapping = [])
+    public function __construct(ReflectionProvider $reflectionProvider, array $superclassToSuffixMapping = [])
     {
+        foreach ($superclassToSuffixMapping as $className => $suffix) {
+            if (!$reflectionProvider->hasClass($className)) {
+                throw new LogicException("Class $className used in 'superclassToSuffixMapping' does not exist");
+            }
+        }
+
         $this->superclassToSuffixMapping = $superclassToSuffixMapping;
     }
 

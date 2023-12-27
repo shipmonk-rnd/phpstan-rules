@@ -34,6 +34,7 @@ use function array_merge_recursive;
 use function explode;
 use function in_array;
 use function is_int;
+use function strpos;
 
 /**
  * @implements Rule<Node>
@@ -68,6 +69,9 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         array $allowedCheckedExceptionCallables
     )
     {
+        $this->checkClassExistence($reflectionProvider, $immediatelyCalledCallables, 'immediatelyCalledCallables');
+        $this->checkClassExistence($reflectionProvider, $allowedCheckedExceptionCallables, 'allowedCheckedExceptionCallables');
+
         /** @var array<string, int|list<int>> $callablesWithAllowedCheckedExceptions */
         $callablesWithAllowedCheckedExceptions = array_merge_recursive($immediatelyCalledCallables, $allowedCheckedExceptionCallables);
 
@@ -332,6 +336,28 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     private function normalizeArgumentIndexes($argumentIndexes): array
     {
         return is_int($argumentIndexes) ? [$argumentIndexes] : $argumentIndexes;
+    }
+
+    /**
+     * @param array<string, int|list<int>> $callables
+     */
+    private function checkClassExistence(
+        ReflectionProvider $reflectionProvider,
+        array $callables,
+        string $configName
+    ): void
+    {
+        foreach ($callables as $call => $args) {
+            if (strpos($call, '::') === false) {
+                continue;
+            }
+
+            [$className] = explode('::', $call);
+
+            if (!$reflectionProvider->hasClass($className)) {
+                throw new LogicException("Class $className used '$configName' in does not exist.");
+            }
+        }
     }
 
 }
