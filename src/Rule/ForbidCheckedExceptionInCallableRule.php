@@ -100,14 +100,14 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     ): array
     {
         if (
-            $node instanceof MethodCallableNode // @phpstan-ignore-line ignore bc promise
-            || $node instanceof StaticMethodCallableNode // @phpstan-ignore-line ignore bc promise
-            || $node instanceof FunctionCallableNode // @phpstan-ignore-line ignore bc promise
+            $node instanceof MethodCallableNode
+            || $node instanceof StaticMethodCallableNode
+            || $node instanceof FunctionCallableNode
         ) {
             return $this->processFirstClassCallable($node->getOriginalNode(), $scope);
         }
 
-        if ($node instanceof ClosureReturnStatementsNode) { // @phpstan-ignore-line ignore bc promise
+        if ($node instanceof ClosureReturnStatementsNode) {
             return $this->processClosure($node, $scope);
         }
 
@@ -206,7 +206,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         Scope $scope
     ): array
     {
-        if (!$scope instanceof MutatingScope) { // @phpstan-ignore-line ignore BC promise
+        if (!$scope instanceof MutatingScope) {
             throw new LogicException('Unexpected scope implementation');
         }
 
@@ -214,18 +214,18 @@ class ForbidCheckedExceptionInCallableRule implements Rule
             return [];
         }
 
-        $result = $this->nodeScopeResolver->processExprNode( // @phpstan-ignore-line ignore BC promise
+        $result = $this->nodeScopeResolver->processExprNode(
             new Expression($node->expr),
             $node->expr,
             $scope->enterArrowFunction($node),
             static function (): void {
             },
-            ExpressionContext::createDeep(), // @phpstan-ignore-line ignore BC promise
+            ExpressionContext::createDeep(),
         );
 
         $errors = [];
 
-        foreach ($result->getThrowPoints() as $throwPoint) { // @phpstan-ignore-line ignore BC promise
+        foreach ($result->getThrowPoints() as $throwPoint) {
             if (!$throwPoint->isExplicit()) {
                 continue;
             }

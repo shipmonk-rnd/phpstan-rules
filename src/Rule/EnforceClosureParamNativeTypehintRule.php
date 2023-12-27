@@ -46,7 +46,7 @@ class EnforceClosureParamNativeTypehintRule implements Rule
         Scope $scope
     ): array
     {
-        if (!$node instanceof InClosureNode && !$node instanceof InArrowFunctionNode) { // @phpstan-ignore-line bc promise
+        if (!$node instanceof InClosureNode && !$node instanceof InArrowFunctionNode) {
             return [];
         }
 

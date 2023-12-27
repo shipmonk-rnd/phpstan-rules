@@ -36,7 +36,7 @@ class ForbidUselessNullableReturnRule implements Rule
         $verbosity = VerbosityLevel::precise();
         $methodReflection = $scope->getFunction();
 
-        if ($node instanceof ClosureReturnStatementsNode) { // @phpstan-ignore-line ignore bc promise
+        if ($node instanceof ClosureReturnStatementsNode) {
             $declaredType = $scope->getFunctionType($node->getClosureExpr()->getReturnType(), false, false);
         } elseif ($methodReflection !== null) {
             $declaredType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();

@@ -68,7 +68,7 @@ class ForbidReturnValueInYieldingMethodRule implements Rule
                 ? 'this approach is denied'
                 : 'but this method is not marked to return Generator';
 
-            $callType = $node instanceof MethodReturnStatementsNode // @phpstan-ignore-line ignore bc promise
+            $callType = $node instanceof MethodReturnStatementsNode
                 ? 'method'
                 : 'function';
 
@@ -85,7 +85,7 @@ class ForbidReturnValueInYieldingMethodRule implements Rule
     {
         $methodReflection = $scope->getFunction();
 
-        if ($node instanceof ClosureReturnStatementsNode) { // @phpstan-ignore-line ignore bc promise
+        if ($node instanceof ClosureReturnStatementsNode) {
             return $scope->getFunctionType($node->getClosureExpr()->getReturnType(), false, false);
         }
 
