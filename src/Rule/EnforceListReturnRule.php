@@ -39,7 +39,7 @@ class EnforceListReturnRule implements Rule
 
         $methodReflection = $scope->getFunction();
 
-        if ($methodReflection === null || $node instanceof ClosureReturnStatementsNode) { // @phpstan-ignore-line ignore bc promise
+        if ($methodReflection === null || $node instanceof ClosureReturnStatementsNode) {
             return [];
         }
 

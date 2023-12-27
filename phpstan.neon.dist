@@ -54,3 +54,10 @@ parameters:
             message: '#^Call to function method_exists\(\) with PHPStan\\Analyser\\Scope and ''getKeepVoidType'' will always evaluate to true\.$#'
             path: src/Rule/ForbidUnusedMatchResultRule.php
             reportUnmatched: false # fails only for PHPStan > 1.10.49
+
+        # ignore BC promises
+        - identifier: phpstanApi.class
+        - identifier: phpstanApi.method
+        - identifier: phpstanApi.interface
+        - identifier: phpstanApi.instanceofType
+        - identifier: phpstanApi.instanceofAssumption

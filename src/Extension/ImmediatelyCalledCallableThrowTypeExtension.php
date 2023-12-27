@@ -118,7 +118,7 @@ class ImmediatelyCalledCallableThrowTypeExtension implements DynamicFunctionThro
         Scope $scope
     ): ?Type
     {
-        if (!$scope instanceof MutatingScope) { // @phpstan-ignore-line ignore bc promise
+        if (!$scope instanceof MutatingScope) {
             throw new LogicException('Unexpected scope implementation');
         }
 
