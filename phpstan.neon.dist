@@ -7,6 +7,7 @@ includes:
     - ./rules.neon
 
 parameters:
+    phpVersion: 70400
     paths:
         - src
         - tests
@@ -38,8 +39,6 @@ parameters:
                 ShipMonk\PHPStan\RuleTestCase: RuleTest
         forbidAssignmentNotMatchingVarDoc:
             enabled: false # native check is better now; this rule will be dropped / reworked in 3.0
-        enforceClosureParamNativeTypehint:
-            enabled: false # we support even PHP 7.4, some typehints cannot be used
 
     ignoreErrors:
         -
