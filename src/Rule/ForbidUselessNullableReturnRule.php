@@ -7,8 +7,8 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
@@ -29,14 +29,14 @@ class ForbidUselessNullableReturnRule implements Rule
 
     /**
      * @param ReturnStatementsNode $node
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
         $verbosity = VerbosityLevel::precise();
         $methodReflection = $scope->getFunction();
 
-        if ($node instanceof ClosureReturnStatementsNode) { // @phpstan-ignore-line ignore bc promise
+        if ($node instanceof ClosureReturnStatementsNode) {
             $declaredType = $scope->getFunctionType($node->getClosureExpr()->getReturnType(), false, false);
         } elseif ($methodReflection !== null) {
             $declaredType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();

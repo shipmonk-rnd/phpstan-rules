@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Expression;
 use PHPStan\Analyser\ExpressionContext;
 use PHPStan\Analyser\MutatingScope;
 use PHPStan\Analyser\NodeScopeResolver;
@@ -22,8 +23,8 @@ use PHPStan\Node\MethodCallableNode;
 use PHPStan\Node\StaticMethodCallableNode;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Type;
 use ShipMonk\PHPStan\Visitor\ImmediatelyCalledCallableVisitor;
@@ -33,6 +34,7 @@ use function array_merge_recursive;
 use function explode;
 use function in_array;
 use function is_int;
+use function strpos;
 
 /**
  * @implements Rule<Node>
@@ -67,6 +69,9 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         array $allowedCheckedExceptionCallables
     )
     {
+        $this->checkClassExistence($reflectionProvider, $immediatelyCalledCallables, 'immediatelyCalledCallables');
+        $this->checkClassExistence($reflectionProvider, $allowedCheckedExceptionCallables, 'allowedCheckedExceptionCallables');
+
         /** @var array<string, int|list<int>> $callablesWithAllowedCheckedExceptions */
         $callablesWithAllowedCheckedExceptions = array_merge_recursive($immediatelyCalledCallables, $allowedCheckedExceptionCallables);
 
@@ -87,7 +92,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(
         Node $node,
@@ -95,14 +100,14 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     ): array
     {
         if (
-            $node instanceof MethodCallableNode // @phpstan-ignore-line ignore bc promise
-            || $node instanceof StaticMethodCallableNode // @phpstan-ignore-line ignore bc promise
-            || $node instanceof FunctionCallableNode // @phpstan-ignore-line ignore bc promise
+            $node instanceof MethodCallableNode
+            || $node instanceof StaticMethodCallableNode
+            || $node instanceof FunctionCallableNode
         ) {
             return $this->processFirstClassCallable($node->getOriginalNode(), $scope);
         }
 
-        if ($node instanceof ClosureReturnStatementsNode) { // @phpstan-ignore-line ignore bc promise
+        if ($node instanceof ClosureReturnStatementsNode) {
             return $this->processClosure($node, $scope);
         }
 
@@ -115,7 +120,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
     /**
      * @param MethodCall|StaticCall|FuncCall $callNode
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processFirstClassCallable(
         CallLike $callNode,
@@ -155,7 +160,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processClosure(
         ClosureReturnStatementsNode $node,
@@ -194,14 +199,14 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processArrowFunction(
         ArrowFunction $node,
         Scope $scope
     ): array
     {
-        if (!$scope instanceof MutatingScope) { // @phpstan-ignore-line ignore BC promise
+        if (!$scope instanceof MutatingScope) {
             throw new LogicException('Unexpected scope implementation');
         }
 
@@ -209,17 +214,18 @@ class ForbidCheckedExceptionInCallableRule implements Rule
             return [];
         }
 
-        $result = $this->nodeScopeResolver->processExprNode( // @phpstan-ignore-line ignore BC promise
+        $result = $this->nodeScopeResolver->processExprNode(
+            new Expression($node->expr),
             $node->expr,
             $scope->enterArrowFunction($node),
             static function (): void {
             },
-            ExpressionContext::createDeep(), // @phpstan-ignore-line ignore BC promise
+            ExpressionContext::createDeep(),
         );
 
         $errors = [];
 
-        foreach ($result->getThrowPoints() as $throwPoint) { // @phpstan-ignore-line ignore BC promise
+        foreach ($result->getThrowPoints() as $throwPoint) {
             if (!$throwPoint->isExplicit()) {
                 continue;
             }
@@ -238,7 +244,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function processCall(
         Scope $scope,
@@ -256,7 +262,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function processThrowType(
         ?Type $throwType,
@@ -330,6 +336,28 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     private function normalizeArgumentIndexes($argumentIndexes): array
     {
         return is_int($argumentIndexes) ? [$argumentIndexes] : $argumentIndexes;
+    }
+
+    /**
+     * @param array<string, int|list<int>> $callables
+     */
+    private function checkClassExistence(
+        ReflectionProvider $reflectionProvider,
+        array $callables,
+        string $configName
+    ): void
+    {
+        foreach ($callables as $call => $args) {
+            if (strpos($call, '::') === false) {
+                continue;
+            }
+
+            [$className] = explode('::', $call);
+
+            if (!$reflectionProvider->hasClass($className)) {
+                throw new LogicException("Class $className used '$configName' in does not exist.");
+            }
+        }
     }
 
 }

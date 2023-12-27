@@ -7,8 +7,8 @@ use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\Variable;
 use PHPStan\Analyser\Scope;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Accessory\AccessoryType;
 use PHPStan\Type\Enum\EnumCaseObjectType;
@@ -35,7 +35,7 @@ class ForbidVariableTypeOverwritingRule implements Rule
 
     /**
      * @param Assign $node
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -112,7 +112,7 @@ class ForbidVariableTypeOverwritingRule implements Rule
             $newInnerTypes = [];
 
             foreach ($type->getTypes() as $innerType) {
-                if ($innerType instanceof AccessoryType) { // @phpstan-ignore-line ignore bc promise
+                if ($innerType instanceof AccessoryType) {
                     continue;
                 }
 
@@ -122,8 +122,8 @@ class ForbidVariableTypeOverwritingRule implements Rule
             $type = TypeCombinator::intersect(...$newInnerTypes);
         }
 
-        if ($type instanceof SubtractableType) { // @phpstan-ignore-line ignore bc promise
-            $type = $type->getTypeWithoutSubtractedType(); // @phpstan-ignore-line ignore bc promise
+        if ($type instanceof SubtractableType) {
+            $type = $type->getTypeWithoutSubtractedType();
         }
 
         return TypeCombinator::removeNull($type);
