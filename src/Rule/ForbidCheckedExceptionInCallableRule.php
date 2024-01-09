@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Expression;
 use PHPStan\Analyser\ExpressionContext;
 use PHPStan\Analyser\MutatingScope;
 use PHPStan\Analyser\NodeScopeResolver;
@@ -210,6 +211,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         }
 
         $result = $this->nodeScopeResolver->processExprNode( // @phpstan-ignore-line ignore BC promise
+            new Expression($node->expr),
             $node->expr,
             $scope->enterArrowFunction($node),
             static function (): void {
