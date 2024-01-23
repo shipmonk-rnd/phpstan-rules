@@ -100,7 +100,7 @@ class ForbidMethodCallOnMixedRule implements Rule
                 return '::';
 
             case MethodCall::class:
-                return '->';
+                return $node->getAttribute('virtualNullsafeMethodCall') === true ? '?->' : '->';
 
             default:
                 throw new LogicException('Unexpected node given: ' . get_class($node));
