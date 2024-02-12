@@ -484,6 +484,9 @@ class UserEditFacade
 }
 ```
 
+#### Limitations
+- Immediatelly called closure (`(function(){})()` syntax) is not considered immediatelly-called even though it is ([related issue](https://github.com/shipmonk-rnd/phpstan-rules/issues/210))
+
 ### forbidCheckedExceptionInYieldingMethod
 - Denies throwing [checked exception](https://phpstan.org/blog/bring-your-exceptions-under-control) within yielding methods as those exceptions are not throw upon method call, but when generator gets iterated.
 - This behaviour cannot be easily reflected within PHPStan exception analysis and may cause [false negatives](https://phpstan.org/r/d07ac0f0-a49d-4f82-b1dd-1939058bbeed).
