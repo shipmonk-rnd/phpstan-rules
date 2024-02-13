@@ -49,6 +49,10 @@ parameters:
                 array_map: 0
                 array_walk_recursive: 1
                 array_walk: 1
+                call_user_func: 0
+                call_user_func_array: 0
+                forward_static_call: 0
+                forward_static_call_array: 0
                 uasort: 1
                 uksort: 1
                 usort: 1
