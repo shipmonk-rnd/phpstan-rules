@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cca2f3e76c495bd23c413ee6889cb025",
+    "content-hash": "7ea06564ca86ef5cace89c6fb3109ead",
     "packages": [
         {
             "name": "nikic/php-parser",
@@ -2787,16 +2787,16 @@
         },
         {
             "name": "shipmonk/composer-dependency-analyser",
-            "version": "dev-master",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shipmonk-rnd/composer-dependency-analyser.git",
-                "reference": "d6323ce717c9faa8c53bf3975a5181e59577dd8b"
+                "reference": "ad19bacd43f7cc6bc5170ecea71a1cb511117826"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shipmonk-rnd/composer-dependency-analyser/zipball/d6323ce717c9faa8c53bf3975a5181e59577dd8b",
-                "reference": "d6323ce717c9faa8c53bf3975a5181e59577dd8b",
+                "url": "https://api.github.com/repos/shipmonk-rnd/composer-dependency-analyser/zipball/ad19bacd43f7cc6bc5170ecea71a1cb511117826",
+                "reference": "ad19bacd43f7cc6bc5170ecea71a1cb511117826",
                 "shasum": ""
             },
             "require": {
@@ -2813,7 +2813,6 @@
                 "shipmonk/name-collision-detector": "^2.0.0",
                 "slevomat/coding-standard": "^8.0.1"
             },
-            "default-branch": true,
             "bin": [
                 "bin/composer-dependency-analyser"
             ],
@@ -2844,9 +2843,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shipmonk-rnd/composer-dependency-analyser/issues",
-                "source": "https://github.com/shipmonk-rnd/composer-dependency-analyser/tree/master"
+                "source": "https://github.com/shipmonk-rnd/composer-dependency-analyser/tree/1.2.0"
             },
-            "time": "2024-02-15T12:50:12+00:00"
+            "time": "2024-02-15T14:59:26+00:00"
         },
         {
             "name": "shipmonk/name-collision-detector",
@@ -3093,9 +3092,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "shipmonk/composer-dependency-analyser": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
