@@ -21,6 +21,7 @@
         "phpstan/phpstan-phpunit": "^1.1.1",
         "phpstan/phpstan-strict-rules": "^1.2.3",
         "phpunit/phpunit": "^9.5.20",
+        "shipmonk/composer-dependency-analyser": "dev-master",
         "shipmonk/name-collision-detector": "^2.0.0",
         "slevomat/coding-standard": "^8.0.1"
     },
@@ -59,12 +60,14 @@
             "@check:cs",
             "@check:types",
             "@check:tests",
+            "@check:dependencies",
             "@check:collisions",
             "@check:readme"
         ],
         "check:collisions": "detect-collisions src tests",
         "check:composer": "composer normalize --dry-run --no-check-lock --no-update-lock",
         "check:cs": "phpcs",
+        "check:dependencies": "composer-dependency-analyser",
         "check:ec": "ec src tests",
         "check:readme": "php bin/verify-readme-default-config.php",
         "check:tests": "phpunit -vvv tests",
