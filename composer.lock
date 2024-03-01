@@ -2787,16 +2787,16 @@
         },
         {
             "name": "shipmonk/composer-dependency-analyser",
-            "version": "1.2.0",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shipmonk-rnd/composer-dependency-analyser.git",
-                "reference": "ad19bacd43f7cc6bc5170ecea71a1cb511117826"
+                "reference": "d44a0ec7d3b66fd73d5c32981c81569c9b85bddc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shipmonk-rnd/composer-dependency-analyser/zipball/ad19bacd43f7cc6bc5170ecea71a1cb511117826",
-                "reference": "ad19bacd43f7cc6bc5170ecea71a1cb511117826",
+                "url": "https://api.github.com/repos/shipmonk-rnd/composer-dependency-analyser/zipball/d44a0ec7d3b66fd73d5c32981c81569c9b85bddc",
+                "reference": "d44a0ec7d3b66fd73d5c32981c81569c9b85bddc",
                 "shasum": ""
             },
             "require": {
@@ -2843,9 +2843,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shipmonk-rnd/composer-dependency-analyser/issues",
-                "source": "https://github.com/shipmonk-rnd/composer-dependency-analyser/tree/1.2.0"
+                "source": "https://github.com/shipmonk-rnd/composer-dependency-analyser/tree/1.2.1"
             },
-            "time": "2024-02-15T14:59:26+00:00"
+            "time": "2024-02-16T10:44:07+00:00"
         },
         {
             "name": "shipmonk/name-collision-detector",
