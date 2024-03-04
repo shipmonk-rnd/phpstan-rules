@@ -15,7 +15,7 @@
         "phpstan/phpstan": "^1.10.51"
     },
     "require-dev": {
-        "editorconfig-checker/editorconfig-checker": "^10.3.0",
+        "editorconfig-checker/editorconfig-checker": "^10.6.0",
         "ergebnis/composer-normalize": "^2.28",
         "nette/neon": "^3.3.1",
         "phpstan/phpstan-phpunit": "^1.1.1",
