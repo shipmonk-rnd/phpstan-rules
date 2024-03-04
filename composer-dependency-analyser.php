@@ -1,9 +1,10 @@
 <?php declare(strict_types = 1);
 
 use ShipMonk\ComposerDependencyAnalyser\Config\Configuration;
-use ShipMonk\ComposerDependencyAnalyser\Config\ErrorType;
 
-$config = new Configuration();
+$pharFile = __DIR__ . '/vendor/phpstan/phpstan/phpstan.phar';
+Phar::loadPhar($pharFile, 'phpstan.phar');
 
-return $config
-    ->ignoreErrorsOnPackage('phpstan/phpdoc-parser', [ErrorType::SHADOW_DEPENDENCY]); // it gets autoloaded from within the PHPStan.phar when running PHPStan
+require_once('phar://phpstan.phar/preload.php'); // prepends PHPStan's PharAutolaoder to composer's autoloader
+
+return new Configuration();

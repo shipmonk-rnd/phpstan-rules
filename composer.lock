@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc41a95b3f6b8bd065c5684a3da0ea87",
+    "content-hash": "9d8206d632544cd49a8691adba5daea3",
     "packages": [
         {
             "name": "nikic/php-parser",
@@ -2787,16 +2787,16 @@
         },
         {
             "name": "shipmonk/composer-dependency-analyser",
-            "version": "1.2.1",
+            "version": "dev-support-more-loaders",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shipmonk-rnd/composer-dependency-analyser.git",
-                "reference": "d44a0ec7d3b66fd73d5c32981c81569c9b85bddc"
+                "reference": "0ae84077b0145a8c0a0fa1ac80cedef568801157"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shipmonk-rnd/composer-dependency-analyser/zipball/d44a0ec7d3b66fd73d5c32981c81569c9b85bddc",
-                "reference": "d44a0ec7d3b66fd73d5c32981c81569c9b85bddc",
+                "url": "https://api.github.com/repos/shipmonk-rnd/composer-dependency-analyser/zipball/0ae84077b0145a8c0a0fa1ac80cedef568801157",
+                "reference": "0ae84077b0145a8c0a0fa1ac80cedef568801157",
                 "shasum": ""
             },
             "require": {
@@ -2843,9 +2843,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shipmonk-rnd/composer-dependency-analyser/issues",
-                "source": "https://github.com/shipmonk-rnd/composer-dependency-analyser/tree/1.2.1"
+                "source": "https://github.com/shipmonk-rnd/composer-dependency-analyser/tree/support-more-loaders"
             },
-            "time": "2024-02-16T10:44:07+00:00"
+            "time": "2024-03-04T11:55:20+00:00"
         },
         {
             "name": "shipmonk/name-collision-detector",
@@ -3092,7 +3092,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "shipmonk/composer-dependency-analyser": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
