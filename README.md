@@ -431,6 +431,7 @@ parameters:
   - By default, native functions like `array_map` are present. So it is recommended not to overwrite the defaults here (by `!` char).
 - It allows configuration of functions/methods, where the callable is handling all thrown exceptions and it is safe to throw anything from there; this basically makes such calls ignored by this rule
 - It ignores [implicitly thrown Throwable](https://phpstan.org/blog/bring-your-exceptions-under-control#what-does-absent-%40throws-above-a-function-mean%3F)
+- Learn more in 🇨🇿 [talk about checked exceptions in general](https://www.youtube.com/watch?v=UQsP1U0sVZM)
 
 ```neon
 parameters:
