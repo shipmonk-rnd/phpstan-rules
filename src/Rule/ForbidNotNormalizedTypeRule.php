@@ -11,6 +11,7 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\IntersectionType;
 use PhpParser\Node\NullableType;
 use PhpParser\Node\Param;
+use PhpParser\Node\Stmt\Catch_;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Property;
@@ -103,7 +104,20 @@ class ForbidNotNormalizedTypeRule implements Rule
             );
         }
 
+        if ($node instanceof Catch_) {
+            return $this->checkCatchNativeType($node, $scope);
+        }
+
         return $this->checkInlineVarDoc($node, $scope);
+    }
+
+    /**
+     * @return list<RuleError>
+     */
+    private function checkCatchNativeType(Catch_ $node, Scope $scope): array
+    {
+        $multiTypeNode = new UnionType($node->types, $node->getAttributes());
+        return $this->processMultiTypePhpParserNode($multiTypeNode, $scope, 'catch statement');
     }
 
     /**
