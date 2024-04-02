@@ -411,7 +411,7 @@ class ForbidNotNormalizedTypeRule implements Rule
         }
 
         $unionNode = new UnionTypeNode($thrownTypes);
-        return $this->processMultiTypePhpDocNode($unionNode, $nameSpace, 'throws', $this->getPhpDocLine($originalNode, $unionNode));
+        return $this->processMultiTypePhpDocNode($unionNode, $nameSpace, 'throws', $originalNode->getLine());
     }
 
     /**
