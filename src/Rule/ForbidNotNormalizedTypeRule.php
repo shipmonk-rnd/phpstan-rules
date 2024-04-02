@@ -24,6 +24,7 @@ use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDocParser\Ast\Node as PhpDocRootNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
+use PHPStan\PhpDocParser\Ast\PhpDoc\ThrowsTagValueNode;
 use PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IntersectionTypeNode;
@@ -92,7 +93,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     {
         if ($node instanceof FunctionLike) {
             return array_merge(
-                $this->checkParamAndReturnPhpDoc($node, $scope),
+                $this->checkParamAndReturnAndThrowsPhpDoc($node, $scope),
                 $this->checkParamAndReturnNativeType($node, $scope),
             );
         }
@@ -123,7 +124,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     /**
      * @return list<RuleError>
      */
-    private function checkParamAndReturnPhpDoc(
+    private function checkParamAndReturnAndThrowsPhpDoc(
         FunctionLike $node,
         Scope $scope
     ): array
@@ -147,6 +148,7 @@ class ForbidNotNormalizedTypeRule implements Rule
                 $errors,
                 $this->processParamTags($node, $phpdocNode->getParamTagValues(), $nameScope),
                 $this->processReturnTags($node, $phpdocNode->getReturnTagValues(), $nameScope),
+                $this->processThrowsTags($node, $phpdocNode->getThrowsTagValues(), $nameScope),
             );
         }
 
@@ -380,6 +382,36 @@ class ForbidNotNormalizedTypeRule implements Rule
         }
 
         return $errors;
+    }
+
+    /**
+     * @param array<ThrowsTagValueNode> $throwsTagValues
+     * @return list<RuleError>
+     */
+    public function processThrowsTags(
+        PhpParserNode $originalNode,
+        array $throwsTagValues,
+        NameScope $nameSpace
+    ): array
+    {
+        $thrownTypes = [];
+
+        foreach ($throwsTagValues as $throwsTagValue) {
+            $multiTypeNodes = $this->extractUnionAndIntersectionPhpDocTypeNodes($throwsTagValue->type);
+
+            if ($multiTypeNodes === []) {
+                $thrownTypes[] = $throwsTagValue->type;
+            } else {
+                foreach ($multiTypeNodes as $multiTypeNode) {
+                    foreach ($multiTypeNode->types as $typeNode) {
+                        $thrownTypes[] = $typeNode;
+                    }
+                }
+            }
+        }
+
+        $unionNode = new UnionTypeNode($thrownTypes);
+        return $this->processMultiTypePhpDocNode($unionNode, $nameSpace, 'throws', $this->getPhpDocLine($originalNode, $unionNode));
     }
 
     /**
