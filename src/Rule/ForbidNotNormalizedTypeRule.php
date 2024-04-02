@@ -317,12 +317,13 @@ class ForbidNotNormalizedTypeRule implements Rule
         $errors = [];
 
         foreach ($paramTagValues as $paramTagValue) {
-            foreach ($this->extractUnionAndIntersectionPhpDocTypeNodes($paramTagValue->type) as $multiTypeNode) {
+            $line = $this->getPhpDocLine($sourceNode, $paramTagValue);
+
+            foreach ($this->extractUnionAndIntersectionPhpDocTypeNodes($paramTagValue->type, $line) as $multiTypeNode) {
                 $newErrors = $this->processMultiTypePhpDocNode(
                     $multiTypeNode,
                     $nameSpace,
                     "parameter {$paramTagValue->parameterName}",
-                    $this->getPhpDocLine($sourceNode, $paramTagValue),
                 );
                 $errors = array_merge($errors, $newErrors);
             }
@@ -344,7 +345,9 @@ class ForbidNotNormalizedTypeRule implements Rule
         $errors = [];
 
         foreach ($varTagValues as $varTagValue) {
-            foreach ($this->extractUnionAndIntersectionPhpDocTypeNodes($varTagValue->type) as $multiTypeNode) {
+            $line = $this->getPhpDocLine($originalNode, $varTagValue);
+
+            foreach ($this->extractUnionAndIntersectionPhpDocTypeNodes($varTagValue->type, $line) as $multiTypeNode) {
                 $identification = $varTagValue->variableName !== ''
                     ? "variable {$varTagValue->variableName}"
                     : null;
@@ -353,7 +356,6 @@ class ForbidNotNormalizedTypeRule implements Rule
                     $multiTypeNode,
                     $nameSpace,
                     $identification,
-                    $this->getPhpDocLine($originalNode, $varTagValue),
                 );
                 $errors = array_merge($errors, $newErrors);
             }
@@ -375,8 +377,10 @@ class ForbidNotNormalizedTypeRule implements Rule
         $errors = [];
 
         foreach ($returnTagValues as $returnTagValue) {
-            foreach ($this->extractUnionAndIntersectionPhpDocTypeNodes($returnTagValue->type) as $multiTypeNode) {
-                $newErrors = $this->processMultiTypePhpDocNode($multiTypeNode, $nameSpace, 'return', $this->getPhpDocLine($originalNode, $returnTagValue));
+            $line = $this->getPhpDocLine($originalNode, $returnTagValue);
+
+            foreach ($this->extractUnionAndIntersectionPhpDocTypeNodes($returnTagValue->type, $line) as $multiTypeNode) {
+                $newErrors = $this->processMultiTypePhpDocNode($multiTypeNode, $nameSpace, 'return');
                 $errors = array_merge($errors, $newErrors);
             }
         }
@@ -397,10 +401,14 @@ class ForbidNotNormalizedTypeRule implements Rule
         $thrownTypes = [];
 
         foreach ($throwsTagValues as $throwsTagValue) {
-            $multiTypeNodes = $this->extractUnionAndIntersectionPhpDocTypeNodes($throwsTagValue->type);
+            $line = $this->getPhpDocLine($originalNode, $throwsTagValue);
+            $multiTypeNodes = $this->extractUnionAndIntersectionPhpDocTypeNodes($throwsTagValue->type, $line);
 
             if ($multiTypeNodes === []) {
-                $thrownTypes[] = $throwsTagValue->type;
+                $innerType = $throwsTagValue->type;
+                $innerType->setAttribute('line', $line);
+
+                $thrownTypes[] = $innerType;
             } else {
                 foreach ($multiTypeNodes as $multiTypeNode) {
                     foreach ($multiTypeNode->types as $typeNode) {
@@ -411,14 +419,15 @@ class ForbidNotNormalizedTypeRule implements Rule
         }
 
         $unionNode = new UnionTypeNode($thrownTypes);
-        return $this->processMultiTypePhpDocNode($unionNode, $nameSpace, 'throws', $originalNode->getLine());
+        return $this->processMultiTypePhpDocNode($unionNode, $nameSpace, 'throws');
     }
 
     /**
      * @return list<UnionTypeNode|IntersectionTypeNode>
      */
-    private function extractUnionAndIntersectionPhpDocTypeNodes(TypeNode $typeNode): array
+    private function extractUnionAndIntersectionPhpDocTypeNodes(TypeNode $typeNode, int $line): array
     {
+        /** @var list<UnionTypeNode|IntersectionTypeNode> $nodes */
         $nodes = [];
         $this->traversePhpDocTypeNode($typeNode, static function (TypeNode $typeNode) use (&$nodes): void {
             if ($typeNode instanceof UnionTypeNode || $typeNode instanceof IntersectionTypeNode) {
@@ -429,6 +438,13 @@ class ForbidNotNormalizedTypeRule implements Rule
                 $nodes[] = new UnionTypeNode([$typeNode->type, new IdentifierTypeNode('null')]);
             }
         });
+
+        foreach ($nodes as $node) {
+            foreach ($node->types as $innerType) {
+                $innerType->setAttribute('line', $line);
+            }
+        }
+
         return $nodes;
     }
 
@@ -545,8 +561,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     private function processMultiTypePhpDocNode(
         TypeNode $multiTypeNode,
         NameScope $nameSpace,
-        ?string $identification,
-        int $line
+        ?string $identification
     ): array
     {
         $errors = [];
@@ -559,7 +574,7 @@ class ForbidNotNormalizedTypeRule implements Rule
                     $dnf = $this->typeNodeResolver->resolve($multiTypeNode, $nameSpace)->describe(VerbosityLevel::typeOnly());
 
                     $errors[] = RuleErrorBuilder::message("Found non-normalized type {$multiTypeNode}{$forWhat}: this is not disjunctive normal form, use {$dnf}")
-                        ->line($line)
+                        ->line($type->getAttribute('line'))
                         ->identifier('shipmonk.nonNormalizedType')
                         ->build();
                 }
@@ -578,7 +593,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
                 if ($typeA->isSuperTypeOf($typeB)->yes()) {
                     $errors[] = RuleErrorBuilder::message("Found non-normalized type {$multiTypeNode}{$forWhat}: {$typeNodeB} is a subtype of {$typeNodeA}.")
-                        ->line($line)
+                        ->line($typeNodeB->getAttribute('line'))
                         ->identifier('shipmonk.nonNormalizedType')
                         ->build();
                     continue;
@@ -586,7 +601,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
                 if ($typeB->isSuperTypeOf($typeA)->yes()) {
                     $errors[] = RuleErrorBuilder::message("Found non-normalized type {$multiTypeNode}{$forWhat}: {$typeNodeA} is a subtype of {$typeNodeB}.")
-                        ->line($line)
+                        ->line($typeNodeA->getAttribute('line'))
                         ->identifier('shipmonk.nonNormalizedType')
                         ->build();
                 }

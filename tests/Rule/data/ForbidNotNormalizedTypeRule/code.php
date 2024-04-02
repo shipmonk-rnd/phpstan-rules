@@ -170,25 +170,25 @@ class Example
     }
 
     /**
-     * @throws InterfaceImplementor
+     * @throws InterfaceImplementor // error: Found non-normalized type (InterfaceImplementor | MyInterface) for throws: InterfaceImplementor is a subtype of MyInterface.
      * @throws MyInterface
      */
-    public function testThrows() // error: Found non-normalized type (InterfaceImplementor | MyInterface) for throws: InterfaceImplementor is a subtype of MyInterface.
+    public function testThrows()
     {
     }
 
     /**
-     * @throws InterfaceImplementor|MyInterface
+     * @throws InterfaceImplementor|MyInterface // error: Found non-normalized type (InterfaceImplementor | MyInterface) for throws: InterfaceImplementor is a subtype of MyInterface.
      */
-    public function testThrowsUnion() // error: Found non-normalized type (InterfaceImplementor | MyInterface) for throws: InterfaceImplementor is a subtype of MyInterface.
+    public function testThrowsUnion()
     {
     }
 
     /**
      * @throws MyInterface|ChildOne
-     * @throws InterfaceImplementor
+     * @throws InterfaceImplementor // error: Found non-normalized type (MyInterface | ChildOne | InterfaceImplementor) for throws: InterfaceImplementor is a subtype of MyInterface.
      */
-    public function testThrowsUnionCombined() // error: Found non-normalized type (MyInterface | ChildOne | InterfaceImplementor) for throws: InterfaceImplementor is a subtype of MyInterface.
+    public function testThrowsUnionCombined()
     {
     }
 
