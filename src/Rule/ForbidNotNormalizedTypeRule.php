@@ -42,6 +42,7 @@ use function count;
 use function get_object_vars;
 use function implode;
 use function is_array;
+use function is_int;
 use function is_object;
 use function is_string;
 use function spl_object_id;
@@ -572,9 +573,10 @@ class ForbidNotNormalizedTypeRule implements Rule
             foreach ($multiTypeNode->types as $type) {
                 if ($type instanceof UnionTypeNode) {
                     $dnf = $this->typeNodeResolver->resolve($multiTypeNode, $nameSpace)->describe(VerbosityLevel::typeOnly());
+                    $line = $this->extractLineFromPhpDocTypeNode($type);
 
                     $errors[] = RuleErrorBuilder::message("Found non-normalized type {$multiTypeNode}{$forWhat}: this is not disjunctive normal form, use {$dnf}")
-                        ->line($type->getAttribute('line'))
+                        ->line($line)
                         ->identifier('shipmonk.nonNormalizedType')
                         ->build();
                 }
@@ -591,9 +593,12 @@ class ForbidNotNormalizedTypeRule implements Rule
                 $typeA = $this->typeNodeResolver->resolve($typeNodeA, $nameSpace);
                 $typeB = $this->typeNodeResolver->resolve($typeNodeB, $nameSpace);
 
+                $typeALine = $this->extractLineFromPhpDocTypeNode($typeNodeA);
+                $typeBLine = $this->extractLineFromPhpDocTypeNode($typeNodeB);
+
                 if ($typeA->isSuperTypeOf($typeB)->yes()) {
                     $errors[] = RuleErrorBuilder::message("Found non-normalized type {$multiTypeNode}{$forWhat}: {$typeNodeB} is a subtype of {$typeNodeA}.")
-                        ->line($typeNodeB->getAttribute('line'))
+                        ->line($typeBLine)
                         ->identifier('shipmonk.nonNormalizedType')
                         ->build();
                     continue;
@@ -601,7 +606,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
                 if ($typeB->isSuperTypeOf($typeA)->yes()) {
                     $errors[] = RuleErrorBuilder::message("Found non-normalized type {$multiTypeNode}{$forWhat}: {$typeNodeA} is a subtype of {$typeNodeB}.")
-                        ->line($typeNodeA->getAttribute('line'))
+                        ->line($typeALine)
                         ->identifier('shipmonk.nonNormalizedType')
                         ->build();
                 }
@@ -609,6 +614,17 @@ class ForbidNotNormalizedTypeRule implements Rule
         }
 
         return $errors;
+    }
+
+    private function extractLineFromPhpDocTypeNode(TypeNode $node): int
+    {
+        $line = $node->getAttribute('line');
+
+        if (!is_int($line)) {
+            throw new LogicException('Missing custom line attribute in node: ' . $node);
+        }
+
+        return $line;
     }
 
     private function getPropertyNameFromNativeNode(Property $node): string
