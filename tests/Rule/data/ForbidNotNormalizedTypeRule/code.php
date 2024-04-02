@@ -160,4 +160,13 @@ class Example
     {
     }
 
+    public function testCatch()
+    {
+        try {
+
+        } catch (InterfaceImplementor|MyInterface $k) { // error: Found non-normalized type \ForbidNotNormalizedTypeRule\InterfaceImplementor|\ForbidNotNormalizedTypeRule\MyInterface for catch statement: \ForbidNotNormalizedTypeRule\InterfaceImplementor is a subtype of \ForbidNotNormalizedTypeRule\MyInterface.
+
+        }
+    }
+
 }
