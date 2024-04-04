@@ -2,8 +2,6 @@
 
 namespace ForbidNotNormalizedTypeRule;
 
-use function WrongVariableNameVarTag\doFoo;
-
 interface MyInterface {}
 
 abstract class BaseClass  {}
