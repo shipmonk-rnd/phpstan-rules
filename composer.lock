@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "004a1794a80ed67ae622d44df8fd33bbec98b942"
+                "reference": "f280c2575fb9ae58bbfe0137e5f605485295ace8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/004a1794a80ed67ae622d44df8fd33bbec98b942",
-                "reference": "004a1794a80ed67ae622d44df8fd33bbec98b942",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f280c2575fb9ae58bbfe0137e5f605485295ace8",
+                "reference": "f280c2575fb9ae58bbfe0137e5f605485295ace8",
                 "shasum": ""
             },
             "require": {
@@ -61,13 +61,9 @@
                 {
                     "url": "https://github.com/phpstan",
                     "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/phpstan/phpstan",
-                    "type": "tidelift"
                 }
             ],
-            "time": "2023-12-26T14:22:24+00:00"
+            "time": "2024-04-16T11:19:50+00:00"
         }
     ],
     "packages-dev": [
@@ -3122,5 +3118,5 @@
         "php": "^7.4 || ^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.2.0"
 }

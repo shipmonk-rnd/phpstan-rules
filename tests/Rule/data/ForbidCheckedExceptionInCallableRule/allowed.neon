@@ -1,0 +1,7 @@
+parameters:
+    allowedCheckedExceptionCallables:
+        'ForbidCheckedExceptionInCallableRule\CallableTest::allowThrowInInterface': [0]
+        'ForbidCheckedExceptionInCallableRule\BaseCallableTest::allowThrowInBaseClass': [0]
+        'ForbidCheckedExceptionInCallableRule\ClosureTest::allowThrow': [0]
+        'ForbidCheckedExceptionInCallableRule\FirstClassCallableTest::allowThrow': [1]
+        'ForbidCheckedExceptionInCallableRule\ArrowFunctionTest::allowThrow': [0]

@@ -49,29 +49,6 @@ parameters:
             blacklist: ['(array)', '(object)', '(unset)']
         forbidCheckedExceptionInCallable:
             enabled: true
-            immediatelyCalledCallables:
-                array_reduce: 1
-                array_intersect_ukey: 2
-                array_uintersect: 2
-                array_uintersect_assoc: 2
-                array_intersect_uassoc: 2
-                array_uintersect_uassoc: [2, 3]
-                array_diff_ukey: 2
-                array_udiff: 2
-                array_udiff_assoc: 2
-                array_diff_uassoc: 2
-                array_udiff_uassoc: [2, 3]
-                array_filter: 1
-                array_map: 0
-                array_walk_recursive: 1
-                array_walk: 1
-                call_user_func: 0
-                call_user_func_array: 0
-                forward_static_call: 0
-                forward_static_call_array: 0
-                uasort: 1
-                uksort: 1
-                usort: 1
             allowedCheckedExceptionCallables: []
         forbidCheckedExceptionInYieldingMethod:
             enabled: true
@@ -350,8 +327,7 @@ parameters:
 
 ### forbidCheckedExceptionInCallable
 - Denies throwing [checked exception](https://phpstan.org/blog/bring-your-exceptions-under-control) in callables (Closures, Arrow functions and First class callables) as those cannot be tracked as checked by PHPStan analysis, because it is unknown when the callable is about to be called
-- It allows configuration of functions/methods, where the callable is called immediately, those cases are allowed and are also added to [dynamic throw type extension](https://phpstan.org/developing-extensions/dynamic-throw-type-extensions) which causes those exceptions to be tracked properly in your codebase (!)
-  - By default, native functions like `array_map` are present. So it is recommended not to overwrite the defaults here (by `!` char).
+- It is allowed to throw checked exceptions in immediately called callables (e.g. params marked by `@param-immediately-invoked-callable`, see [docs](https://phpstan.org/writing-php-code/phpdocs-basics#callables))
 - It allows configuration of functions/methods, where the callable is handling all thrown exceptions and it is safe to throw anything from there; this basically makes such calls ignored by this rule
 - It ignores [implicitly thrown Throwable](https://phpstan.org/blog/bring-your-exceptions-under-control#what-does-absent-%40throws-above-a-function-mean%3F)
 - Learn more in 🇨🇿 [talk about checked exceptions in general](https://www.youtube.com/watch?v=UQsP1U0sVZM)
@@ -360,10 +336,6 @@ parameters:
 parameters:
     shipmonkRules:
         forbidCheckedExceptionInCallable:
-            immediatelyCalledCallables:
-                'Doctrine\ORM\EntityManager::transactional': 0 # 0 is argument index where the closure appears, you can use list if needed
-                'Symfony\Contracts\Cache\CacheInterface::get': 1
-                'Acme\my_custom_function': 0
             allowedCheckedExceptionCallables:
                 'Symfony\Component\Console\Question::setValidator': 0 # symfony automatically converts all thrown exceptions to error output, so it is safe to throw anything here
 ```
@@ -384,16 +356,26 @@ parameters:
 
 
 ```php
+class TransactionManager {
+    /**
+     * @param-immediately-invoked-callable $callback
+     */
+    public function transactional(callable $callback): void {
+        // ...
+        $callback();
+        // ...
+    }
+}
+
 class UserEditFacade
 {
     /**
      * @throws UserNotFoundException
-     *  ^ This throws would normally be reported as never thrown in native phpstan, but we know the closure is immediately called
      */
     public function updateUserEmail(UserId $userId, Email $email): void
     {
-        $this->entityManager->transactional(function () use ($userId, $email) {
-            $user = $this->userRepository->get($userId); // throws checked UserNotFoundException
+        $this->transactionManager->transactional(function () use ($userId, $email) {
+            $user = $this->userRepository->get($userId); // can throw checked UserNotFoundException
             $user->updateEmail($email);
         })
     }

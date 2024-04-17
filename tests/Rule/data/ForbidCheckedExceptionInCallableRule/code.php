@@ -101,6 +101,9 @@ class FirstClassCallableTest extends BaseCallableTest {
 
     }
 
+    /**
+     * @param-immediately-invoked-callable $callable
+     */
     public function immediateThrow(?callable $denied, callable $callable): void
     {
         $callable();
@@ -175,6 +178,16 @@ class ClosureTest extends BaseCallableTest {
             },
         );
 
+        $this->immediateThrow(
+            denied: function () {},
+        );
+
+        $this->immediateThrow(
+            denied: function () {
+                throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!
+            },
+        );
+
         $this->allowThrowInBaseClass(function () {
             $this->throws();
         });
@@ -209,6 +222,9 @@ class ClosureTest extends BaseCallableTest {
 
     }
 
+    /**
+     * @param-immediately-invoked-callable $callable
+     */
     public function immediateThrow(callable $callable, ?callable $denied = null): void
     {
         $callable();
@@ -226,6 +242,11 @@ class ClosureTest extends BaseCallableTest {
 }
 
 class ArrowFunctionTest extends BaseCallableTest {
+
+    public function __construct($callable)
+    {
+        new self(fn () => throw new CheckedException());
+    }
 
     public function testDeclarations(): void
     {
@@ -279,6 +300,9 @@ class ArrowFunctionTest extends BaseCallableTest {
 
     }
 
+    /**
+     * @param-immediately-invoked-callable $callable
+     */
     public function immediateThrow(callable $callable): void
     {
         $callable();
@@ -293,4 +317,74 @@ class ArrowFunctionTest extends BaseCallableTest {
         }
     }
 
+}
+
+class ArgumentSwappingTest {
+
+    public function test()
+    {
+        $this->call(
+            $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+            $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+            $this->throws(...),
+            $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+        );
+
+        $this->call(
+            second: $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+            first: $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+            third: $this->throws(...),
+        );
+
+        $this->call(
+            forth: $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+            first: $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+        );
+
+        $this->call(
+            $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+            forth: $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+            second: $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+            third: $this->throws(...),
+        );
+
+        $this->call(
+            $this->noop(...),
+            $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+            forth: $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+            third: $this->noop(...),
+        );
+
+        // this is not yet supported, the rule do not see this as argument pass
+        $this->call(... [
+            'third' => $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+            'first' => $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+            'second' => $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+        ]);
+    }
+
+    /**
+     * @param-immediately-invoked-callable $third
+     */
+    public function call(
+        callable $first,
+        ?callable $second = null,
+        ?callable $third = null,
+        ?callable $forth = null
+    ): void
+    {
+
+    }
+
+    private function noop(): void
+    {
+    }
+
+    /**
+     * @throws CheckedException
+     */
+    private function throws(): void
+    {
+        throw new CheckedException();
+    }
 }
