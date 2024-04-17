@@ -28,29 +28,6 @@ parameters:
             blacklist: ['(array)', '(object)', '(unset)']
         forbidCheckedExceptionInCallable:
             enabled: true
-            immediatelyCalledCallables:
-                array_reduce: 1
-                array_intersect_ukey: 2
-                array_uintersect: 2
-                array_uintersect_assoc: 2
-                array_intersect_uassoc: 2
-                array_uintersect_uassoc: [2, 3]
-                array_diff_ukey: 2
-                array_udiff: 2
-                array_udiff_assoc: 2
-                array_diff_uassoc: 2
-                array_udiff_uassoc: [2, 3]
-                array_filter: 1
-                array_map: 0
-                array_walk_recursive: 1
-                array_walk: 1
-                call_user_func: 0
-                call_user_func_array: 0
-                forward_static_call: 0
-                forward_static_call_array: 0
-                uasort: 1
-                uksort: 1
-                usort: 1
             allowedCheckedExceptionCallables: []
         forbidCheckedExceptionInYieldingMethod:
             enabled: true
@@ -147,7 +124,6 @@ parametersSchema:
         ])
         forbidCheckedExceptionInCallable: structure([
             enabled: bool()
-            immediatelyCalledCallables: arrayOf(anyOf(listOf(int()), int()), string())
             allowedCheckedExceptionCallables: arrayOf(anyOf(listOf(int()), int()), string())
         ])
         forbidCheckedExceptionInYieldingMethod: structure([
@@ -302,8 +278,6 @@ conditionalTags:
     ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule:
         phpstan.rules.rule: %shipmonkRules.uselessPrivatePropertyNullability.enabled%
 
-    ShipMonk\PHPStan\Visitor\ImmediatelyCalledCallableVisitor:
-        phpstan.parser.richParserNodeVisitor: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
     ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.forbidUnusedException.enabled%
     ShipMonk\PHPStan\Visitor\UnusedMatchVisitor:
@@ -312,11 +286,6 @@ conditionalTags:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.uselessPrivatePropertyDefaultValue.enabled%
     ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.uselessPrivatePropertyNullability.enabled%
-
-    ShipMonk\PHPStan\Extension\ImmediatelyCalledCallableThrowTypeExtension:
-        phpstan.dynamicFunctionThrowTypeExtension: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
-        phpstan.dynamicMethodThrowTypeExtension: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
-        phpstan.dynamicStaticMethodThrowTypeExtension: %shipmonkRules.forbidCheckedExceptionInCallable.enabled%
 
 services:
     -
@@ -352,7 +321,6 @@ services:
     -
         class: ShipMonk\PHPStan\Rule\ForbidCheckedExceptionInCallableRule
         arguments:
-            immediatelyCalledCallables: %shipmonkRules.forbidCheckedExceptionInCallable.immediatelyCalledCallables%
             allowedCheckedExceptionCallables: %shipmonkRules.forbidCheckedExceptionInCallable.allowedCheckedExceptionCallables%
     -
         class: ShipMonk\PHPStan\Rule\ForbidCheckedExceptionInYieldingMethodRule
@@ -423,11 +391,6 @@ services:
         arguments:
             reportEvenIfExceptionIsNotAcceptableByRethrownOne: %shipmonkRules.requirePreviousExceptionPass.reportEvenIfExceptionIsNotAcceptableByRethrownOne%
     -
-        class: ShipMonk\PHPStan\Visitor\ImmediatelyCalledCallableVisitor
-        arguments:
-            immediatelyCalledCallables: %shipmonkRules.forbidCheckedExceptionInCallable.immediatelyCalledCallables%
-            allowedCheckedExceptionCallables: %shipmonkRules.forbidCheckedExceptionInCallable.allowedCheckedExceptionCallables%
-    -
         class: ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor
     -
         class: ShipMonk\PHPStan\Visitor\UnusedMatchVisitor
@@ -435,8 +398,3 @@ services:
         class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
     -
         class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
-
-    -
-        class: ShipMonk\PHPStan\Extension\ImmediatelyCalledCallableThrowTypeExtension
-        arguments:
-            immediatelyCalledCallables: %shipmonkRules.forbidCheckedExceptionInCallable.immediatelyCalledCallables%
