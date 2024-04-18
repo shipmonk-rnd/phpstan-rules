@@ -123,7 +123,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function checkParamAndReturnAndThrowsPhpDoc(
         FunctionLike $node,
@@ -391,7 +391,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
     /**
      * @param array<ThrowsTagValueNode> $throwsTagValues
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processThrowsTags(
         PhpParserNode $originalNode,
