@@ -9,6 +9,8 @@ class CheckedException extends \Exception {}
  */
 function throwing_function() {}
 
+function allowed_function(callable $callable) {}
+
 interface CallableTest {
 
     public function allowThrowInInterface(callable $callable): void;

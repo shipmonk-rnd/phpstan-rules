@@ -49,6 +49,7 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
                 'ForbidCheckedExceptionInCallableRule\FirstClassCallableTest::allowThrow' => [1],
                 'ForbidCheckedExceptionInCallableRule\ArrowFunctionTest::allowThrow' => [0],
                 'ForbidCheckedExceptionInCallableRule\ArrowFunctionTest::__construct' => [0],
+                'allowed_function' => [0],
             ],
         );
     }
