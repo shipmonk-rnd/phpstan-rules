@@ -520,7 +520,7 @@ class ForbidNotNormalizedTypeRule implements Rule
         foreach ($innerTypeNodes as $i => $iValue) {
             for ($j = $i + 1; $j < $countOfNodeTypes; $j++) {
                 $typeNodeA = $iValue;
-                $typeNodeB = $innerTypeNodes[$j];
+                $typeNodeB = $innerTypeNodes[$j]; // @phpstan-ignore offsetAccess.notFound
 
                 $typeA = $scope->getFunctionType($typeNodeA, false, false);
                 $typeB = $scope->getFunctionType($typeNodeB, false, false);
@@ -588,7 +588,7 @@ class ForbidNotNormalizedTypeRule implements Rule
         foreach ($innerTypeNodes as $i => $iValue) {
             for ($j = $i + 1; $j < $countOfNodeTypes; $j++) {
                 $typeNodeA = $iValue;
-                $typeNodeB = $innerTypeNodes[$j];
+                $typeNodeB = $innerTypeNodes[$j]; // @phpstan-ignore offsetAccess.notFound
 
                 $typeA = $this->typeNodeResolver->resolve($typeNodeA, $nameSpace);
                 $typeB = $this->typeNodeResolver->resolve($typeNodeB, $nameSpace);

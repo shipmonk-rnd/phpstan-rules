@@ -14,6 +14,7 @@ use PHPStan\Type\Enum\EnumCaseObjectType;
 use function array_map;
 use function array_merge;
 use function array_unique;
+use function array_values;
 use function count;
 
 /**
@@ -47,12 +48,12 @@ class EnforceEnumMatchRule implements Rule
         $rightType = $scope->getType($node->right);
 
         if ($leftType->isEnum()->yes() && $rightType->isEnum()->yes()) {
-            $enumCases = array_unique(
+            $enumCases = array_values(array_unique(
                 array_merge(
                     array_map(static fn (EnumCaseObjectType $type) => "{$type->getClassName()}::{$type->getEnumCaseName()}", $leftType->getEnumCases()),
                     array_map(static fn (EnumCaseObjectType $type) => "{$type->getClassName()}::{$type->getEnumCaseName()}", $rightType->getEnumCases()),
                 ),
-            );
+            ));
 
             if (count($enumCases) !== 1) {
                 return []; // do not report nonsense comparison

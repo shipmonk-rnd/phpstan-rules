@@ -17,7 +17,7 @@ class TopLevelConstructorPropertyFetchMarkingVisitor extends NodeVisitorAbstract
     public const IS_TOP_LEVEL_CONSTRUCTOR_FETCH_ASSIGNMENT = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'topLevelConstructorFetchAssignment';
 
     /**
-     * @var Node[]
+     * @var list<Node>
      */
     private array $stack = [];
 
@@ -38,9 +38,9 @@ class TopLevelConstructorPropertyFetchMarkingVisitor extends NodeVisitorAbstract
         if (
             $nodesInStack >= 3
             && $node instanceof PropertyFetch
-            && $this->stack[$nodesInStack - 1] instanceof Assign
-            && $this->stack[$nodesInStack - 2] instanceof Expression
-            && $this->stack[$nodesInStack - 3] instanceof ClassMethod
+            && $this->stack[$nodesInStack - 1] instanceof Assign // @phpstan-ignore offsetAccess.notFound
+            && $this->stack[$nodesInStack - 2] instanceof Expression // @phpstan-ignore offsetAccess.notFound
+            && $this->stack[$nodesInStack - 3] instanceof ClassMethod // @phpstan-ignore offsetAccess.notFound
             && $this->stack[$nodesInStack - 3]->name->name === '__construct'
         ) {
             $node->setAttribute(self::IS_TOP_LEVEL_CONSTRUCTOR_FETCH_ASSIGNMENT, true);

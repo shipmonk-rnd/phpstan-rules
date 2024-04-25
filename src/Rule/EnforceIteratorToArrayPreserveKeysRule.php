@@ -9,6 +9,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
+use function array_values;
 use function count;
 
 /**
@@ -36,15 +37,17 @@ class EnforceIteratorToArrayPreserveKeysRule implements Rule
             return [];
         }
 
-        if (count($node->getArgs()) >= 2) {
+        $args = array_values($node->getArgs());
+
+        if (count($args) >= 2) {
             return [];
         }
 
-        if (count($node->getArgs()) === 0) {
+        if (count($args) === 0) {
             return [];
         }
 
-        if ($node->getArgs()[0]->unpack) {
+        if ($args[0]->unpack) {
             return []; // not trying to analyse what is being unpacked as this is very non-standard approach here
         }
 

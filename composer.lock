@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "f280c2575fb9ae58bbfe0137e5f605485295ace8"
+                "reference": "f632067e36ff1b9cba999266fa6745d35027d2e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f280c2575fb9ae58bbfe0137e5f605485295ace8",
-                "reference": "f280c2575fb9ae58bbfe0137e5f605485295ace8",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f632067e36ff1b9cba999266fa6745d35027d2e0",
+                "reference": "f632067e36ff1b9cba999266fa6745d35027d2e0",
                 "shasum": ""
             },
             "require": {
@@ -63,7 +63,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-04-16T11:19:50+00:00"
+            "time": "2024-04-24T13:53:24+00:00"
         }
     ],
     "packages-dev": [
