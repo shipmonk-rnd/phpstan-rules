@@ -35,7 +35,7 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
         return new ForbidCheckedExceptionInCallableRule(
             self::getContainer()->getByType(NodeScopeResolver::class),
             self::getContainer()->getByType(ReflectionProvider::class),
-            new DefaultExceptionTypeResolver( // @phpstan-ignore-line ignore BC promise
+            new DefaultExceptionTypeResolver( // @phpstan-ignore phpstanApi.constructor
                 self::getContainer()->getByType(ReflectionProvider::class),
                 [],
                 [],
