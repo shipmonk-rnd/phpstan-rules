@@ -255,7 +255,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         foreach ($type->getTypes() as $subtype) {
             $wrap = false;
 
-            if ($subtype instanceof IntersectionType) { // @phpstan-ignore-line ignore instanceof intersection
+            if ($subtype instanceof IntersectionType) { // @phpstan-ignore phpstanApi.instanceofType
                 if ($this->phpVersion->getVersionId() < 80_200) { // DNF
                     return null;
                 }
@@ -286,7 +286,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         bool $alwaysThrowsException
     ): ?string
     {
-        if (!$type instanceof IntersectionType) { // @phpstan-ignore-line ignore instanceof intersection
+        if (!$type instanceof IntersectionType) { // @phpstan-ignore phpstanApi.instanceofType
             return null;
         }
 

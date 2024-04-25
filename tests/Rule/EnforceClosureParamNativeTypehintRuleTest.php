@@ -58,7 +58,7 @@ class EnforceClosureParamNativeTypehintRuleTest extends RuleTestCase
 
     private function createPhpVersion(int $version): PhpVersion
     {
-        return new PhpVersion($version); // @phpstan-ignore-line ignore bc promise
+        return new PhpVersion($version); // @phpstan-ignore phpstanApi.constructor
     }
 
 }

@@ -57,5 +57,4 @@ parameters:
         - identifier: phpstanApi.class
         - identifier: phpstanApi.method
         - identifier: phpstanApi.interface
-        - identifier: phpstanApi.instanceofType
         - identifier: phpstanApi.instanceofAssumption

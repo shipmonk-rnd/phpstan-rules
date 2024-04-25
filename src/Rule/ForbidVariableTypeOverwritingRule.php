@@ -85,7 +85,7 @@ class ForbidVariableTypeOverwritingRule implements Rule
         if (
             $type->isConstantValue()->yes()
             || $type instanceof IntegerRangeType
-            || $type instanceof EnumCaseObjectType // @phpstan-ignore-line ignore instanceof warning
+            || $type instanceof EnumCaseObjectType // @phpstan-ignore phpstanApi.instanceofType
         ) {
             $type = $type->generalize(GeneralizePrecision::lessSpecific());
         }
@@ -108,11 +108,11 @@ class ForbidVariableTypeOverwritingRule implements Rule
             return $type;
         }
 
-        if ($type instanceof IntersectionType) { // @phpstan-ignore-line ignore instanceof intersection
+        if ($type instanceof IntersectionType) { // @phpstan-ignore phpstanApi.instanceofType
             $newInnerTypes = [];
 
             foreach ($type->getTypes() as $innerType) {
-                if ($innerType instanceof AccessoryType) {
+                if ($innerType instanceof AccessoryType) { // @phpstan-ignore phpstanApi.instanceofType
                     continue;
                 }
 
