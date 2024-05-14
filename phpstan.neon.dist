@@ -37,8 +37,8 @@ parameters:
                 PHPStan\Rules\Rule: Rule
                 PhpParser\NodeVisitor: Visitor
                 ShipMonk\PHPStan\RuleTestCase: RuleTest
-        forbidAssignmentNotMatchingVarDoc:
-            enabled: false # native check is better now; this rule will be dropped / reworked in 3.0
+        enforceClosureParamNativeTypehint:
+            enabled: false # we support even PHP 7.4, some typehints cannot be used
 
     ignoreErrors:
         -

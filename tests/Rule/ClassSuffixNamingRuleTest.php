@@ -2,6 +2,7 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use ShipMonk\PHPStan\RuleTestCase;
 
@@ -13,11 +14,13 @@ class ClassSuffixNamingRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new ClassSuffixNamingRule([ // @phpstan-ignore-line ignore non existing class not being class-string
-            'ClassSuffixNamingRule\CheckedParent' => 'Suffix',
-            'ClassSuffixNamingRule\CheckedInterface' => 'Suffix2',
-            'NotExistingClass' => 'Foo',
-        ]);
+        return new ClassSuffixNamingRule(
+            self::getContainer()->getByType(ReflectionProvider::class),
+            [
+                'ClassSuffixNamingRule\CheckedParent' => 'Suffix',
+                'ClassSuffixNamingRule\CheckedInterface' => 'Suffix2',
+            ],
+        );
     }
 
     public function testClass(): void
