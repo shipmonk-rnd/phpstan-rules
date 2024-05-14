@@ -12,3 +12,6 @@ services:
                 ImmediatelyCalledCallableThrowTypeExtension\BaseImmediate::inheritedMethod: 1
                 ImmediatelyCalledCallableThrowTypeExtension\Immediate::method: [0, 1]
 
+parameters:
+    exceptions:
+        implicitThrows: false
