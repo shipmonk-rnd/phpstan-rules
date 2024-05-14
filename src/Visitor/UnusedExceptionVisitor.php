@@ -19,7 +19,7 @@ use PhpParser\Node\Stmt\Return_;
 use PhpParser\Node\Stmt\Throw_;
 use PhpParser\NodeVisitorAbstract;
 use function array_pop;
-use function count;
+use function end;
 
 class UnusedExceptionVisitor extends NodeVisitorAbstract
 {
@@ -27,7 +27,7 @@ class UnusedExceptionVisitor extends NodeVisitorAbstract
     public const RESULT_USED = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'resultUsed';
 
     /**
-     * @var Node[]
+     * @var list<Node>
      */
     private array $stack = [];
 
@@ -44,7 +44,7 @@ class UnusedExceptionVisitor extends NodeVisitorAbstract
     public function enterNode(Node $node): ?Node
     {
         if ($this->stack !== []) {
-            $parent = $this->stack[count($this->stack) - 1];
+            $parent = end($this->stack);
 
             if ($this->isNodeInInterest($node) && $this->isUsed($parent)) {
                 $node->setAttribute(self::RESULT_USED, true);

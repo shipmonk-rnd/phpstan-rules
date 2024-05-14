@@ -8,7 +8,7 @@ use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\NodeVisitorAbstract;
 use function array_pop;
-use function count;
+use function end;
 
 class ClassPropertyAssignmentVisitor extends NodeVisitorAbstract
 {
@@ -16,7 +16,7 @@ class ClassPropertyAssignmentVisitor extends NodeVisitorAbstract
     public const ASSIGNED_EXPR = ShipMonkNodeVisitor::NODE_ATTRIBUTE_PREFIX . 'assignment';
 
     /**
-     * @var Node[]
+     * @var list<Node>
      */
     private array $stack = [];
 
@@ -33,7 +33,7 @@ class ClassPropertyAssignmentVisitor extends NodeVisitorAbstract
     public function enterNode(Node $node): ?Node
     {
         if ($this->stack !== []) {
-            $parent = $this->stack[count($this->stack) - 1];
+            $parent = end($this->stack);
 
             if (
                 $parent instanceof Assign

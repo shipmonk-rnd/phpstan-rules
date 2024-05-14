@@ -392,7 +392,11 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
         foreach ($caller->getObjectClassReflections() as $callerReflection) {
             foreach ($this->callablesAllowingCheckedExceptions as $immediateCallerAndMethod => $indexes) {
-                [$callerClass, $methodName] = explode('::', $immediateCallerAndMethod);
+                if (strpos($immediateCallerAndMethod, '::') === false) {
+                    continue;
+                }
+
+                [$callerClass, $methodName] = explode('::', $immediateCallerAndMethod); // @phpstan-ignore offsetAccess.notFound
 
                 if (
                     $methodName === $calledMethodName

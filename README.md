@@ -756,6 +756,8 @@ parameters:
     checkMissingCallableSignature: true                       # https://phpstan.org/config-reference#vague-typehints
     checkTooWideReturnTypesInProtectedAndPublicMethods: true  # https://phpstan.org/config-reference#checktoowidereturntypesinprotectedandpublicmethods
     reportAnyTypeWideningInVarTag: true                       # https://phpstan.org/config-reference#reportanytypewideninginvartag
+    reportPossiblyNonexistentConstantArrayOffset: true        # https://phpstan.org/config-reference#reportpossiblynonexistentconstantarrayoffset
+    reportPossiblyNonexistentGeneralArrayOffset: true         # https://phpstan.org/config-reference#reportpossiblynonexistentgeneralarrayoffset
 ```
 
 ## Contributing
