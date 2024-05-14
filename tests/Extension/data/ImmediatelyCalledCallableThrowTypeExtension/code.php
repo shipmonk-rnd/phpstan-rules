@@ -173,7 +173,7 @@ class FunctionCallExtensionTest
         try {
             $result = array_map('ucfirst', []);
         } finally {
-            assertVariableCertainty(TrinaryLogic::createMaybe(), $result);  // should be Yes https://github.com/phpstan/phpstan-src/pull/3016
+            assertVariableCertainty(TrinaryLogic::createYes(), $result);
         }
     }
 
@@ -240,7 +240,7 @@ class FunctionCallExtensionTest
         try {
             $result = array_map($this->noThrow(...), []);
         } finally {
-            assertVariableCertainty(TrinaryLogic::createMaybe(), $result); // should be Yes https://github.com/phpstan/phpstan-src/pull/3016
+            assertVariableCertainty(TrinaryLogic::createYes(), $result);
         }
     }
 
