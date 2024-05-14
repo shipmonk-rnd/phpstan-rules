@@ -23,8 +23,8 @@ use PHPStan\Node\MethodCallableNode;
 use PHPStan\Node\StaticMethodCallableNode;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Type;
 use ShipMonk\PHPStan\Visitor\ImmediatelyCalledCallableVisitor;
@@ -34,6 +34,7 @@ use function array_merge_recursive;
 use function explode;
 use function in_array;
 use function is_int;
+use function strpos;
 
 /**
  * @implements Rule<Node>
@@ -88,7 +89,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(
         Node $node,
@@ -116,7 +117,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
     /**
      * @param MethodCall|StaticCall|FuncCall $callNode
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processFirstClassCallable(
         CallLike $callNode,
@@ -156,7 +157,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processClosure(
         ClosureReturnStatementsNode $node,
@@ -195,7 +196,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processArrowFunction(
         ArrowFunction $node,
@@ -240,7 +241,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function processCall(
         Scope $scope,
@@ -258,7 +259,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function processThrowType(
         ?Type $throwType,
@@ -310,6 +311,10 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
         foreach ($callerWithClosureAsArgType->getObjectClassReflections() as $callerWithClosureAsArgClassReflection) {
             foreach ($this->callablesAllowingCheckedExceptions as $immediateCallerAndMethod => $indexes) {
+                if (strpos($immediateCallerAndMethod, '::') === false) {
+                    continue;
+                }
+
                 [$callerClass, $methodName] = explode('::', $immediateCallerAndMethod);
 
                 if (

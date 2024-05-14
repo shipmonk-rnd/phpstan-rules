@@ -31,8 +31,8 @@ use PHPStan\PhpDocParser\Ast\Type\IntersectionTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\VerbosityLevel;
@@ -85,7 +85,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processNode(
         PhpParserNode $node,
@@ -114,7 +114,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function checkCatchNativeType(Catch_ $node, Scope $scope): array
     {
@@ -123,7 +123,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function checkParamAndReturnAndThrowsPhpDoc(
         FunctionLike $node,
@@ -157,7 +157,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function checkPropertyNativeType(Property $node, Scope $scope): array
     {
@@ -176,7 +176,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function checkParamAndReturnNativeType(FunctionLike $node, Scope $scope): array
     {
@@ -208,7 +208,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function checkPropertyPhpDoc(
         Property $node,
@@ -237,7 +237,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     }
 
     /**
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function checkInlineVarDoc(PhpParserNode $node, Scope $scope): array
     {
@@ -307,7 +307,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
     /**
      * @param array<ParamTagValueNode> $paramTagValues
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processParamTags(
         PhpParserNode $sourceNode,
@@ -335,7 +335,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
     /**
      * @param array<VarTagValueNode> $varTagValues
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processVarTags(
         PhpParserNode $originalNode,
@@ -367,7 +367,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
     /**
      * @param array<ReturnTagValueNode> $returnTagValues
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processReturnTags(
         PhpParserNode $originalNode,
@@ -391,7 +391,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
     /**
      * @param array<ThrowsTagValueNode> $throwsTagValues
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     public function processThrowsTags(
         PhpParserNode $originalNode,
@@ -503,7 +503,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
     /**
      * @param IntersectionType|UnionType $multiTypeNode
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function processMultiTypePhpParserNode(
         ComplexType $multiTypeNode,
@@ -557,7 +557,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
     /**
      * @param UnionTypeNode|IntersectionTypeNode $multiTypeNode
-     * @return list<RuleError>
+     * @return list<IdentifierRuleError>
      */
     private function processMultiTypePhpDocNode(
         TypeNode $multiTypeNode,
