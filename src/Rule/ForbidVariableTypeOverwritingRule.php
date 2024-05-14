@@ -112,7 +112,7 @@ class ForbidVariableTypeOverwritingRule implements Rule
             $newInnerTypes = [];
 
             foreach ($type->getTypes() as $innerType) {
-                if ($innerType instanceof AccessoryType) { // @phpstan-ignore-line ignore bc promise
+                if ($innerType instanceof AccessoryType) { // @phpstan-ignore phpstanApi.instanceofType
                     continue;
                 }
 
@@ -122,8 +122,8 @@ class ForbidVariableTypeOverwritingRule implements Rule
             $type = TypeCombinator::intersect(...$newInnerTypes);
         }
 
-        if ($type instanceof SubtractableType) { // @phpstan-ignore-line ignore bc promise
-            $type = $type->getTypeWithoutSubtractedType(); // @phpstan-ignore-line ignore bc promise
+        if ($type instanceof SubtractableType) {
+            $type = $type->getTypeWithoutSubtractedType();
         }
 
         return TypeCombinator::removeNull($type);
