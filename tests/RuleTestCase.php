@@ -6,15 +6,18 @@ use LogicException;
 use PHPStan\Analyser\Error;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase as OriginalRuleTestCase;
+use function array_values;
 use function explode;
 use function file_get_contents;
 use function file_put_contents;
 use function implode;
+use function ksort;
 use function preg_match;
 use function preg_match_all;
 use function preg_replace;
 use function sprintf;
 use function trim;
+use function uniqid;
 
 /**
  * @template TRule of Rule
@@ -50,13 +53,17 @@ abstract class RuleTestCase extends OriginalRuleTestCase
         $resultToAssert = [];
 
         foreach ($actualErrors as $error) {
-            $resultToAssert[] = $this->formatErrorForAssert($error->getMessage(), $error->getLine());
+            $usedLine = $error->getLine() ?? -1;
+            $key = $usedLine . '-' . uniqid();
+            $resultToAssert[$key] = $this->formatErrorForAssert($error->getMessage(), $usedLine);
 
             self::assertNotNull($error->getIdentifier(), "Missing error identifier for error: {$error->getMessage()}");
             self::assertStringStartsWith('shipmonk.', $error->getIdentifier(), "Unexpected error identifier for: {$error->getMessage()}");
         }
 
-        return $resultToAssert;
+        ksort($resultToAssert);
+
+        return array_values($resultToAssert);
     }
 
     /**
@@ -80,16 +87,20 @@ abstract class RuleTestCase extends OriginalRuleTestCase
             }
 
             foreach ($matches[1] as $error) {
-                $expectedErrors[] = $this->formatErrorForAssert(trim($error), $line + 1);
+                $actualLine = $line + 1;
+                $key = $actualLine . '-' . uniqid();
+                $expectedErrors[$key] = $this->formatErrorForAssert(trim($error), $actualLine);
             }
         }
 
-        return $expectedErrors;
+        ksort($expectedErrors);
+
+        return array_values($expectedErrors);
     }
 
-    private function formatErrorForAssert(string $message, ?int $line): string
+    private function formatErrorForAssert(string $message, int $line): string
     {
-        return sprintf('%02d: %s', $line ?? -1, $message);
+        return sprintf('%02d: %s', $line, $message);
     }
 
     /**

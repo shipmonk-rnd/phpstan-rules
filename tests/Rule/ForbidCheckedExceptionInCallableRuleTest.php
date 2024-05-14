@@ -3,7 +3,6 @@
 namespace ShipMonk\PHPStan\Rule;
 
 use LogicException;
-use Nette\Neon\Neon;
 use PHPStan\Analyser\NodeScopeResolver;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver;
@@ -33,8 +32,6 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
             throw new LogicException('Missing implicitThrows');
         }
 
-        $visitorConfig = Neon::decodeFile(self::getVisitorConfigFilePath());
-
         return new ForbidCheckedExceptionInCallableRule(
             self::getContainer()->getByType(NodeScopeResolver::class),
             self::getContainer()->getByType(ReflectionProvider::class),
@@ -45,8 +42,14 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
                 [],
                 $this->checkedExceptions, // everything is checked when no config is provided
             ),
-            $visitorConfig['services'][0]['arguments']['immediatelyCalledCallables'], // @phpstan-ignore-line ignore mixed access
-            $visitorConfig['services'][0]['arguments']['allowedCheckedExceptionCallables'], // @phpstan-ignore-line ignore mixed access
+            [
+                'ForbidCheckedExceptionInCallableRule\CallableTest::allowThrowInInterface' => [0],
+                'ForbidCheckedExceptionInCallableRule\BaseCallableTest::allowThrowInBaseClass' => [0],
+                'ForbidCheckedExceptionInCallableRule\ClosureTest::allowThrow' => [0],
+                'ForbidCheckedExceptionInCallableRule\FirstClassCallableTest::allowThrow' => [1],
+                'ForbidCheckedExceptionInCallableRule\ArrowFunctionTest::allowThrow' => [0],
+                'ForbidCheckedExceptionInCallableRule\ArrowFunctionTest::__construct' => [0],
+            ],
         );
     }
 
@@ -78,20 +81,13 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
      */
     public static function getAdditionalConfigFiles(): array
     {
-        $files = [
-            self::getVisitorConfigFilePath(),
-        ];
+        $files = [];
 
         if (self::$implicitThrows === true) {
             $files[] = __DIR__ . '/data/ForbidCheckedExceptionInCallableRule/no-implicit-throws.neon';
         }
 
         return $files;
-    }
-
-    private static function getVisitorConfigFilePath(): string
-    {
-        return __DIR__ . '/data/ForbidCheckedExceptionInCallableRule/visitor.neon';
     }
 
 }

@@ -34,8 +34,7 @@
             "ShipMonk\\PHPStan\\": "tests/"
         },
         "classmap": [
-            "tests/Rule/data",
-            "tests/Extension/data"
+            "tests/Rule/data"
         ]
     },
     "config": {

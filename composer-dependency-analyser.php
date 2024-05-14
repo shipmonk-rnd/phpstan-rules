@@ -8,5 +8,4 @@ Phar::loadPhar($pharFile, 'phpstan.phar');
 require_once('phar://phpstan.phar/preload.php'); // prepends PHPStan's PharAutolaoder to composer's autoloader
 
 return (new Configuration())
-    ->addPathToExclude(__DIR__ . '/tests/Rule/data')
-    ->addPathToExclude(__DIR__ . '/tests/Extension/data');
+    ->addPathToExclude(__DIR__ . '/tests/Rule/data');
