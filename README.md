@@ -330,7 +330,7 @@ parameters:
 - It is allowed to throw checked exceptions in immediately called callables (e.g. params marked by `@param-immediately-invoked-callable`, see [docs](https://phpstan.org/writing-php-code/phpdocs-basics#callables))
 - It allows configuration of functions/methods, where the callable is handling all thrown exceptions and it is safe to throw anything from there; this basically makes such calls ignored by this rule
 - It ignores [implicitly thrown Throwable](https://phpstan.org/blog/bring-your-exceptions-under-control#what-does-absent-%40throws-above-a-function-mean%3F)
-- Learn more in 🇨🇿 [talk about checked exceptions in general](https://www.youtube.com/watch?v=UQsP1U0sVZM)
+- Learn more in 🇨🇿 [talk about checked exceptions in general](https://www.youtube.com/watch?v=UQsP1U0sVZM) (🇺🇸 [slides](https://docs.google.com/presentation/d/17gfiWgCewU8F9bFXmKW2qXqvKbAF5cqIoFELfw8b0Cc/edit#slide=id.g14a99d9699a_0_356))
 
 ```neon
 parameters:
