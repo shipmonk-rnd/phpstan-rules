@@ -54,7 +54,7 @@ abstract class RuleTestCase extends OriginalRuleTestCase
 
         foreach ($actualErrors as $error) {
             $usedLine = $error->getLine() ?? -1;
-            $key = $usedLine . '-' . uniqid();
+            $key = sprintf('%04d', $usedLine) . '-' . uniqid();
             $resultToAssert[$key] = $this->formatErrorForAssert($error->getMessage(), $usedLine);
 
             self::assertNotNull($error->getIdentifier(), "Missing error identifier for error: {$error->getMessage()}");
