@@ -88,7 +88,7 @@ abstract class RuleTestCase extends OriginalRuleTestCase
 
             foreach ($matches[1] as $error) {
                 $actualLine = $line + 1;
-                $key = $actualLine . '-' . uniqid();
+                $key = sprintf('%04d', $actualLine) . '-' . uniqid();
                 $expectedErrors[$key] = $this->formatErrorForAssert(trim($error), $actualLine);
             }
         }
