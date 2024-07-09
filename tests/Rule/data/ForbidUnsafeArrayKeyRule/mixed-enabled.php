@@ -32,6 +32,17 @@ class ArrayKey
         $array[$implicitMixed] = ''; // error: Array key must be integer or string, but mixed given.
         $array[$arrayKey] = '';
         $weakMap[$object] = '';
+
+        [
+            $int => $int,
+            $string => $string,
+            $float => $float, // error: Array key must be integer or string, but float given.
+            $intOrFloat => $intOrFloat, // error: Array key must be integer or string, but float|int given.
+            $intOrString => $intOrString,
+            $explicitMixed => $explicitMixed, // error: Array key must be integer or string, but mixed given.
+            $implicitMixed => $implicitMixed, // error: Array key must be integer or string, but mixed given.
+            $arrayKey => $arrayKey,
+        ];
     }
 }
 
