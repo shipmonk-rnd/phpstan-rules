@@ -65,6 +65,9 @@ parameters:
         forbidReturnValueInYieldingMethod:
             enabled: true
             reportRegardlessOfReturnType: true
+        forbidUnsafeArrayKey:
+            enabled: true
+            reportMixed: true
         forbidVariableTypeOverwriting:
             enabled: true
         forbidUnsetClassField:
@@ -177,6 +180,10 @@ parametersSchema:
             enabled: bool()
             reportRegardlessOfReturnType: bool()
         ])
+        forbidUnsafeArrayKey: structure([
+            enabled: bool()
+            reportMixed: bool()
+        ])
         forbidVariableTypeOverwriting: structure([
             enabled: bool()
         ])
@@ -259,6 +266,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.forbidProtectedEnumMethod.enabled%
     ShipMonk\PHPStan\Rule\ForbidReturnValueInYieldingMethodRule:
         phpstan.rules.rule: %shipmonkRules.forbidReturnValueInYieldingMethod.enabled%
+    ShipMonk\PHPStan\Rule\ForbidUnsafeArrayKeyRule:
+        phpstan.rules.rule: %shipmonkRules.forbidUnsafeArrayKey.enabled%
     ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule:
         phpstan.rules.rule: %shipmonkRules.forbidVariableTypeOverwriting.enabled%
     ShipMonk\PHPStan\Rule\ForbidUnsetClassFieldRule:
@@ -369,6 +378,10 @@ services:
         class: ShipMonk\PHPStan\Rule\ForbidReturnValueInYieldingMethodRule
         arguments:
             reportRegardlessOfReturnType: %shipmonkRules.forbidReturnValueInYieldingMethod.reportRegardlessOfReturnType%
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidUnsafeArrayKeyRule
+        arguments:
+            reportMixed: %shipmonkRules.forbidUnsafeArrayKey.reportMixed%
     -
         class: ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule
     -

@@ -86,6 +86,9 @@ parameters:
         forbidReturnValueInYieldingMethod:
             enabled: true
             reportRegardlessOfReturnType: true
+        forbidUnsafeArrayKey:
+            enabled: true
+            reportMixed: true
         forbidVariableTypeOverwriting:
             enabled: true
         forbidUnsetClassField:
@@ -609,6 +612,29 @@ parameters:
         forbidReturnValueInYieldingMethod:
             reportRegardlessOfReturnType: true # optional stricter mode, defaults to false
 ```
+
+
+### forbidUnsafeArrayKey
+- Denies non-int non-string array keys
+- PHP casts `null`, `float` and `bool` to some nearest int/string
+  - You should rather do that intentionally and explicitly
+  - Those types are the main difference to default PHPStan behaviour which allows using them as array keys
+- You can exclude reporting `mixed` keys via configuration
+
+```php
+$taxRates = [ // denied, float key gets casted to int (causing $taxRates to contain one item)
+    1.15 => 'reduced',
+    1.21 => 'standard',
+];
+```
+
+```neon
+parameters:
+    shipmonkRules:
+        forbidUnsafeArrayKey:
+            reportMixed: false # defaults to true
+```
+
 
 ### forbidVariableTypeOverwriting
 - Restricts variable assignment to those that does not change its type

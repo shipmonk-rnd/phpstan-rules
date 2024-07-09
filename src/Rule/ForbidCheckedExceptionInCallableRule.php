@@ -469,7 +469,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         $parameters = $parametersAcceptor->getParameters();
 
         foreach ($args as $index => $arg) {
-            $parameterIndex = $this->getParameterIndex($arg, $index, $parameters);
+            $parameterIndex = $this->getParameterIndex($arg, $index, $parameters) ?? -1;
             $parameter = $parameters[$parameterIndex] ?? null;
             $argHash = spl_object_hash($arg->value);
 

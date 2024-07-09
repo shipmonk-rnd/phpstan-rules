@@ -111,7 +111,8 @@ abstract class RuleTestCase extends OriginalRuleTestCase
         $errorsByLines = [];
 
         foreach ($analyserErrors as $analyserError) {
-            $errorsByLines[$analyserError->getLine()] = $analyserError;
+            $line = $analyserError->getLine() ?? -1;
+            $errorsByLines[$line] = $analyserError;
         }
 
         $fileLines = $this->getFileLines($file);
