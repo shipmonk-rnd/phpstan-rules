@@ -111,7 +111,12 @@ abstract class RuleTestCase extends OriginalRuleTestCase
         $errorsByLines = [];
 
         foreach ($analyserErrors as $analyserError) {
-            $line = $analyserError->getLine() ?? -1;
+            $line = $analyserError->getLine();
+
+            if ($line === null) {
+                throw new LogicException('Error without line number: ' . $analyserError->getMessage());
+            }
+
             $errorsByLines[$line] = $analyserError;
         }
 
