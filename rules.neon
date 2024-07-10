@@ -68,6 +68,7 @@ parameters:
         forbidUnsafeArrayKey:
             enabled: true
             reportMixed: true
+            reportInsideIsset: true
         forbidVariableTypeOverwriting:
             enabled: true
         forbidUnsetClassField:
@@ -183,6 +184,7 @@ parametersSchema:
         forbidUnsafeArrayKey: structure([
             enabled: bool()
             reportMixed: bool()
+            reportInsideIsset: bool()
         ])
         forbidVariableTypeOverwriting: structure([
             enabled: bool()
@@ -382,6 +384,7 @@ services:
         class: ShipMonk\PHPStan\Rule\ForbidUnsafeArrayKeyRule
         arguments:
             reportMixed: %shipmonkRules.forbidUnsafeArrayKey.reportMixed%
+            reportInsideIsset: %shipmonkRules.forbidUnsafeArrayKey.reportInsideIsset%
     -
         class: ShipMonk\PHPStan\Rule\ForbidVariableTypeOverwritingRule
     -

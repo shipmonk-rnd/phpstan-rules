@@ -24,9 +24,15 @@ class ForbidUnsafeArrayKeyRule implements Rule
 
     private bool $reportMixed;
 
-    public function __construct(bool $reportMixed)
+    private bool $reportInsideIsset;
+
+    public function __construct(
+        bool $reportMixed,
+        bool $reportInsideIsset
+    )
     {
         $this->reportMixed = $reportMixed;
+        $this->reportInsideIsset = $reportInsideIsset;
     }
 
     public function getNodeType(): string
@@ -59,6 +65,10 @@ class ForbidUnsafeArrayKeyRule implements Rule
             && $node->dim !== null
             && !$scope->getType($node->var)->isArray()->no()
         ) {
+            if (!$this->reportInsideIsset && $scope->isUndefinedExpressionAllowed($node)) {
+                return [];
+            }
+
             $dimType = $scope->getType($node->dim);
 
             if (!$this->isArrayKey($dimType)) {
