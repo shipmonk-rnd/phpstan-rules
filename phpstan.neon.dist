@@ -4,6 +4,7 @@ includes:
     - ./vendor/phpstan/phpstan-strict-rules/rules.neon
     - ./vendor/phpstan/phpstan-phpunit/extension.neon
     - ./vendor/phpstan/phpstan-phpunit/rules.neon
+    - ./vendor/shipmonk/dead-code-detector/rules.neon
     - ./rules.neon
 
 parameters:
@@ -43,6 +44,11 @@ parameters:
                 ShipMonk\PHPStan\RuleTestCase: RuleTest
         enforceClosureParamNativeTypehint:
             enabled: false # we support even PHP 7.4, some typehints cannot be used
+
+    shipmonkDeadCode:
+        entrypoints:
+            phpunit:
+                enabled: true
 
     ignoreErrors:
         -
