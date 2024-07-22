@@ -8,6 +8,7 @@ includes:
 
 parameters:
     phpVersion: 70400
+    internalErrorsCountLimit: 1
     paths:
         - src
         - tests
