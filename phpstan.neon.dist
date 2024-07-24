@@ -45,11 +45,6 @@ parameters:
         enforceClosureParamNativeTypehint:
             enabled: false # we support even PHP 7.4, some typehints cannot be used
 
-    shipmonkDeadCode:
-        entrypoints:
-            phpunit:
-                enabled: true
-
     ignoreErrors:
         -
             message: "#Class BackedEnum not found\\.#"
