@@ -2861,12 +2861,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/shipmonk-rnd/dead-code-detector.git",
-                "reference": "c3edd158d5beff2073af5515aa43c473f7503df1"
+                "reference": "b778a9aa4e56c6deb50aab7f1accd2c93c188ada"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shipmonk-rnd/dead-code-detector/zipball/c3edd158d5beff2073af5515aa43c473f7503df1",
-                "reference": "c3edd158d5beff2073af5515aa43c473f7503df1",
+                "url": "https://api.github.com/repos/shipmonk-rnd/dead-code-detector/zipball/b778a9aa4e56c6deb50aab7f1accd2c93c188ada",
+                "reference": "b778a9aa4e56c6deb50aab7f1accd2c93c188ada",
                 "shasum": ""
             },
             "require": {
@@ -2874,14 +2874,17 @@
                 "phpstan/phpstan": "^1.11.0"
             },
             "require-dev": {
+                "doctrine/orm": "^2.19 || ^3.0",
                 "editorconfig-checker/editorconfig-checker": "^10.3.0",
                 "ergebnis/composer-normalize": "^2.28",
                 "phpstan/phpstan-phpunit": "^1.1.1",
                 "phpstan/phpstan-strict-rules": "^1.2.3",
+                "phpstan/phpstan-symfony": "^1.4",
                 "phpunit/phpunit": "^9.5.20",
+                "shipmonk/composer-dependency-analyser": "^1.6",
                 "shipmonk/name-collision-detector": "^2.0.0",
                 "shipmonk/phpstan-rules": "^3.1",
-                "slevomat/coding-standard": "^8.0.1",
+                "slevomat/coding-standard": "^8.15.0",
                 "symfony/contracts": "^2.5 || ^3.0",
                 "symfony/event-dispatcher": "^5.4 || ^6.0 || ^7.0",
                 "symfony/routing": "^5.4 || ^6.0 || ^7.0"
@@ -2915,7 +2918,7 @@
                 "issues": "https://github.com/shipmonk-rnd/dead-code-detector/issues",
                 "source": "https://github.com/shipmonk-rnd/dead-code-detector/tree/master"
             },
-            "time": "2024-07-17T11:47:43+00:00"
+            "time": "2024-07-24T11:59:35+00:00"
         },
         {
             "name": "shipmonk/name-collision-detector",
