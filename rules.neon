@@ -1,94 +1,98 @@
 parameters:
     shipmonkRules:
+        enableAllRules: true
+
         allowComparingOnlyComparableTypes:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         backedEnumGenerics:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         classSuffixNaming:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
             superclassToSuffixMapping: []
         enforceClosureParamNativeTypehint:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
             allowMissingTypeWhenInferred: false
         enforceEnumMatch:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         enforceIteratorToArrayPreserveKeys:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         enforceListReturn:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         enforceNativeReturnTypehint:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         enforceReadonlyPublicProperty:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidArithmeticOperationOnNonNumber:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
             allowNumericString: false
         forbidCast:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
             blacklist: ['(array)', '(object)', '(unset)']
         forbidCheckedExceptionInCallable:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
             allowedCheckedExceptionCallables: []
         forbidCheckedExceptionInYieldingMethod:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidCustomFunctions:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
             list: []
         forbidEnumInFunctionArguments:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidFetchOnMixed:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidIdenticalClassComparison:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
             blacklist: ['DateTimeInterface']
         forbidIncrementDecrementOnNonInteger:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidMatchDefaultArmForEnums:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidMethodCallOnMixed:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidNotNormalizedType:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
             checkDisjunctiveNormalForm: true
         forbidNullInAssignOperations:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
             blacklist: ['??=']
         forbidNullInBinaryOperations:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
             blacklist: ['===', '!==', '??']
         forbidNullInInterpolatedString:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidPhpDocNullabilityMismatchWithNativeTypehint:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidProtectedEnumMethod:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidReturnValueInYieldingMethod:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
             reportRegardlessOfReturnType: true
         forbidUnsafeArrayKey:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
             reportMixed: true
             reportInsideIsset: true
         forbidVariableTypeOverwriting:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidUnsetClassField:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidUselessNullableReturn:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidUnusedException:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         forbidUnusedMatchResult:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         requirePreviousExceptionPass:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
             reportEvenIfExceptionIsNotAcceptableByRethrownOne: true
         uselessPrivatePropertyDefaultValue:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
         uselessPrivatePropertyNullability:
-            enabled: true
+            enabled: %shipmonkRules.enableAllRules%
 
 parametersSchema:
     shipmonkRules: structure([
+        enableAllRules: bool()
+
         allowComparingOnlyComparableTypes: structure([
             enabled: bool()
         ])
