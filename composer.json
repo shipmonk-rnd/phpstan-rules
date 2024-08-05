@@ -60,8 +60,7 @@
             "@check:tests",
             "@check:dependencies",
             "@check:collisions",
-            "@check:ignores",
-            "@check:readme"
+            "@check:ignores"
         ],
         "check:collisions": "detect-collisions src tests",
         "check:composer": "composer normalize --dry-run --no-check-lock --no-update-lock",
@@ -69,7 +68,6 @@
         "check:dependencies": "composer-dependency-analyser",
         "check:ec": "ec src tests",
         "check:ignores": "php bin/verify-inline-ignore.php",
-        "check:readme": "php bin/verify-readme-default-config.php",
         "check:tests": "phpunit -vvv tests",
         "check:types": "phpstan analyse -vvv --ansi",
         "fix:cs": "phpcbf"

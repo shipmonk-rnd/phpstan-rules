@@ -17,95 +17,23 @@ includes:
     - vendor/shipmonk/phpstan-rules/rules.neon
 ```
 
-You can easily disable or reconfigure any rule. Here is a default setup used in `rules.neon` you can change:
+You can easily disable or reconfigure any rule, for example:
 ```neon
 parameters:
     shipmonkRules:
-        allowComparingOnlyComparableTypes:
-            enabled: true
-        backedEnumGenerics:
-            enabled: true
-        classSuffixNaming:
-            enabled: true
-            superclassToSuffixMapping: []
-        enforceClosureParamNativeTypehint:
-            enabled: true
-            allowMissingTypeWhenInferred: false
-        enforceEnumMatch:
-            enabled: true
-        enforceIteratorToArrayPreserveKeys:
-            enabled: true
-        enforceListReturn:
-            enabled: true
-        enforceNativeReturnTypehint:
-            enabled: true
         enforceReadonlyPublicProperty:
-            enabled: true
-        forbidArithmeticOperationOnNonNumber:
-            enabled: true
-            allowNumericString: false
-        forbidCast:
-            enabled: true
-            blacklist: ['(array)', '(object)', '(unset)']
-        forbidCheckedExceptionInCallable:
-            enabled: true
-            allowedCheckedExceptionCallables: []
-        forbidCheckedExceptionInYieldingMethod:
-            enabled: true
-        forbidCustomFunctions:
-            enabled: true
-            list: []
-        forbidEnumInFunctionArguments:
-            enabled: true
-        forbidFetchOnMixed:
-            enabled: true
-        forbidIdenticalClassComparison:
-            enabled: true
-            blacklist: ['DateTimeInterface']
-        forbidIncrementDecrementOnNonInteger:
-            enabled: true
-        forbidMatchDefaultArmForEnums:
-            enabled: true
-        forbidMethodCallOnMixed:
-            enabled: true
-        forbidNotNormalizedType:
-            enabled: true
-            checkDisjunctiveNormalForm: true
-        forbidNullInAssignOperations:
-            enabled: true
-            blacklist: ['??=']
-        forbidNullInBinaryOperations:
-            enabled: true
-            blacklist: ['===', '!==', '??']
-        forbidNullInInterpolatedString:
-            enabled: true
-        forbidPhpDocNullabilityMismatchWithNativeTypehint:
-            enabled: true
-        forbidProtectedEnumMethod:
-            enabled: true
-        forbidReturnValueInYieldingMethod:
-            enabled: true
-            reportRegardlessOfReturnType: true
+            enabled: false
         forbidUnsafeArrayKey:
-            enabled: true
-            reportMixed: true
-            reportInsideIsset: true
-        forbidVariableTypeOverwriting:
-            enabled: true
-        forbidUnsetClassField:
-            enabled: true
-        forbidUselessNullableReturn:
-            enabled: true
-        forbidUnusedException:
-            enabled: true
-        forbidUnusedMatchResult:
-            enabled: true
-        requirePreviousExceptionPass:
-            enabled: true
-            reportEvenIfExceptionIsNotAcceptableByRethrownOne: true
-        uselessPrivatePropertyDefaultValue:
-            enabled: true
-        uselessPrivatePropertyNullability:
+            reportMixed: false
+```
+
+Or you can disable all rules and enable only those you want:
+```neon
+parameters:
+    shipmonkRules:
+        enableAllRules: false
+
+        allowComparingOnlyComparableTypes:
             enabled: true
 ```
 
