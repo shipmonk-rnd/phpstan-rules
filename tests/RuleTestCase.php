@@ -75,7 +75,7 @@ abstract class RuleTestCase extends OriginalRuleTestCase
         $expectedErrors = [];
 
         foreach ($fileLines as $line => $row) {
-            /** @var array{0: list<string>, 1: list<string>} $matches */
+            /** @var array{0: list<string>, 1: list<non-empty-string>} $matches */
             $matched = preg_match_all('#// error:(.+)#', $row, $matches);
 
             if ($matched === false) {
