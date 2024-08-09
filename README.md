@@ -1,4 +1,4 @@
-# ShipMonk PHPStan rules
+# ShipMonk PHPStan strict rules
 About **40 super-strict rules** we found useful in ShipMonk.
 We tend to have PHPStan set up [as strict as possible](#native-phpstan-extra-strictness), but that still was not strict enough for us.
 This set of rules should fill the missing gaps we found.
@@ -13,6 +13,7 @@ composer require --dev shipmonk/phpstan-rules
 
 Use [official extension-installer](https://phpstan.org/user-guide/extension-library#installing-extensions) or enable all rules manually by:
 ```neon
+# phpstan.neon
 includes:
     - vendor/shipmonk/phpstan-rules/rules.neon
 ```
@@ -39,8 +40,6 @@ parameters:
             enabled: true
 ```
 
-Few rules are enabled, but do nothing unless configured, those are marked with `*`.
-
 When you try to configure any default array, PHPStan config is **merged by default**,
 so if you want to enforce only your values and not to include our defaults, use [exclamation mark](https://doc.nette.org/en/dependency-injection/configuration#toc-merging):
 
@@ -51,6 +50,8 @@ parameters:
             enabled: true
             blacklist!: ['(unset)'] # force the blacklist to be only (unset)
 ```
+
+Few rules are enabled, but do nothing unless configured, those are marked with `*`.
 
 ## Rules:
 
