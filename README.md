@@ -17,6 +17,8 @@ includes:
     - vendor/shipmonk/phpstan-rules/rules.neon
 ```
 
+## Configuration:
+
 You can easily disable or reconfigure any rule, for example:
 ```neon
 parameters:
