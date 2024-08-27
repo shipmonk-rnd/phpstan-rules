@@ -681,6 +681,8 @@ class Example
 - Detects useless nullability of a private property by checking type of all assignments.
 - Works only with natively typehinted properties
 - Recommended to be used with `uselessPrivatePropertyNullability` and `forbidUselessNullableReturn` as removing useless default value may cause useless nullability to be detected
+- PHPStan 1.12 with bleeding edge contains more generic version of this rule under `property.unusedType` error identifier
+
 ```php
 class Example
 {
