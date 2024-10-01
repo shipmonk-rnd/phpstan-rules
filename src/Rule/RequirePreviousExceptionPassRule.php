@@ -171,7 +171,11 @@ class RequirePreviousExceptionPassRule implements Rule
 
         // FuncCall not yet supported
         if ($methodReflection !== null) {
-            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters();
+            return ParametersAcceptorSelector::selectFromArgs(
+                $scope,
+                $node->getArgs(),
+                $methodReflection->getVariants(),
+            )->getParameters();
         }
 
         return [];

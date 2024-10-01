@@ -6,9 +6,7 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\ReturnStatementsNode;
-use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -43,27 +41,21 @@ class EnforceListReturnRule implements Rule
             return [];
         }
 
-        if ($this->alwaysReturnList($node) && !$this->isMarkedWithListReturn($methodReflection)) {
+        $returnType = $methodReflection->getReturnType();
+
+        if ($this->alwaysReturnList($node) && !$returnType->isList()->yes()) {
             $callLikeType = $methodReflection instanceof MethodReflection
                 ? 'Method'
                 : 'Function';
+            $returnTypeString = $returnType->describe(VerbosityLevel::precise());
 
-            $error = RuleErrorBuilder::message("{$callLikeType} {$methodReflection->getName()} always return list, but is marked as {$this->getReturnPhpDoc($methodReflection)}")
+            $error = RuleErrorBuilder::message("{$callLikeType} {$methodReflection->getName()} always return list, but is marked as {$returnTypeString}")
                 ->identifier('shipmonk.returnListNotUsed')
                 ->build();
             return [$error];
         }
 
         return [];
-    }
-
-    /**
-     * @param FunctionReflection|MethodReflection $methodReflection
-     */
-    private function getReturnPhpDoc(object $methodReflection): string
-    {
-        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
-        return $returnType->describe(VerbosityLevel::precise());
     }
 
     private function alwaysReturnList(ReturnStatementsNode $node): bool
@@ -93,15 +85,6 @@ class EnforceListReturnRule implements Rule
         }
 
         return true;
-    }
-
-    /**
-     * @param FunctionReflection|MethodReflection $methodReflection
-     */
-    private function isMarkedWithListReturn(object $methodReflection): bool
-    {
-        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
-        return $returnType->isList()->yes();
     }
 
 }

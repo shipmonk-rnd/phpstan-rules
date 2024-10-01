@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": "^7.4 || ^8.0",
-        "phpstan/phpstan": "^1.11.0"
+        "phpstan/phpstan": "^1.12.5"
     },
     "require-dev": {
         "editorconfig-checker/editorconfig-checker": "^10.6.0",
@@ -74,7 +74,7 @@
         "check:ec": "ec src tests",
         "check:ignores": "php bin/verify-inline-ignore.php",
         "check:tests": "phpunit -vvv tests",
-        "check:types": "phpstan analyse -vvv --ansi",
+        "check:types": "phpstan analyse -vv --ansi",
         "fix:cs": "phpcbf"
     }
 }
