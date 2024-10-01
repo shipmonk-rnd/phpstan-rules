@@ -7,6 +7,7 @@ use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\ArgumentsNormalizer;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\IdentifierRuleError;
@@ -86,7 +87,12 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
 
         $wrongArguments = [];
 
-        $functionReflection = $this->reflectionProvider->getFunction($node->name, $scope);
+        $functionReflection = $this->getFunctionReflection($node->name, $scope);
+
+        if ($functionReflection === null) {
+            return [];
+        }
+
         $parametersAcceptor = ParametersAcceptorSelector::selectFromArgs($scope, $node->getArgs(), $functionReflection->getVariants());
         $funcCall = ArgumentsNormalizer::reorderFuncArguments($parametersAcceptor, $node);
 
@@ -148,6 +154,13 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
         }
 
         return $type->isEnum()->yes();
+    }
+
+    private function getFunctionReflection(Name $functionName, Scope $scope): ?FunctionReflection
+    {
+        return $this->reflectionProvider->hasFunction($functionName, $scope)
+            ? $this->reflectionProvider->getFunction($functionName, $scope)
+            : null;
     }
 
 }

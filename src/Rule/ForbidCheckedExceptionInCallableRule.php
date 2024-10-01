@@ -175,7 +175,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
             $errors = array_merge($errors, $this->processCall($scope, $callerType, $methodName, $line, $nodeHash));
         }
 
-        if ($callNode instanceof FuncCall && $callNode->name instanceof Name) {
+        if ($callNode instanceof FuncCall && $callNode->name instanceof Name && $this->reflectionProvider->hasFunction($callNode->name, $scope)) {
             $functionReflection = $this->reflectionProvider->getFunction($callNode->name, $scope);
             $errors = array_merge($errors, $this->processThrowType($functionReflection->getThrowType(), $scope, $line, $nodeHash));
         }
@@ -427,7 +427,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
         } elseif ($node instanceof FuncCall && $node->name instanceof Name) {
             $callerType = null;
-            $methodReflection = $this->reflectionProvider->getFunction($node->name, $scope);
+            $methodReflection = $this->getFunctionReflection($node->name, $scope);
 
         } elseif ($node instanceof FuncCall && $this->isFirstClassCallableOrClosureOrArrowFunction($node->name)) { // immediately called callable syntax
             $this->allowedCallables[spl_object_hash($node->name)] = true;
@@ -532,6 +532,13 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         }
 
         return $builder->build();
+    }
+
+    private function getFunctionReflection(Name $functionName, Scope $scope): ?FunctionReflection
+    {
+        return $this->reflectionProvider->hasFunction($functionName, $scope)
+            ? $this->reflectionProvider->getFunction($functionName, $scope)
+            : null;
     }
 
 }
