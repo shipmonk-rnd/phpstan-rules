@@ -74,7 +74,7 @@ class EnforceClosureParamNativeTypehintRule implements Rule
 
             $errors[] = RuleErrorBuilder::message("Missing parameter typehint for {$type} parameter \${$param->var->name}.")
                 ->identifier('shipmonk.unknownClosureParamType')
-                ->line($param->getLine())
+                ->line($param->getStartLine())
                 ->build();
         }
 

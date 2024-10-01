@@ -530,7 +530,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
                 if ($typeA->isSuperTypeOf($typeB)->yes()) {
                     $errors[] = RuleErrorBuilder::message("Found non-normalized type {$multiTypeNodeString} for {$identification}: {$typeNodeBString} is a subtype of {$typeNodeAString}.")
-                        ->line($multiTypeNode->getLine())
+                        ->line($multiTypeNode->getStartLine())
                         ->identifier('shipmonk.nonNormalizedType')
                         ->build();
                     continue;
@@ -538,7 +538,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
                 if ($typeB->isSuperTypeOf($typeA)->yes()) {
                     $errors[] = RuleErrorBuilder::message("Found non-normalized type {$multiTypeNodeString} for {$identification}: {$typeNodeAString} is a subtype of {$typeNodeBString}.")
-                        ->line($multiTypeNode->getLine())
+                        ->line($multiTypeNode->getStartLine())
                         ->identifier('shipmonk.nonNormalizedType')
                         ->build();
                 }
@@ -645,7 +645,7 @@ class ForbidNotNormalizedTypeRule implements Rule
         $phpDoc = $node->getDocComment();
 
         if ($phpDocTagLine === null || $phpDoc === null) {
-            return $node->getLine();
+            return $node->getStartLine();
         }
 
         return $phpDoc->getStartLine() + $phpDocTagLine - 1;

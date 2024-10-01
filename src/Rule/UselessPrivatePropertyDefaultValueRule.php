@@ -70,7 +70,7 @@ class UselessPrivatePropertyDefaultValueRule implements Rule
 
             if (isset($noDefaultValueNeededProperties[$propertyName])) {
                 $errors[] = RuleErrorBuilder::message("Property {$className}::{$propertyName} has useless default value (overwritten in constructor)")
-                    ->line($property->getLine())
+                    ->line($property->getStartLine())
                     ->identifier('shipmonk.uselessPrivatePropertyDefaultValue')
                     ->build();
             }
