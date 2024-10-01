@@ -6,7 +6,6 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\ReturnStatementsNode;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -39,7 +38,7 @@ class ForbidUselessNullableReturnRule implements Rule
         if ($node instanceof ClosureReturnStatementsNode) {
             $declaredType = $scope->getFunctionType($node->getClosureExpr()->getReturnType(), false, false);
         } elseif ($methodReflection !== null) {
-            $declaredType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+            $declaredType = $methodReflection->getReturnType();
         } else {
             return [];
         }
