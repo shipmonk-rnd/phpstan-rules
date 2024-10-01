@@ -52,7 +52,7 @@ class EnforceIteratorToArrayPreserveKeysRule implements Rule
         }
 
         return [RuleErrorBuilder::message('Calling iterator_to_array without 2nd parameter $preserve_keys. Default value true might cause failures or data loss.')
-            ->line($node->getLine())
+            ->line($node->getStartLine())
             ->identifier('shipmonk.iteratorToArrayWithoutPreserveKeys')
             ->build()];
     }

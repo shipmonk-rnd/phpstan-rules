@@ -159,7 +159,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         }
 
         $errors = [];
-        $line = $callNode->getLine();
+        $line = $callNode->getStartLine();
 
         if ($callNode instanceof MethodCall && $callNode->name instanceof Identifier) {
             $callerType = $scope->getType($callNode->var);
@@ -208,7 +208,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                     $errors[] = $this->buildError(
                         $exceptionClass,
                         'closure',
-                        $throwPoint->getNode()->getLine(),
+                        $throwPoint->getNode()->getStartLine(),
                         $this->callablesInArguments[$nodeHash] ?? null,
                     );
                 }
@@ -257,7 +257,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                     $errors[] = $this->buildError(
                         $exceptionClass,
                         'arrow function',
-                        $throwPoint->getNode()->getLine(),
+                        $throwPoint->getNode()->getStartLine(),
                         $this->callablesInArguments[$nodeHash] ?? null,
                     );
                 }
