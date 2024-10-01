@@ -171,6 +171,10 @@ class ForbidCustomFunctionsRule implements Rule
      */
     private function validateMethod(array $methodNames, string $className): array
     {
+        if (!$this->reflectionProvider->hasClass($className)) {
+            return [];
+        }
+
         $errors = [];
 
         foreach ($this->reflectionProvider->getClass($className)->getAncestors() as $ancestor) {
