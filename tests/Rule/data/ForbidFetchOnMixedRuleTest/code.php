@@ -11,7 +11,7 @@ class Foo {
     public static ?int $staticProperty = null;
 }
 
-$fn = function (mixed $mixed, $unknown, string $string, array $array, ReflectionClass $reflection, ?Foo $fooOrNull, object $object) {
+$fn = function ($mixed, $unknown, string $string, array $array, ReflectionClass $reflection, ?Foo $fooOrNull, object $object) {
     (new Foo)->property;
     Foo::$staticProperty;
     Foo::CONST;
