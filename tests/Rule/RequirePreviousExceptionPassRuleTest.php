@@ -22,7 +22,7 @@ class RequirePreviousExceptionPassRuleTest extends RuleTestCase
         }
 
         return new RequirePreviousExceptionPassRule(
-            self::getContainer()->getByType(Printer::class), // @phpstan-ignore phpstanApi.classConstant
+            self::getContainer()->getByType(Printer::class),
             $this->reportEvenIfExceptionIsNotAcceptableByRethrownOne,
         );
     }

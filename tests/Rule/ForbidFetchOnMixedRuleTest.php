@@ -15,7 +15,7 @@ class ForbidFetchOnMixedRuleTest extends RuleTestCase
     protected function getRule(): Rule
     {
         return new ForbidFetchOnMixedRule(
-            self::getContainer()->getByType(Printer::class), // @phpstan-ignore phpstanApi.classConstant
+            self::getContainer()->getByType(Printer::class),
             (bool) self::getContainer()->getParameter('checkExplicitMixed'),
         );
     }

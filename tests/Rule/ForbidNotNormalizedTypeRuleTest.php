@@ -18,7 +18,7 @@ class ForbidNotNormalizedTypeRuleTest extends RuleTestCase
         return new ForbidNotNormalizedTypeRule(
             self::getContainer()->getByType(FileTypeMapper::class),
             self::getContainer()->getByType(TypeNodeResolver::class),
-            self::getContainer()->getByType(Printer::class), // @phpstan-ignore phpstanApi.classConstant
+            self::getContainer()->getByType(Printer::class),
             true,
         );
     }

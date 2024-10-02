@@ -8,10 +8,11 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\Throw_;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
-use PhpParser\Node\Stmt\Throw_;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\TryCatch;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\Printer\Printer;
@@ -73,11 +74,11 @@ class RequirePreviousExceptionPassRule implements Rule
             }
 
             foreach ($catch->stmts as $statement) {
-                if (!$statement instanceof Throw_) {
+                if ($statement instanceof Expression && $statement->expr instanceof Throw_) {
+                    $throwExpression = $statement->expr->expr;
+                } else {
                     continue;
                 }
-
-                $throwExpression = $statement->expr;
 
                 if ($throwExpression instanceof CallLike) {
                     $errors = array_merge(

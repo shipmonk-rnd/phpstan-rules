@@ -38,7 +38,7 @@ class ForbidProtectedEnumMethodRule implements Rule
                 && !$classMethod->isDeclaredInTrait()
             ) {
                 $errors[] = RuleErrorBuilder::message('Protected methods within enum makes no sense as you cannot extend them anyway.')
-                    ->line($classMethod->getStartLine())
+                    ->line($classMethod->getNode()->getStartLine())
                     ->identifier('shipmonk.protectedEnumMethod')
                     ->build();
             }
