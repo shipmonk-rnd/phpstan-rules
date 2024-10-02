@@ -2,7 +2,7 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
-use PhpParser\PrettyPrinter\Standard;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\Rules\Rule;
 use ShipMonk\PHPStan\RuleTestCase;
 
@@ -15,7 +15,7 @@ class ForbidFetchOnMixedRuleTest extends RuleTestCase
     protected function getRule(): Rule
     {
         return new ForbidFetchOnMixedRule(
-            self::getContainer()->getByType(Standard::class),
+            self::getContainer()->getByType(Printer::class), // @phpstan-ignore phpstanApi.classConstant
             (bool) self::getContainer()->getParameter('checkExplicitMixed'),
         );
     }

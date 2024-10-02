@@ -5,7 +5,7 @@ namespace ShipMonk\PHPStan\Rule;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\MethodReturnStatementsNode;
-use PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver;
+use PHPStan\Rules\Exceptions\ExceptionTypeResolver;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -16,9 +16,9 @@ use PHPStan\Rules\RuleErrorBuilder;
 class ForbidCheckedExceptionInYieldingMethodRule implements Rule
 {
 
-    private DefaultExceptionTypeResolver $exceptionTypeResolver;
+    private ExceptionTypeResolver $exceptionTypeResolver;
 
-    public function __construct(DefaultExceptionTypeResolver $exceptionTypeResolver)
+    public function __construct(ExceptionTypeResolver $exceptionTypeResolver)
     {
         $this->exceptionTypeResolver = $exceptionTypeResolver;
     }

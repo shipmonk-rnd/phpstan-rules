@@ -3,7 +3,7 @@
 namespace ShipMonk\PHPStan\Rule;
 
 use LogicException;
-use PhpParser\PrettyPrinter\Standard;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\Rules\Rule;
 use ShipMonk\PHPStan\RuleTestCase;
 
@@ -22,7 +22,7 @@ class RequirePreviousExceptionPassRuleTest extends RuleTestCase
         }
 
         return new RequirePreviousExceptionPassRule(
-            self::getContainer()->getByType(Standard::class),
+            self::getContainer()->getByType(Printer::class), // @phpstan-ignore phpstanApi.classConstant
             $this->reportEvenIfExceptionIsNotAcceptableByRethrownOne,
         );
     }

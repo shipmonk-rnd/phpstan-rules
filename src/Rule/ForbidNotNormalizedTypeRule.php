@@ -16,9 +16,9 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\UnionType;
-use PhpParser\PrettyPrinter\Standard as PhpParserPrinter;
 use PHPStan\Analyser\NameScope;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\PhpDoc\ResolvedPhpDocBlock;
 use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDocParser\Ast\Node as PhpDocRootNode;
@@ -57,7 +57,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
     private TypeNodeResolver $typeNodeResolver;
 
-    private PhpParserPrinter $phpParserPrinter;
+    private Printer $phpParserPrinter;
 
     private bool $checkDisjunctiveNormalForm;
 
@@ -69,7 +69,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     public function __construct(
         FileTypeMapper $fileTypeMapper,
         TypeNodeResolver $typeNodeResolver,
-        PhpParserPrinter $phpParserPrinter,
+        Printer $phpParserPrinter,
         bool $checkDisjunctiveNormalForm
     )
     {

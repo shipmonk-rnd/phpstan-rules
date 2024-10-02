@@ -9,8 +9,8 @@ use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Expr\StaticPropertyFetch;
 use PhpParser\Node\Identifier;
-use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -25,11 +25,11 @@ use function sprintf;
 class ForbidFetchOnMixedRule implements Rule
 {
 
-    private Standard $printer;
+    private Printer $printer;
 
     private bool $checkExplicitMixed;
 
-    public function __construct(Standard $printer, bool $checkExplicitMixed)
+    public function __construct(Printer $printer, bool $checkExplicitMixed)
     {
         $this->printer = $printer;
         $this->checkExplicitMixed = $checkExplicitMixed;
