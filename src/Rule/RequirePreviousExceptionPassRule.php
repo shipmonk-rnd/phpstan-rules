@@ -13,8 +13,8 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Throw_;
 use PhpParser\Node\Stmt\TryCatch;
-use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\IdentifierRuleError;
@@ -35,11 +35,14 @@ use function is_string;
 class RequirePreviousExceptionPassRule implements Rule
 {
 
-    private Standard $printer;
+    private Printer $printer;
 
     private bool $reportEvenIfExceptionIsNotAcceptableByRethrownOne;
 
-    public function __construct(Standard $printer, bool $reportEvenIfExceptionIsNotAcceptableByRethrownOne = false)
+    public function __construct(
+        Printer $printer,
+        bool $reportEvenIfExceptionIsNotAcceptableByRethrownOne = false
+    )
     {
         $this->printer = $printer;
         $this->reportEvenIfExceptionIsNotAcceptableByRethrownOne = $reportEvenIfExceptionIsNotAcceptableByRethrownOne;

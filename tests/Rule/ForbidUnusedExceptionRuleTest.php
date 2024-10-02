@@ -2,7 +2,7 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
-use PhpParser\PrettyPrinter\Standard;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\Rules\Rule;
 use ShipMonk\PHPStan\RuleTestCase;
 use function array_merge;
@@ -15,7 +15,9 @@ class ForbidUnusedExceptionRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new ForbidUnusedExceptionRule(new Standard());
+        return new ForbidUnusedExceptionRule(
+            self::getContainer()->getByType(Printer::class), // @phpstan-ignore phpstanApi.classConstant
+        );
     }
 
     /**

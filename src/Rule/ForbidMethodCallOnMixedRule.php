@@ -9,8 +9,8 @@ use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
-use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -24,11 +24,11 @@ use function sprintf;
 class ForbidMethodCallOnMixedRule implements Rule
 {
 
-    private Standard $printer;
+    private Printer $printer;
 
     private bool $checkExplicitMixed;
 
-    public function __construct(Standard $printer, bool $checkExplicitMixed)
+    public function __construct(Printer $printer, bool $checkExplicitMixed)
     {
         $this->printer = $printer;
         $this->checkExplicitMixed = $checkExplicitMixed;

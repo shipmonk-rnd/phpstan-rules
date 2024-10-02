@@ -2,7 +2,7 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
-use PhpParser\PrettyPrinter\Standard;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\Type\FileTypeMapper;
 use ShipMonk\PHPStan\RuleTestCase;
@@ -18,7 +18,7 @@ class ForbidNotNormalizedTypeRuleTest extends RuleTestCase
         return new ForbidNotNormalizedTypeRule(
             self::getContainer()->getByType(FileTypeMapper::class),
             self::getContainer()->getByType(TypeNodeResolver::class),
-            self::getContainer()->getByType(Standard::class),
+            self::getContainer()->getByType(Printer::class), // @phpstan-ignore phpstanApi.classConstant
             true,
         );
     }

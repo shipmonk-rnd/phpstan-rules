@@ -239,7 +239,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         $result = $this->nodeScopeResolver->processExprNode(
             new Expression($node->expr),
             $node->expr,
-            $scope->enterArrowFunction($node),
+            $scope->enterArrowFunction($node, null),
             static function (): void {
             },
             ExpressionContext::createDeep(),

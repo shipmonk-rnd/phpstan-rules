@@ -8,8 +8,8 @@ use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -22,9 +22,9 @@ use Throwable;
 class ForbidUnusedExceptionRule implements Rule
 {
 
-    private Standard $printer;
+    private Printer $printer;
 
-    public function __construct(Standard $printer)
+    public function __construct(Printer $printer)
     {
         $this->printer = $printer;
     }
