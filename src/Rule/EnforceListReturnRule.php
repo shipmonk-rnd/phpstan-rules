@@ -10,10 +10,8 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
-use PHPStan\Type\Accessory\AccessoryArrayListType;
 use PHPStan\Type\VerbosityLevel;
 use function count;
-use function method_exists;
 
 /**
  * @implements Rule<ReturnStatementsNode>
@@ -32,10 +30,6 @@ class EnforceListReturnRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        if (method_exists(AccessoryArrayListType::class, 'isListTypeEnabled') && !AccessoryArrayListType::isListTypeEnabled()) { // @phpstan-ignore function.alreadyNarrowedType (changes in v2)
-            return [];
-        }
-
         $methodReflection = $scope->getFunction();
 
         if ($methodReflection === null || $node instanceof ClosureReturnStatementsNode) {

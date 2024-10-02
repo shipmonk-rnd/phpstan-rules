@@ -4,7 +4,7 @@ namespace ShipMonk\PHPStan\Visitor;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
-use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\MethodCall;
@@ -12,11 +12,10 @@ use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Expr\Ternary;
-use PhpParser\Node\Expr\Throw_ as ThrowExpr;
+use PhpParser\Node\Expr\Throw_;
 use PhpParser\Node\Expr\Yield_;
 use PhpParser\Node\MatchArm;
 use PhpParser\Node\Stmt\Return_;
-use PhpParser\Node\Stmt\Throw_;
 use PhpParser\NodeVisitorAbstract;
 use function array_pop;
 use function end;
@@ -85,8 +84,7 @@ class UnusedExceptionVisitor extends NodeVisitorAbstract
      */
     private function isUsed(Node $parent): bool
     {
-        return $parent instanceof Throw_
-            || $parent instanceof Assign
+        return $parent instanceof Assign
             || $parent instanceof MethodCall
             || $parent instanceof Return_
             || $parent instanceof Arg
@@ -95,7 +93,7 @@ class UnusedExceptionVisitor extends NodeVisitorAbstract
             || $parent instanceof NullsafeMethodCall
             || $parent instanceof Ternary
             || $parent instanceof Yield_
-            || $parent instanceof ThrowExpr
+            || $parent instanceof Throw_
             || $parent instanceof MatchArm;
     }
 

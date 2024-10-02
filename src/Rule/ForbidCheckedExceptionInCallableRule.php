@@ -26,10 +26,10 @@ use PHPStan\Node\FileNode;
 use PHPStan\Node\FunctionCallableNode;
 use PHPStan\Node\MethodCallableNode;
 use PHPStan\Node\StaticMethodCallableNode;
+use PHPStan\Reflection\ExtendedParameterReflection;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParameterReflection;
-use PHPStan\Reflection\ParameterReflectionWithPhpDocs;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver;
@@ -354,7 +354,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      */
     private function isImmediatelyInvokedCallable(object $reflection, ?ParameterReflection $parameter): bool
     {
-        if ($parameter instanceof ParameterReflectionWithPhpDocs) {
+        if ($parameter instanceof ExtendedParameterReflection) {
             $parameterCallImmediately = $parameter->isImmediatelyInvokedCallable();
 
             if ($parameterCallImmediately->maybe()) {

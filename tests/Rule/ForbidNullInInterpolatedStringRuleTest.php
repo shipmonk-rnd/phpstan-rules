@@ -15,7 +15,7 @@ class ForbidNullInInterpolatedStringRuleTest extends RuleTestCase
     protected function getRule(): Rule
     {
         return new ForbidNullInInterpolatedStringRule(
-            self::getContainer()->getByType(Printer::class), // @phpstan-ignore phpstanApi.classConstant
+            self::getContainer()->getByType(Printer::class),
         );
     }
 

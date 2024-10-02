@@ -16,7 +16,7 @@ class ForbidUnusedExceptionRuleTest extends RuleTestCase
     protected function getRule(): Rule
     {
         return new ForbidUnusedExceptionRule(
-            self::getContainer()->getByType(Printer::class), // @phpstan-ignore phpstanApi.classConstant
+            self::getContainer()->getByType(Printer::class),
         );
     }
 

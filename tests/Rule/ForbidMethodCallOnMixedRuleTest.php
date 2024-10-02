@@ -15,7 +15,7 @@ class ForbidMethodCallOnMixedRuleTest extends RuleTestCase
     protected function getRule(): Rule
     {
         return new ForbidMethodCallOnMixedRule(
-            self::getContainer()->getByType(Printer::class), // @phpstan-ignore phpstanApi.classConstant
+            self::getContainer()->getByType(Printer::class),
             (bool) self::getContainer()->getParameter('checkExplicitMixed'),
         );
     }

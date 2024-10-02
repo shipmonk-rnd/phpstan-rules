@@ -4,7 +4,7 @@ namespace ShipMonk\PHPStan\Visitor;
 
 use PhpParser\Node;
 use PhpParser\Node\Arg;
-use PhpParser\Node\Expr\ArrayItem;
+use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\AssignOp;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
@@ -12,12 +12,11 @@ use PhpParser\Node\Expr\Match_;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\Ternary;
-use PhpParser\Node\Expr\Throw_ as ThrowExpr;
+use PhpParser\Node\Expr\Throw_;
 use PhpParser\Node\Expr\Yield_;
 use PhpParser\Node\Expr\YieldFrom;
 use PhpParser\Node\MatchArm;
 use PhpParser\Node\Stmt\Return_;
-use PhpParser\Node\Stmt\Throw_;
 use PhpParser\NodeVisitorAbstract;
 use function array_pop;
 use function end;
@@ -87,8 +86,7 @@ class UnusedMatchVisitor extends NodeVisitorAbstract
             || $parent instanceof Ternary
             || $parent instanceof MatchArm
             || $parent instanceof Yield_
-            || $parent instanceof YieldFrom
-            || $parent instanceof ThrowExpr;
+            || $parent instanceof YieldFrom;
     }
 
 }

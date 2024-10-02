@@ -4,7 +4,8 @@ namespace ShipMonk\PHPStan\Rule;
 
 use Generator;
 use PhpParser\Node;
-use PhpParser\Node\Stmt\Throw_;
+use PhpParser\Node\Expr\Throw_;
+use PhpParser\Node\Stmt\Expression;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Php\PhpVersion;
@@ -328,7 +329,10 @@ class EnforceNativeReturnTypehintRule implements Rule
         $exitPoints = $node->getStatementResult()->getExitPoints();
 
         foreach ($exitPoints as $exitPoint) {
-            if (!$exitPoint->getStatement() instanceof Throw_) {
+            $statement = $exitPoint->getStatement();
+            $isThrow = $statement instanceof Expression && $statement->expr instanceof Throw_;
+
+            if (!$isThrow) {
                 return false;
             }
         }
