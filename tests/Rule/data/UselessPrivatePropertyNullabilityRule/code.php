@@ -26,7 +26,7 @@ class ExampleClass
     private $isUninitializedWithoutTypehint;
 
     public function __construct(
-        mixed $mixed,
+        $mixed,
         int $isPublic,
         int $isProtected,
         int $isPrivate,
