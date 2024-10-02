@@ -6,6 +6,7 @@ use PHPStan\Node\Printer\Printer;
 use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\Type\FileTypeMapper;
 use ShipMonk\PHPStan\RuleTestCase;
+use const PHP_VERSION_ID;
 
 /**
  * @extends RuleTestCase<ForbidNotNormalizedTypeRule>
@@ -25,6 +26,10 @@ class ForbidNotNormalizedTypeRuleTest extends RuleTestCase
 
     public function testRule(): void
     {
+        if (PHP_VERSION_ID < 8_02_00) {
+            self::markTestSkipped('Test is for PHP 8.2+, we are using native true type there');
+        }
+
         $this->analyseFile(__DIR__ . '/data/ForbidNotNormalizedTypeRule/code.php');
     }
 
