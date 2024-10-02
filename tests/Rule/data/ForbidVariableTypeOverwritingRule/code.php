@@ -74,10 +74,10 @@ function testBasics(
 }
 
 function testIgnoredTypes(
-    mixed $mixed1,
-    mixed $mixed2,
-    mixed $mixed3,
-    mixed $mixed4,
+    $mixed1,
+    $mixed2,
+    $mixed3,
+    $mixed4,
     ?ParentClass $parentClass1,
     ParentClass $parentClass2,
 ): void {
@@ -103,7 +103,7 @@ function testIgnoredTypes(
 function testAdvancedTypesAreIgnored(
     array $nonEmptyArray,
     array $intList,
-    mixed $mixed,
+    $mixed,
     int $int,
     int $positiveInt,
     int $intMask,
