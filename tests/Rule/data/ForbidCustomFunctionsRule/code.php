@@ -55,7 +55,7 @@ class Test
      * @param class-string<SomeClass> $classString
      */
     public function test(
-        mixed $classStringOrTheClass,
+        $classStringOrTheClass,
         string $classString,
         SomeClass $class,
         SomeClass|AnotherClass $union,

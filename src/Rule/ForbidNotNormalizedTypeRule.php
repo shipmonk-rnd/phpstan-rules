@@ -16,9 +16,9 @@ use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Function_;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\UnionType;
-use PhpParser\PrettyPrinter\Standard as PhpParserPrinter;
 use PHPStan\Analyser\NameScope;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\PhpDoc\ResolvedPhpDocBlock;
 use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDocParser\Ast\Node as PhpDocRootNode;
@@ -57,7 +57,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
     private TypeNodeResolver $typeNodeResolver;
 
-    private PhpParserPrinter $phpParserPrinter;
+    private Printer $phpParserPrinter;
 
     private bool $checkDisjunctiveNormalForm;
 
@@ -69,7 +69,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     public function __construct(
         FileTypeMapper $fileTypeMapper,
         TypeNodeResolver $typeNodeResolver,
-        PhpParserPrinter $phpParserPrinter,
+        Printer $phpParserPrinter,
         bool $checkDisjunctiveNormalForm
     )
     {
@@ -100,17 +100,14 @@ class ForbidNotNormalizedTypeRule implements Rule
         }
 
         if ($node instanceof Property) {
-            return array_merge(
-                $this->checkPropertyPhpDoc($node, $scope),
-                $this->checkPropertyNativeType($node, $scope),
-            );
+            return $this->checkPropertyNativeType($node, $scope);
         }
 
         if ($node instanceof Catch_) {
             return $this->checkCatchNativeType($node, $scope);
         }
 
-        return $this->checkInlineVarDoc($node, $scope);
+        return $this->checkVarDoc($node, $scope);
     }
 
     /**
@@ -208,38 +205,11 @@ class ForbidNotNormalizedTypeRule implements Rule
     }
 
     /**
+     * Checks inline var docs and property var docs
+     *
      * @return list<IdentifierRuleError>
      */
-    private function checkPropertyPhpDoc(
-        Property $node,
-        Scope $scope
-    ): array
-    {
-        $errors = [];
-
-        $resolvedPhpDoc = $this->resolvePhpDoc($node, $scope);
-
-        if ($resolvedPhpDoc === null) {
-            return [];
-        }
-
-        $nameScope = $resolvedPhpDoc->getNullableNameScope();
-
-        if ($nameScope === null) {
-            return [];
-        }
-
-        foreach ($resolvedPhpDoc->getPhpDocNodes() as $phpdocNode) {
-            $errors = array_merge($errors, $this->processVarTags($node, $phpdocNode->getVarTagValues(), $nameScope));
-        }
-
-        return $errors;
-    }
-
-    /**
-     * @return list<IdentifierRuleError>
-     */
-    private function checkInlineVarDoc(PhpParserNode $node, Scope $scope): array
+    private function checkVarDoc(PhpParserNode $node, Scope $scope): array
     {
         $docComment = $node->getDocComment();
 

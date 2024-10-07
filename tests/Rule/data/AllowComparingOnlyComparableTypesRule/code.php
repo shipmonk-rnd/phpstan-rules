@@ -25,7 +25,7 @@ $fn = function (
     int|float $intOrFloat,
     float $float,
     bool $bool,
-    mixed $mixed,
+    $mixed,
 ) {
     $foos > $foo; // error: Comparison array > AllowComparingOnlyComparableTypesRule\Foo contains non-comparable type, only int|float|string|DateTimeInterface or comparable tuple is allowed.
     $nullableInt > $int; // error: Comparison int|null > int contains non-comparable type, only int|float|string|DateTimeInterface or comparable tuple is allowed.

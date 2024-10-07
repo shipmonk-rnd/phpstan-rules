@@ -9,7 +9,7 @@ class Foo {
     public static function staticMethod() {}
 }
 
-$fn = function (mixed $mixed, $unknown, array $array, string $string, ?Foo $fooOrNull, ReflectionClass $reflection) {
+$fn = function ($mixed, $unknown, array $array, string $string, ?Foo $fooOrNull, ReflectionClass $reflection) {
 
     $foo = new Foo();
     $foo->method();
