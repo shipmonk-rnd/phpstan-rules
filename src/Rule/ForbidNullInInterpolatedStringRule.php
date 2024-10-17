@@ -3,35 +3,35 @@
 namespace ShipMonk\PHPStan\Rule;
 
 use PhpParser\Node;
-use PhpParser\Node\Scalar\Encapsed;
-use PhpParser\Node\Scalar\EncapsedStringPart;
-use PhpParser\PrettyPrinter\Standard;
+use PhpParser\Node\InterpolatedStringPart;
+use PhpParser\Node\Scalar\InterpolatedString;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\TypeCombinator;
 
 /**
- * @implements Rule<Encapsed>
+ * @implements Rule<InterpolatedString>
  */
 class ForbidNullInInterpolatedStringRule implements Rule
 {
 
-    private Standard $printer;
+    private Printer $printer;
 
-    public function __construct(Standard $printer)
+    public function __construct(Printer $printer)
     {
         $this->printer = $printer;
     }
 
     public function getNodeType(): string
     {
-        return Encapsed::class;
+        return InterpolatedString::class;
     }
 
     /**
-     * @param Encapsed $node
+     * @param InterpolatedString $node
      * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
@@ -39,7 +39,7 @@ class ForbidNullInInterpolatedStringRule implements Rule
         $errors = [];
 
         foreach ($node->parts as $part) {
-            if ($part instanceof EncapsedStringPart) {
+            if ($part instanceof InterpolatedStringPart) {
                 continue;
             }
 
