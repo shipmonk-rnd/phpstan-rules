@@ -86,8 +86,6 @@ parameters:
             reportEvenIfExceptionIsNotAcceptableByRethrownOne: true
         uselessPrivatePropertyDefaultValue:
             enabled: %shipmonkRules.enableAllRules%
-        uselessPrivatePropertyNullability:
-            enabled: %shipmonkRules.enableAllRules%
 
 parametersSchema:
     shipmonkRules: structure([
@@ -212,9 +210,6 @@ parametersSchema:
         uselessPrivatePropertyDefaultValue: structure([
             enabled: bool()
         ])
-        uselessPrivatePropertyNullability: structure([
-            enabled: bool()
-        ])
     ])
 
 conditionalTags:
@@ -290,8 +285,6 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.requirePreviousExceptionPass.enabled%
     ShipMonk\PHPStan\Rule\UselessPrivatePropertyDefaultValueRule:
         phpstan.rules.rule: %shipmonkRules.uselessPrivatePropertyDefaultValue.enabled%
-    ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule:
-        phpstan.rules.rule: %shipmonkRules.uselessPrivatePropertyNullability.enabled%
 
     ShipMonk\PHPStan\Visitor\UnusedExceptionVisitor:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.forbidUnusedException.enabled%
@@ -299,8 +292,6 @@ conditionalTags:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.forbidUnusedMatchResult.enabled%
     ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.uselessPrivatePropertyDefaultValue.enabled%
-    ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor:
-        phpstan.parser.richParserNodeVisitor: %shipmonkRules.uselessPrivatePropertyNullability.enabled%
 
 services:
     -
@@ -405,8 +396,6 @@ services:
         class: ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule
     -
         class: ShipMonk\PHPStan\Rule\UselessPrivatePropertyDefaultValueRule
-    -
-        class: ShipMonk\PHPStan\Rule\UselessPrivatePropertyNullabilityRule
 
     -
         class: ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule
@@ -418,5 +407,3 @@ services:
         class: ShipMonk\PHPStan\Visitor\UnusedMatchVisitor
     -
         class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
-    -
-        class: ShipMonk\PHPStan\Visitor\ClassPropertyAssignmentVisitor
