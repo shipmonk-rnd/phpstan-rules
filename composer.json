@@ -16,7 +16,6 @@
     "require-dev": {
         "editorconfig-checker/editorconfig-checker": "^10.6.0",
         "ergebnis/composer-normalize": "^2.44",
-        "nette/neon": "^3.4.4",
         "phpstan/phpstan-deprecation-rules": "^2.0.0",
         "phpstan/phpstan-phpunit": "^2.0.0",
         "phpstan/phpstan-strict-rules": "^2.0.0",
