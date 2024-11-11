@@ -18,7 +18,6 @@ use PHPStan\Type\UnionType;
 use function array_key_exists;
 use function count;
 use function implode;
-use const SORT_REGULAR;
 
 /**
  * @template-implements Rule<FuncCall>
@@ -26,33 +25,19 @@ use const SORT_REGULAR;
 class ForbidEnumInFunctionArgumentsRule implements Rule
 {
 
-    private const ANY_ARGUMENT = -1;
-
-    private const REASON_IMPLICIT_TO_STRING = 'as the function causes implicit __toString conversion which is not supported for enums';
     private const REASON_UNPREDICTABLE_RESULT = 'as the function causes unexpected results'; // https://3v4l.org/YtGVa
-    private const REASON_SKIPS_ENUMS = 'as the function will skip any enums and produce warning';
 
     /**
      * Function name -> [forbidden argument position, reason]]
      */
     private const FUNCTION_MAP = [
-        'array_intersect' => [self::ANY_ARGUMENT, self::REASON_IMPLICIT_TO_STRING],
-        'array_intersect_assoc' => [self::ANY_ARGUMENT, self::REASON_IMPLICIT_TO_STRING],
-        'array_diff' => [self::ANY_ARGUMENT, self::REASON_IMPLICIT_TO_STRING],
-        'array_diff_assoc' => [self::ANY_ARGUMENT, self::REASON_IMPLICIT_TO_STRING],
-        'array_unique' => [0, self::REASON_IMPLICIT_TO_STRING],
-        'array_combine' => [0, self::REASON_IMPLICIT_TO_STRING],
         'sort' => [0, self::REASON_UNPREDICTABLE_RESULT],
         'asort' => [0, self::REASON_UNPREDICTABLE_RESULT],
         'arsort' => [0, self::REASON_UNPREDICTABLE_RESULT],
-        'natsort' => [0, self::REASON_IMPLICIT_TO_STRING],
-        'natcasesort' => [0, self::REASON_IMPLICIT_TO_STRING],
-        'array_count_values' => [0, self::REASON_SKIPS_ENUMS],
-        'array_fill_keys' => [0, self::REASON_IMPLICIT_TO_STRING],
-        'array_flip' => [0, self::REASON_SKIPS_ENUMS],
+
+        // https://github.com/phpstan/phpstan/issues/11883
         'array_product' => [0, self::REASON_UNPREDICTABLE_RESULT],
         'array_sum' => [0, self::REASON_UNPREDICTABLE_RESULT],
-        'implode' => [1, self::REASON_IMPLICIT_TO_STRING],
     ];
 
     private ReflectionProvider $reflectionProvider;
@@ -103,10 +88,6 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
         foreach ($funcCall->getArgs() as $position => $argument) {
             $argumentType = $scope->getType($argument->value);
 
-            if ($functionName === 'array_unique' && $position === 1 && $argumentType->getConstantScalarValues() === [SORT_REGULAR]) {
-                return []; // this edgecase seems to be working fine
-            }
-
             if (!$this->matchesPosition((int) $position, $forbiddenArgumentPosition)) {
                 continue;
             }
@@ -130,10 +111,6 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
 
     private function matchesPosition(int $position, int $forbiddenArgumentPosition): bool
     {
-        if ($forbiddenArgumentPosition === self::ANY_ARGUMENT) {
-            return true;
-        }
-
         return $position === $forbiddenArgumentPosition;
     }
 
