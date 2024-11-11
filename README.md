@@ -592,7 +592,7 @@ function example(MyClass $class) {
 
 ### forbidUselessNullableReturn
 - Denies marking closure/function/method return type as nullable when null is never returned
-- Recommended to be used together with `uselessPrivatePropertyDefaultValue` and `UselessPrivatePropertyNullabilityRule`
+- Recommended to be used together with `uselessPrivatePropertyDefaultValue`
 ```php
 public function example(int $foo): ?int { // null never returned
     if ($foo < 0) {
@@ -664,7 +664,7 @@ try {
 - Detects useless default value of a private property that is always initialized in constructor.
 - Cannot handle conditions or private method calls within constructor.
 - When enabled, return statements in constructors are denied to avoid false positives
-- Recommended to be used with `uselessPrivatePropertyNullability` and `forbidUselessNullableReturn`
+- Recommended to be used with `forbidUselessNullableReturn`
 ```php
 class Example
 {
@@ -673,29 +673,6 @@ class Example
     public function __construct()
     {
         $this->field = 1;
-    }
-}
-```
-
-### uselessPrivatePropertyNullability:
-- Detects useless nullability of a private property by checking type of all assignments.
-- Works only with natively typehinted properties
-- Recommended to be used with `uselessPrivatePropertyNullability` and `forbidUselessNullableReturn` as removing useless default value may cause useless nullability to be detected
-- PHPStan 1.12 with bleeding edge contains more generic version of this rule under `property.unusedType` error identifier
-
-```php
-class Example
-{
-    private ?int $field; // useless nullability
-
-    public function __construct()
-    {
-        $this->field = 1;
-    }
-
-    public function setField(int $value)
-    {
-        $this->field = $value;
     }
 }
 ```
