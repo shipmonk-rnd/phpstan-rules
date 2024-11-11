@@ -156,7 +156,7 @@ class RequirePreviousExceptionPassRule implements Rule
     }
 
     /**
-     * @return ParameterReflection[]
+     * @return list<ParameterReflection>
      */
     private function getCallLikeParameters(CallLike $node, Scope $scope): array
     {

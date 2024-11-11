@@ -25,7 +25,6 @@
         "shipmonk/name-collision-detector": "^2.0.0",
         "slevomat/coding-standard": "^8.0.1"
     },
-    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "ShipMonk\\PHPStan\\": "src/"
