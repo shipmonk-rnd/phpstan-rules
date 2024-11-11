@@ -8,13 +8,14 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\Throw_;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
-use PhpParser\Node\Stmt\Throw_;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\TryCatch;
-use PhpParser\PrettyPrinter\Standard;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\Printer\Printer;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\IdentifierRuleError;
@@ -35,11 +36,14 @@ use function is_string;
 class RequirePreviousExceptionPassRule implements Rule
 {
 
-    private Standard $printer;
+    private Printer $printer;
 
     private bool $reportEvenIfExceptionIsNotAcceptableByRethrownOne;
 
-    public function __construct(Standard $printer, bool $reportEvenIfExceptionIsNotAcceptableByRethrownOne = false)
+    public function __construct(
+        Printer $printer,
+        bool $reportEvenIfExceptionIsNotAcceptableByRethrownOne = false
+    )
     {
         $this->printer = $printer;
         $this->reportEvenIfExceptionIsNotAcceptableByRethrownOne = $reportEvenIfExceptionIsNotAcceptableByRethrownOne;
@@ -70,11 +74,11 @@ class RequirePreviousExceptionPassRule implements Rule
             }
 
             foreach ($catch->stmts as $statement) {
-                if (!$statement instanceof Throw_) {
+                if ($statement instanceof Expression && $statement->expr instanceof Throw_) {
+                    $throwExpression = $statement->expr->expr;
+                } else {
                     continue;
                 }
-
-                $throwExpression = $statement->expr;
 
                 if ($throwExpression instanceof CallLike) {
                     $errors = array_merge(
@@ -152,7 +156,7 @@ class RequirePreviousExceptionPassRule implements Rule
     }
 
     /**
-     * @return ParameterReflection[]
+     * @return list<ParameterReflection>
      */
     private function getCallLikeParameters(CallLike $node, Scope $scope): array
     {

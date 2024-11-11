@@ -3,8 +3,8 @@
 namespace ShipMonk\PHPStan\Rule;
 
 use PhpParser\Node;
+use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr\ArrayDimFetch;
-use PhpParser\Node\Expr\ArrayItem;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;

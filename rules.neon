@@ -339,6 +339,8 @@ services:
             allowedCheckedExceptionCallables: %shipmonkRules.forbidCheckedExceptionInCallable.allowedCheckedExceptionCallables%
     -
         class: ShipMonk\PHPStan\Rule\ForbidCheckedExceptionInYieldingMethodRule
+        arguments:
+            exceptionTypeResolver: @PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver
     -
         class: ShipMonk\PHPStan\Rule\ForbidCustomFunctionsRule
         arguments:

@@ -10,7 +10,6 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
-use PHPStan\Type\Accessory\AccessoryArrayListType;
 use PHPStan\Type\VerbosityLevel;
 use function count;
 
@@ -31,10 +30,6 @@ class EnforceListReturnRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        if (AccessoryArrayListType::isListTypeEnabled() === false) {
-            return [];
-        }
-
         $methodReflection = $scope->getFunction();
 
         if ($methodReflection === null || $node instanceof ClosureReturnStatementsNode) {
