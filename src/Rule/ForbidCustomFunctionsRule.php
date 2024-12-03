@@ -13,6 +13,7 @@ use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\ArgumentsNormalizer;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ExtendedMethodReflection;
@@ -24,10 +25,10 @@ use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use function array_map;
-use function array_merge;
 use function count;
 use function explode;
 use function gettype;
@@ -106,7 +107,7 @@ class ForbidCustomFunctionsRule implements Rule
                 $errors = [
                     ...$errors,
                     ...$this->validateCallOverExpr([$methodName], $caller),
-                    ...$this->validateMethodArguments($caller, $methodName, $node, $scope),
+                    ...$this->validateCallLikeArguments($caller, $methodName, $node, $scope),
                 ];
             }
 
@@ -127,7 +128,7 @@ class ForbidCustomFunctionsRule implements Rule
                 $errors = [
                     ...$errors,
                     ...$this->validateCallOverExpr([$methodName], $caller),
-                    ...$this->validateMethodArguments($caller, $methodName, $node, $scope),
+                    ...$this->validateCallLikeArguments($caller, $methodName, $node, $scope),
                 ];
             }
 
@@ -151,36 +152,15 @@ class ForbidCustomFunctionsRule implements Rule
         }
 
         if ($node instanceof New_) {
-            $classNode = $node->class;
+            $caller = $this->getNewCaller($node, $scope);
 
-            if ($classNode instanceof Name) {
-                return $this->validateMethod(['__construct'], $scope->resolveName($classNode));
-            }
-
-            if ($classNode instanceof Expr) {
-                return $this->validateConstructorWithDynamicString($classNode, $scope);
-            }
-
-            return [];
+            return [
+                ...$this->validateCallOverExpr(['__construct'], $caller),
+                ...$this->validateCallLikeArguments($caller, '__construct', $node, $scope),
+            ];
         }
 
         return [];
-    }
-
-    /**
-     * @return list<IdentifierRuleError>
-     */
-    private function validateConstructorWithDynamicString(Expr $expr, Scope $scope): array
-    {
-        $type = $scope->getType($expr);
-
-        $errors = [];
-
-        foreach ($type->getConstantStrings() as $constantStringType) {
-            $errors = array_merge($errors, $this->validateMethod(['__construct'], $constantStringType->getValue()));
-        }
-
-        return $errors;
     }
 
     /**
@@ -345,10 +325,10 @@ class ForbidCustomFunctionsRule implements Rule
     }
 
     /**
-     * @param MethodCall|StaticCall $node
+     * @param MethodCall|StaticCall|New_ $node
      * @return list<IdentifierRuleError>
      */
-    private function validateMethodArguments(Type $caller, string $methodName, CallLike $node, Scope $scope): array
+    private function validateCallLikeArguments(Type $caller, string $methodName, CallLike $node, Scope $scope): array
     {
         $errors = [];
 
@@ -360,19 +340,11 @@ class ForbidCustomFunctionsRule implements Rule
             }
 
             $parametersAcceptor = ParametersAcceptorSelector::selectFromArgs($scope, $node->getArgs(), $methodReflection->getVariants());
-            $reorderedCall = $node instanceof MethodCall
-                ? ArgumentsNormalizer::reorderMethodArguments($parametersAcceptor, $node)
-                : ArgumentsNormalizer::reorderStaticCallArguments($parametersAcceptor, $node);
-
-            if ($reorderedCall === null) {
-                $reorderedCall = $node;
-            }
-
-            $orderedArgs = $reorderedCall->getArgs();
+            $reorderedArgs = ArgumentsNormalizer::reorderArgs($parametersAcceptor, $node->getArgs()) ?? $node->getArgs();
 
             $errors = [
                 ...$errors,
-                ...$this->validateCallableArguments($orderedArgs, $parametersAcceptor, $scope),
+                ...$this->validateCallableArguments($reorderedArgs, $parametersAcceptor, $scope),
             ];
         }
 
@@ -446,6 +418,20 @@ class ForbidCustomFunctionsRule implements Rule
         return $this->reflectionProvider->hasFunction($functionName, $scope)
             ? $this->reflectionProvider->getFunction($functionName, $scope)
             : null;
+    }
+
+    private function getNewCaller(New_ $new, Scope $scope): Type
+    {
+        if ($new->class instanceof Class_) {
+            $anonymousClassReflection = $this->reflectionProvider->getAnonymousClassReflection($new->class, $scope);
+            return new ObjectType($anonymousClassReflection->getName());
+        }
+
+        if ($new->class instanceof Name) {
+            return $scope->resolveTypeByName($new->class);
+        }
+
+        return $scope->getType($new->class);
     }
 
 }

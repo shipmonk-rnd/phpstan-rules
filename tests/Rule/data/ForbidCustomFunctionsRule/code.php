@@ -101,6 +101,32 @@ class Test
         $self::acceptCallableStatic('x', [], [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
         $self::acceptCallableStatic(callable: [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
 
+        new AcceptCallable('sleep', [], 'x');
+        new AcceptCallable('x', [], 'sleep'); // error: Function sleep() is forbidden. Description 0
+        new AcceptCallable(callable: 'sleep'); // error: Function sleep() is forbidden. Description 0
+        new AcceptCallable(string: 'sleep');
+        new AcceptCallable(callable: 'strlen', array: [], string: 'sleep');
+        new AcceptCallable('x', [], [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        new AcceptCallable(callable: [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+
+        $acceptCallableClass = AcceptCallable::class;
+
+        new $acceptCallableClass('sleep', [], 'x');
+        new $acceptCallableClass('x', [], 'sleep'); // error: Function sleep() is forbidden. Description 0
+        new $acceptCallableClass(callable: 'sleep'); // error: Function sleep() is forbidden. Description 0
+        new $acceptCallableClass(string: 'sleep');
+        new $acceptCallableClass(callable: 'strlen', array: [], string: 'sleep');
+        new $acceptCallableClass('x', [], [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        new $acceptCallableClass(callable: [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+
+        new class ('sleep', [], 'x') extends AcceptCallable {};
+        new class ('x', [], 'sleep') extends AcceptCallable {}; // error: Function sleep() is forbidden. Description 0
+        new class (callable: 'sleep') extends AcceptCallable {}; // error: Function sleep() is forbidden. Description 0
+        new class (string: 'sleep') extends AcceptCallable {};
+        new class (callable: 'strlen', array: [], string: 'sleep') extends AcceptCallable {};
+        new class ('x', [], [$class, 'forbiddenMethod']) extends AcceptCallable {}; // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        new class (callable: [$class, 'forbiddenMethod']) extends AcceptCallable {}; // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+
         $class->allowedMethod();
         $class->forbiddenMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
         $class->allowedInterfaceMethod();
@@ -145,4 +171,8 @@ class Test
     private function acceptCallable(?string $string = null, ?array $array = null, ?callable $callable = null) {}
     private static function acceptCallableStatic(?string $string = null, ?array $array = null, ?callable $callable = null) {}
 
+}
+
+class AcceptCallable {
+    public function __construct(?string $string = null, ?array $array = null, ?callable $callable = null) {}
 }
