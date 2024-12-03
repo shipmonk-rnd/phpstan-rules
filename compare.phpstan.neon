@@ -1,0 +1,42 @@
+includes:
+    - vendor/spaze/phpstan-disallowed-calls/extension.neon
+
+parameters:
+    customRulesetUsed: true
+
+    # those are copied from ForbidCustomFunctionsRuleTest
+    disallowedFunctionCalls:
+        -
+            function: 'sleep'
+            message: 'Description 0'
+
+    disallowedMethodCalls:
+        -
+            method: 'ForbidCustomFunctionsRule\forbidden_namespaced_function'
+            message: 'Description 1'
+        -
+            method: 'ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods::*'
+            message: 'Description 2'
+        -
+            method: 'ForbidCustomFunctionsRule\ClassWithForbiddenConstructor::__construct'
+            message: 'Description 3'
+        -
+            method: 'ForbidCustomFunctionsRule\SomeClass::forbiddenMethod'
+            message: 'Description 4'
+
+        -
+            method: 'ForbidCustomFunctionsRule\SomeInterface::forbiddenInterfaceMethod'
+            message: 'Description 6'
+
+        -
+            method: 'ForbidCustomFunctionsRule\SomeParent::forbiddenMethodOfParent'
+            message: 'Description 8'
+
+    disallowedStaticCalls:
+        -
+            method: 'ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod'
+            message: 'Description 5'
+
+        -
+            method: 'ForbidCustomFunctionsRule\SomeInterface::forbiddenInterfaceStaticMethod'
+            message: 'Description 7'
