@@ -4,6 +4,7 @@ namespace ShipMonk\PHPStan\Rule;
 
 use LogicException;
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\CallLike;
 use PhpParser\Node\Expr\FuncCall;
@@ -12,12 +13,19 @@ use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
+use PHPStan\Analyser\ArgumentsNormalizer;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ExtendedMethodReflection;
+use PHPStan\Reflection\FunctionReflection;
+use PHPStan\Reflection\ParametersAcceptor;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 use function array_map;
 use function array_merge;
 use function count;
@@ -84,32 +92,62 @@ class ForbidCustomFunctionsRule implements Rule
     }
 
     /**
-     * @param CallLike $node
      * @return list<IdentifierRuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
         if ($node instanceof MethodCall) {
+            $caller = $scope->getType($node->var);
             $methodNames = $this->getMethodNames($node->name, $scope);
 
-            return $this->validateCallOverExpr($methodNames, $node->var, $scope);
+            $errors = [];
+
+            foreach ($methodNames as $methodName) {
+                $errors = [
+                    ...$errors,
+                    ...$this->validateCallOverExpr([$methodName], $caller),
+                    ...$this->validateMethodArguments($caller, $methodName, $node, $scope),
+                ];
+            }
+
+            return $errors;
         }
 
         if ($node instanceof StaticCall) {
             $methodNames = $this->getMethodNames($node->name, $scope);
 
             $classNode = $node->class;
+            $caller = $classNode instanceof Name
+                ? $scope->resolveTypeByName($classNode)
+                : $scope->getType($classNode);
 
-            if ($classNode instanceof Name) {
-                return $this->validateMethod($methodNames, $scope->resolveName($classNode));
+            $errors = [];
+
+            foreach ($methodNames as $methodName) {
+                $errors = [
+                    ...$errors,
+                    ...$this->validateCallOverExpr([$methodName], $caller),
+                    ...$this->validateMethodArguments($caller, $methodName, $node, $scope),
+                ];
             }
 
-            return $this->validateCallOverExpr($methodNames, $classNode, $scope);
+            return $errors;
         }
 
         if ($node instanceof FuncCall) {
-            $methodNames = $this->getFunctionNames($node->name, $scope);
-            return $this->validateFunction($methodNames);
+            $functionNames = $this->getFunctionNames($node->name, $scope);
+
+            $errors = [];
+
+            foreach ($functionNames as $functionName) {
+                $errors = [
+                    ...$errors,
+                    ...$this->validateFunction([$functionName]),
+                    ...$this->validateFunctionArguments($functionName, $node, $scope),
+                ];
+            }
+
+            return $errors;
         }
 
         if ($node instanceof New_) {
@@ -149,10 +187,9 @@ class ForbidCustomFunctionsRule implements Rule
      * @param list<string> $methodNames
      * @return list<IdentifierRuleError>
      */
-    private function validateCallOverExpr(array $methodNames, Expr $expr, Scope $scope): array
+    private function validateCallOverExpr(array $methodNames, Type $caller): array
     {
-        $classType = $scope->getType($expr);
-        $classNames = $classType->getObjectTypeOrClassStringObjectType()->getObjectClassNames();
+        $classNames = $caller->getObjectTypeOrClassStringObjectType()->getObjectClassNames();
         $errors = [];
 
         foreach ($classNames as $className) {
@@ -259,6 +296,156 @@ class ForbidCustomFunctionsRule implements Rule
             static fn (ConstantStringType $type) => $type->getValue(),
             $nameType->getConstantStrings(),
         );
+    }
+
+    /**
+     * @return list<IdentifierRuleError>
+     */
+    private function validateCallable(
+        Expr $callable,
+        Scope $scope
+    ): array
+    {
+        $callableType = $scope->getType($callable);
+
+        if (!$callableType->isCallable()->yes()) {
+            return [];
+        }
+
+        $errors = [];
+
+        foreach ($callableType->getConstantStrings() as $constantString) {
+            $errors = [
+                ...$errors,
+                ...$this->validateFunction([$constantString->getValue()]),
+            ];
+        }
+
+        foreach ($callableType->getConstantArrays() as $constantArray) {
+            $callableTypeAndNames = $constantArray->findTypeAndMethodNames();
+
+            foreach ($callableTypeAndNames as $typeAndName) {
+                if ($typeAndName->isUnknown()) {
+                    continue;
+                }
+
+                $classNames = $typeAndName->getType()->getObjectClassNames();
+                $methodName = $typeAndName->getMethod();
+
+                foreach ($classNames as $className) {
+                    $errors = [
+                        ...$errors,
+                        ...$this->validateMethod([$methodName], $className),
+                    ];
+                }
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * @param MethodCall|StaticCall $node
+     * @return list<IdentifierRuleError>
+     */
+    private function validateMethodArguments(Type $caller, string $methodName, CallLike $node, Scope $scope): array
+    {
+        $errors = [];
+
+        foreach ($caller->getObjectTypeOrClassStringObjectType()->getObjectClassNames() as $className) {
+            $methodReflection = $this->getMethodReflection($className, $methodName);
+
+            if ($methodReflection === null) {
+                continue;
+            }
+
+            $parametersAcceptor = ParametersAcceptorSelector::selectFromArgs($scope, $node->getArgs(), $methodReflection->getVariants());
+            $reorderedCall = $node instanceof MethodCall
+                ? ArgumentsNormalizer::reorderMethodArguments($parametersAcceptor, $node)
+                : ArgumentsNormalizer::reorderStaticCallArguments($parametersAcceptor, $node);
+
+            if ($reorderedCall === null) {
+                $reorderedCall = $node;
+            }
+
+            $orderedArgs = $reorderedCall->getArgs();
+
+            $errors = [
+                ...$errors,
+                ...$this->validateCallableArguments($orderedArgs, $parametersAcceptor, $scope),
+            ];
+        }
+
+        return $errors;
+    }
+
+    /**
+     * @param array<Arg> $reorderedArgs
+     * @return list<IdentifierRuleError>
+     */
+    private function validateCallableArguments(
+        array $reorderedArgs,
+        ParametersAcceptor $parametersAcceptor,
+        Scope $scope
+    ): array
+    {
+        $errors = [];
+
+        foreach ($parametersAcceptor->getParameters() as $index => $parameter) {
+            if (TypeCombinator::removeNull($parameter->getType())->isCallable()->yes() && isset($reorderedArgs[$index])) {
+                $errors = [
+                    ...$errors,
+                    ...$this->validateCallable($reorderedArgs[$index]->value, $scope),
+                ];
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * @return list<IdentifierRuleError>
+     */
+    private function validateFunctionArguments(string $functionName, FuncCall $node, Scope $scope): array
+    {
+        $functionReflection = $this->getFunctionReflection(new Name($functionName), $scope);
+
+        if ($functionReflection === null) {
+            return [];
+        }
+
+        $parametersAcceptor = ParametersAcceptorSelector::selectFromArgs($scope, $node->getArgs(), $functionReflection->getVariants());
+        $funcCall = ArgumentsNormalizer::reorderFuncArguments($parametersAcceptor, $node);
+
+        if ($funcCall === null) {
+            $funcCall = $node;
+        }
+
+        $orderedArgs = $funcCall->getArgs();
+
+        return $this->validateCallableArguments($orderedArgs, $parametersAcceptor, $scope);
+    }
+
+    private function getMethodReflection(string $className, string $methodName): ?ExtendedMethodReflection
+    {
+        if (!$this->reflectionProvider->hasClass($className)) {
+            return null;
+        }
+
+        $classReflection = $this->reflectionProvider->getClass($className);
+
+        if (!$classReflection->hasNativeMethod($methodName)) {
+            return null;
+        }
+
+        return $classReflection->getNativeMethod($methodName);
+    }
+
+    private function getFunctionReflection(Name $functionName, Scope $scope): ?FunctionReflection
+    {
+        return $this->reflectionProvider->hasFunction($functionName, $scope)
+            ? $this->reflectionProvider->getFunction($functionName, $scope)
+            : null;
     }
 
 }

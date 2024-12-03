@@ -58,6 +58,7 @@ class Test
         $classStringOrTheClass,
         string $classString,
         SomeClass $class,
+        array $array,
         SomeClass|AnotherClass $union,
         ClassWithForbiddenAllMethods $forbiddenClass,
         ClassWithForbiddenConstructor $forbiddenConstructor,
@@ -65,6 +66,40 @@ class Test
         SomeInterface $interface
     ) {
         sleep(0); // error: Function sleep() is forbidden. Description 0
+        array_map('sleep', $array); // error: Function sleep() is forbidden. Description 0
+        array_map(array: $array, callback: 'sleep'); // error: Function sleep() is forbidden. Description 0
+        array_map([$class, 'forbiddenMethod'], $array); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        array_map([$class, 'forbiddenStaticMethod'], $array); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
+
+        strlen('sleep'); // not used in callable context
+        [$class, 'forbiddenMethod']; // not used in callable context
+        [$class, 'forbiddenStaticMethod']; // not used in callable context
+
+        $this->acceptCallable('sleep', [], 'x');
+        $this->acceptCallable('x', [], 'sleep'); // error: Function sleep() is forbidden. Description 0
+        $this->acceptCallable(callable: 'sleep'); // error: Function sleep() is forbidden. Description 0
+        $this->acceptCallable(string: 'sleep');
+        $this->acceptCallable(callable: 'strlen', array: [], string: 'sleep');
+        $this->acceptCallable('x', [], [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        $this->acceptCallable(callable: [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+
+        self::acceptCallableStatic('sleep', [], 'x');
+        self::acceptCallableStatic('x', [], 'sleep'); // error: Function sleep() is forbidden. Description 0
+        self::acceptCallableStatic(callable: 'sleep'); // error: Function sleep() is forbidden. Description 0
+        self::acceptCallableStatic(string: 'sleep');
+        self::acceptCallableStatic(callable: 'strlen', array: [], string: 'sleep');
+        self::acceptCallableStatic('x', [], [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        self::acceptCallableStatic(callable: [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+
+        $self = self::class;
+
+        $self::acceptCallableStatic('sleep', [], 'x');
+        $self::acceptCallableStatic('x', [], 'sleep'); // error: Function sleep() is forbidden. Description 0
+        $self::acceptCallableStatic(callable: 'sleep'); // error: Function sleep() is forbidden. Description 0
+        $self::acceptCallableStatic(string: 'sleep');
+        $self::acceptCallableStatic(callable: 'strlen', array: [], string: 'sleep');
+        $self::acceptCallableStatic('x', [], [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        $self::acceptCallableStatic(callable: [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
 
         $class->allowedMethod();
         $class->forbiddenMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
@@ -106,4 +141,8 @@ class Test
         $classStringOrTheClass::$forbiddenStaticMethodName(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
         new $forbiddenClassName(); // error: Method ForbidCustomFunctionsRule\ClassWithForbiddenConstructor::__construct() is forbidden. Description 3
     }
+
+    private function acceptCallable(?string $string = null, ?array $array = null, ?callable $callable = null) {}
+    private static function acceptCallableStatic(?string $string = null, ?array $array = null, ?callable $callable = null) {}
+
 }
