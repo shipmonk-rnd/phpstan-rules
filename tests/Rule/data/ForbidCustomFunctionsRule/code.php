@@ -129,6 +129,7 @@ class Test
 
         $class->allowedMethod();
         $class->forbiddenMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        $class?->forbiddenMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
         $class->allowedInterfaceMethod();
         $class->forbiddenInterfaceMethod(); // error: Method ForbidCustomFunctionsRule\SomeInterface::forbiddenInterfaceMethod() is forbidden. Description 6
         $class->forbiddenMethodOfParent(); // error: Method ForbidCustomFunctionsRule\SomeParent::forbiddenMethodOfParent() is forbidden. Description 8

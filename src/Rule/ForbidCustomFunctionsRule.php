@@ -97,85 +97,34 @@ class ForbidCustomFunctionsRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
+        if ($node instanceof FuncCall) {
+            return $this->validateFunctionCall($node, $scope);
+        }
+
         if ($node instanceof MethodCall) {
             $caller = $scope->getType($node->var);
             $methodNames = $this->getMethodNames($node->name, $scope);
 
-            $errors = [];
-
-            foreach ($methodNames as $methodName) {
-                $errors = [
-                    ...$errors,
-                    ...$this->validateCallOverExpr([$methodName], $caller),
-                    ...$this->validateCallLikeArguments($caller, $methodName, $node, $scope),
-                ];
-            }
-
-            return $errors;
-        }
-
-        if ($node instanceof StaticCall) {
+        } elseif ($node instanceof StaticCall) {
+            $classNode = $node->class;
+            $caller = $classNode instanceof Name ? $scope->resolveTypeByName($classNode) : $scope->getType($classNode);
             $methodNames = $this->getMethodNames($node->name, $scope);
 
-            $classNode = $node->class;
-            $caller = $classNode instanceof Name
-                ? $scope->resolveTypeByName($classNode)
-                : $scope->getType($classNode);
-
-            $errors = [];
-
-            foreach ($methodNames as $methodName) {
-                $errors = [
-                    ...$errors,
-                    ...$this->validateCallOverExpr([$methodName], $caller),
-                    ...$this->validateCallLikeArguments($caller, $methodName, $node, $scope),
-                ];
-            }
-
-            return $errors;
-        }
-
-        if ($node instanceof FuncCall) {
-            $functionNames = $this->getFunctionNames($node->name, $scope);
-
-            $errors = [];
-
-            foreach ($functionNames as $functionName) {
-                $errors = [
-                    ...$errors,
-                    ...$this->validateFunction([$functionName]),
-                    ...$this->validateFunctionArguments($functionName, $node, $scope),
-                ];
-            }
-
-            return $errors;
-        }
-
-        if ($node instanceof New_) {
+        } elseif ($node instanceof New_) {
             $caller = $this->getNewCaller($node, $scope);
+            $methodNames = ['__construct'];
 
-            return [
-                ...$this->validateCallOverExpr(['__construct'], $caller),
-                ...$this->validateCallLikeArguments($caller, '__construct', $node, $scope),
-            ];
+        } else {
+            return [];
         }
 
-        return [];
-    }
-
-    /**
-     * @param list<string> $methodNames
-     * @return list<IdentifierRuleError>
-     */
-    private function validateCallOverExpr(array $methodNames, Type $caller): array
-    {
-        $classNames = $caller->getObjectTypeOrClassStringObjectType()->getObjectClassNames();
         $errors = [];
 
-        foreach ($classNames as $className) {
+        foreach ($methodNames as $methodName) {
             $errors = [
                 ...$errors,
-                ...$this->validateMethod($methodNames, $className),
+                ...$this->validateCallOverExpr($methodName, $caller),
+                ...$this->validateCallLikeArguments($caller, $methodName, $node, $scope),
             ];
         }
 
@@ -183,10 +132,47 @@ class ForbidCustomFunctionsRule implements Rule
     }
 
     /**
-     * @param list<string> $methodNames
      * @return list<IdentifierRuleError>
      */
-    private function validateMethod(array $methodNames, string $className): array
+    private function validateFunctionCall(FuncCall $node, Scope $scope): array
+    {
+        $functionNames = $this->getFunctionNames($node->name, $scope);
+
+        $errors = [];
+
+        foreach ($functionNames as $functionName) {
+            $errors = [
+                ...$errors,
+                ...$this->validateFunction($functionName),
+                ...$this->validateFunctionArguments($functionName, $node, $scope),
+            ];
+        }
+
+        return $errors;
+    }
+
+    /**
+     * @return list<IdentifierRuleError>
+     */
+    private function validateCallOverExpr(string $methodName, Type $caller): array
+    {
+        $classNames = $caller->getObjectTypeOrClassStringObjectType()->getObjectClassNames();
+        $errors = [];
+
+        foreach ($classNames as $className) {
+            $errors = [
+                ...$errors,
+                ...$this->validateMethod($methodName, $className),
+            ];
+        }
+
+        return $errors;
+    }
+
+    /**
+     * @return list<IdentifierRuleError>
+     */
+    private function validateMethod(string $methodName, string $className): array
     {
         if (!$this->reflectionProvider->hasClass($className)) {
             return [];
@@ -204,13 +190,11 @@ class ForbidCustomFunctionsRule implements Rule
                     ->build();
             }
 
-            foreach ($methodNames as $methodName) {
-                if (isset($this->forbiddenFunctions[$ancestorClassName][$methodName])) {
-                    $errorMessage = sprintf('Method %s::%s() is forbidden. %s', $ancestorClassName, $methodName, $this->forbiddenFunctions[$ancestorClassName][$methodName]);
-                    $errors[] = RuleErrorBuilder::message($errorMessage)
-                        ->identifier('shipmonk.methodCallDenied')
-                        ->build();
-                }
+            if (isset($this->forbiddenFunctions[$ancestorClassName][$methodName])) {
+                $errorMessage = sprintf('Method %s::%s() is forbidden. %s', $ancestorClassName, $methodName, $this->forbiddenFunctions[$ancestorClassName][$methodName]);
+                $errors[] = RuleErrorBuilder::message($errorMessage)
+                    ->identifier('shipmonk.methodCallDenied')
+                    ->build();
             }
         }
 
@@ -218,20 +202,17 @@ class ForbidCustomFunctionsRule implements Rule
     }
 
     /**
-     * @param list<string> $functionNames
      * @return list<IdentifierRuleError>
      */
-    private function validateFunction(array $functionNames): array
+    private function validateFunction(string $functionName): array
     {
         $errors = [];
 
-        foreach ($functionNames as $functionName) {
-            if (isset($this->forbiddenFunctions[self::FUNCTION][$functionName])) {
-                $errorMessage = sprintf('Function %s() is forbidden. %s', $functionName, $this->forbiddenFunctions[self::FUNCTION][$functionName]);
-                $errors[] = RuleErrorBuilder::message($errorMessage)
-                    ->identifier('shipmonk.functionCallDenied')
-                    ->build();
-            }
+        if (isset($this->forbiddenFunctions[self::FUNCTION][$functionName])) {
+            $errorMessage = sprintf('Function %s() is forbidden. %s', $functionName, $this->forbiddenFunctions[self::FUNCTION][$functionName]);
+            $errors[] = RuleErrorBuilder::message($errorMessage)
+                ->identifier('shipmonk.functionCallDenied')
+                ->build();
         }
 
         return $errors;
@@ -297,7 +278,7 @@ class ForbidCustomFunctionsRule implements Rule
         foreach ($callableType->getConstantStrings() as $constantString) {
             $errors = [
                 ...$errors,
-                ...$this->validateFunction([$constantString->getValue()]),
+                ...$this->validateFunction($constantString->getValue()),
             ];
         }
 
@@ -315,7 +296,7 @@ class ForbidCustomFunctionsRule implements Rule
                 foreach ($classNames as $className) {
                     $errors = [
                         ...$errors,
-                        ...$this->validateMethod([$methodName], $className),
+                        ...$this->validateMethod($methodName, $className),
                     ];
                 }
             }
@@ -325,7 +306,6 @@ class ForbidCustomFunctionsRule implements Rule
     }
 
     /**
-     * @param MethodCall|StaticCall|New_ $node
      * @return list<IdentifierRuleError>
      */
     private function validateCallLikeArguments(Type $caller, string $methodName, CallLike $node, Scope $scope): array
@@ -333,7 +313,7 @@ class ForbidCustomFunctionsRule implements Rule
         $errors = [];
 
         foreach ($caller->getObjectTypeOrClassStringObjectType()->getObjectClassNames() as $className) {
-            $methodReflection = $this->getMethodReflection($className, $methodName);
+            $methodReflection = $this->getMethodReflection($className, $methodName, $scope);
 
             if ($methodReflection === null) {
                 continue;
@@ -398,7 +378,7 @@ class ForbidCustomFunctionsRule implements Rule
         return $this->validateCallableArguments($orderedArgs, $parametersAcceptor, $scope);
     }
 
-    private function getMethodReflection(string $className, string $methodName): ?ExtendedMethodReflection
+    private function getMethodReflection(string $className, string $methodName, Scope $scope): ?ExtendedMethodReflection
     {
         if (!$this->reflectionProvider->hasClass($className)) {
             return null;
@@ -406,11 +386,11 @@ class ForbidCustomFunctionsRule implements Rule
 
         $classReflection = $this->reflectionProvider->getClass($className);
 
-        if (!$classReflection->hasNativeMethod($methodName)) {
+        if (!$classReflection->hasMethod($methodName)) {
             return null;
         }
 
-        return $classReflection->getNativeMethod($methodName);
+        return $classReflection->getMethod($methodName, $scope);
     }
 
     private function getFunctionReflection(Name $functionName, Scope $scope): ?FunctionReflection
