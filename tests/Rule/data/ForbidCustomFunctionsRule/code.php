@@ -65,6 +65,7 @@ class Test
         ChildOfClassWithForbiddenAllMethods $forbiddenClassChild,
         SomeInterface $interface
     ) {
+        sleep(...); // error: Function sleep() is forbidden. Description 0
         sleep(0); // error: Function sleep() is forbidden. Description 0
         array_map('sleep', $array); // error: Function sleep() is forbidden. Description 0
         array_map(array: $array, callback: 'sleep'); // error: Function sleep() is forbidden. Description 0
@@ -130,6 +131,7 @@ class Test
         $class->allowedMethod();
         $class->forbiddenMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
         $class?->forbiddenMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        $class->forbiddenMethod(...); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
         $class->allowedInterfaceMethod();
         $class->forbiddenInterfaceMethod(); // error: Method ForbidCustomFunctionsRule\SomeInterface::forbiddenInterfaceMethod() is forbidden. Description 6
         $class->forbiddenMethodOfParent(); // error: Method ForbidCustomFunctionsRule\SomeParent::forbiddenMethodOfParent() is forbidden. Description 8
@@ -149,8 +151,10 @@ class Test
 
         SomeClass::forbiddenInterfaceStaticMethod(); // error: Method ForbidCustomFunctionsRule\SomeInterface::forbiddenInterfaceStaticMethod() is forbidden. Description 7
         SomeClass::forbiddenStaticMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
+        SomeClass::forbiddenStaticMethod(...); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
 
         forbidden_namespaced_function(); // error: Function ForbidCustomFunctionsRule\forbidden_namespaced_function() is forbidden. Description 1
+        forbidden_namespaced_function(...); // error: Function ForbidCustomFunctionsRule\forbidden_namespaced_function() is forbidden. Description 1
 
         $forbiddenClassName = 'ForbidCustomFunctionsRule\ClassWithForbiddenConstructor';
         $forbiddenMethodName = 'forbiddenMethod';

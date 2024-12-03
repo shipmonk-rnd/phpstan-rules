@@ -16,6 +16,9 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\ArgumentsNormalizer;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\FunctionCallableNode;
+use PHPStan\Node\MethodCallableNode;
+use PHPStan\Node\StaticMethodCallableNode;
 use PHPStan\Reflection\ExtendedMethodReflection;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Reflection\ParametersAcceptor;
@@ -36,7 +39,7 @@ use function is_string;
 use function sprintf;
 
 /**
- * @implements Rule<CallLike>
+ * @implements Rule<Node>
  */
 class ForbidCustomFunctionsRule implements Rule
 {
@@ -89,7 +92,7 @@ class ForbidCustomFunctionsRule implements Rule
 
     public function getNodeType(): string
     {
-        return CallLike::class;
+        return Node::class;
     }
 
     /**
@@ -97,6 +100,10 @@ class ForbidCustomFunctionsRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
+        if ($this->isFirstClassCallableNode($node)) {
+            $node = $node->getOriginalNode(); // @phpstan-ignore shipmonk.variableTypeOverwritten
+        }
+
         if ($node instanceof FuncCall) {
             return $this->validateFunctionCall($node, $scope);
         }
@@ -310,6 +317,10 @@ class ForbidCustomFunctionsRule implements Rule
      */
     private function validateCallLikeArguments(Type $caller, string $methodName, CallLike $node, Scope $scope): array
     {
+        if ($node->isFirstClassCallable()) {
+            return [];
+        }
+
         $errors = [];
 
         foreach ($caller->getObjectTypeOrClassStringObjectType()->getObjectClassNames() as $className) {
@@ -360,6 +371,10 @@ class ForbidCustomFunctionsRule implements Rule
      */
     private function validateFunctionArguments(string $functionName, FuncCall $node, Scope $scope): array
     {
+        if ($node->isFirstClassCallable()) {
+            return [];
+        }
+
         $functionReflection = $this->getFunctionReflection(new Name($functionName), $scope);
 
         if ($functionReflection === null) {
@@ -412,6 +427,16 @@ class ForbidCustomFunctionsRule implements Rule
         }
 
         return $scope->getType($new->class);
+    }
+
+    /**
+     * @phpstan-assert-if-true FunctionCallableNode|MethodCallableNode|StaticMethodCallableNode $node
+     */
+    private function isFirstClassCallableNode(Node $node): bool
+    {
+        return $node instanceof FunctionCallableNode
+            || $node instanceof MethodCallableNode
+            || $node instanceof StaticMethodCallableNode;
     }
 
 }
