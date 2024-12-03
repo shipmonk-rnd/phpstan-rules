@@ -10,10 +10,11 @@ parameters:
             function: 'sleep'
             message: 'Description 0'
 
-    disallowedMethodCalls:
         -
             method: 'ForbidCustomFunctionsRule\forbidden_namespaced_function'
             message: 'Description 1'
+
+    disallowedMethodCalls:
         -
             method: 'ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods::*'
             message: 'Description 2'

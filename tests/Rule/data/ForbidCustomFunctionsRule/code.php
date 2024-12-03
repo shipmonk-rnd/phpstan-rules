@@ -156,7 +156,7 @@ class Test
         SomeClass::forbiddenStaticMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
         SomeClass::forbiddenStaticMethod(...);
 
-        forbidden_namespaced_function();
+        forbidden_namespaced_function(); // error: Method ForbidCustomFunctionsRule\forbidden_namespaced_function() (as forbidden_namespaced_function()) is forbidden. Description 1
         forbidden_namespaced_function(...);
 
         $forbiddenClassName = 'ForbidCustomFunctionsRule\ClassWithForbiddenConstructor';
