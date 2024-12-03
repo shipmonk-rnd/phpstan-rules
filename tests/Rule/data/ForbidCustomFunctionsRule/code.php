@@ -143,6 +143,9 @@ class Test
         $forbiddenConstructor->foo();
         $union->forbiddenMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
 
+        new class {};
+        new class extends ClassWithForbiddenConstructor {}; // error: Method ForbidCustomFunctionsRule\ClassWithForbiddenConstructor::__construct() is forbidden. Description 3
+        new class extends ClassWithForbiddenAllMethods {}; // error: Class ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods is forbidden. Description 2
         new ClassWithForbiddenConstructor(); // error: Method ForbidCustomFunctionsRule\ClassWithForbiddenConstructor::__construct() is forbidden. Description 3
         new ClassWithForbiddenAllMethods(); // error: Class ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods is forbidden. Description 2
 
