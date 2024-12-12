@@ -65,99 +65,99 @@ class Test
         ChildOfClassWithForbiddenAllMethods $forbiddenClassChild,
         SomeInterface $interface
     ) {
-        sleep(...); // error: Function sleep() is forbidden. Description 0
-        sleep(0); // error: Function sleep() is forbidden. Description 0
-        array_map('sleep', $array); // error: Function sleep() is forbidden. Description 0
-        array_map(array: $array, callback: 'sleep'); // error: Function sleep() is forbidden. Description 0
-        array_map([$class, 'forbiddenMethod'], $array); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
-        array_map([$class, 'forbiddenStaticMethod'], $array); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
+        sleep(...);
+        sleep(0); // error: Method sleep() is forbidden. Description 0
+        array_map('sleep', $array);
+        array_map(array: $array, callback: 'sleep');
+        array_map([$class, 'forbiddenMethod'], $array);
+        array_map([$class, 'forbiddenStaticMethod'], $array);
 
         strlen('sleep'); // not used in callable context
         [$class, 'forbiddenMethod']; // not used in callable context
         [$class, 'forbiddenStaticMethod']; // not used in callable context
 
         $this->acceptCallable('sleep', [], 'x');
-        $this->acceptCallable('x', [], 'sleep'); // error: Function sleep() is forbidden. Description 0
-        $this->acceptCallable(callable: 'sleep'); // error: Function sleep() is forbidden. Description 0
+        $this->acceptCallable('x', [], 'sleep');
+        $this->acceptCallable(callable: 'sleep');
         $this->acceptCallable(string: 'sleep');
         $this->acceptCallable(callable: 'strlen', array: [], string: 'sleep');
-        $this->acceptCallable('x', [], [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
-        $this->acceptCallable(callable: [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        $this->acceptCallable('x', [], [$class, 'forbiddenMethod']);
+        $this->acceptCallable(callable: [$class, 'forbiddenMethod']);
 
         self::acceptCallableStatic('sleep', [], 'x');
-        self::acceptCallableStatic('x', [], 'sleep'); // error: Function sleep() is forbidden. Description 0
-        self::acceptCallableStatic(callable: 'sleep'); // error: Function sleep() is forbidden. Description 0
+        self::acceptCallableStatic('x', [], 'sleep');
+        self::acceptCallableStatic(callable: 'sleep');
         self::acceptCallableStatic(string: 'sleep');
         self::acceptCallableStatic(callable: 'strlen', array: [], string: 'sleep');
-        self::acceptCallableStatic('x', [], [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
-        self::acceptCallableStatic(callable: [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        self::acceptCallableStatic('x', [], [$class, 'forbiddenMethod']);
+        self::acceptCallableStatic(callable: [$class, 'forbiddenMethod']);
 
         $self = self::class;
 
         $self::acceptCallableStatic('sleep', [], 'x');
-        $self::acceptCallableStatic('x', [], 'sleep'); // error: Function sleep() is forbidden. Description 0
-        $self::acceptCallableStatic(callable: 'sleep'); // error: Function sleep() is forbidden. Description 0
+        $self::acceptCallableStatic('x', [], 'sleep');
+        $self::acceptCallableStatic(callable: 'sleep');
         $self::acceptCallableStatic(string: 'sleep');
         $self::acceptCallableStatic(callable: 'strlen', array: [], string: 'sleep');
-        $self::acceptCallableStatic('x', [], [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
-        $self::acceptCallableStatic(callable: [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        $self::acceptCallableStatic('x', [], [$class, 'forbiddenMethod']);
+        $self::acceptCallableStatic(callable: [$class, 'forbiddenMethod']);
 
         new AcceptCallable('sleep', [], 'x');
-        new AcceptCallable('x', [], 'sleep'); // error: Function sleep() is forbidden. Description 0
-        new AcceptCallable(callable: 'sleep'); // error: Function sleep() is forbidden. Description 0
+        new AcceptCallable('x', [], 'sleep');
+        new AcceptCallable(callable: 'sleep');
         new AcceptCallable(string: 'sleep');
         new AcceptCallable(callable: 'strlen', array: [], string: 'sleep');
-        new AcceptCallable('x', [], [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
-        new AcceptCallable(callable: [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        new AcceptCallable('x', [], [$class, 'forbiddenMethod']);
+        new AcceptCallable(callable: [$class, 'forbiddenMethod']);
 
         $acceptCallableClass = AcceptCallable::class;
 
         new $acceptCallableClass('sleep', [], 'x');
-        new $acceptCallableClass('x', [], 'sleep'); // error: Function sleep() is forbidden. Description 0
-        new $acceptCallableClass(callable: 'sleep'); // error: Function sleep() is forbidden. Description 0
+        new $acceptCallableClass('x', [], 'sleep');
+        new $acceptCallableClass(callable: 'sleep');
         new $acceptCallableClass(string: 'sleep');
         new $acceptCallableClass(callable: 'strlen', array: [], string: 'sleep');
-        new $acceptCallableClass('x', [], [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
-        new $acceptCallableClass(callable: [$class, 'forbiddenMethod']); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        new $acceptCallableClass('x', [], [$class, 'forbiddenMethod']);
+        new $acceptCallableClass(callable: [$class, 'forbiddenMethod']);
 
         new class ('sleep', [], 'x') extends AcceptCallable {};
-        new class ('x', [], 'sleep') extends AcceptCallable {}; // error: Function sleep() is forbidden. Description 0
-        new class (callable: 'sleep') extends AcceptCallable {}; // error: Function sleep() is forbidden. Description 0
+        new class ('x', [], 'sleep') extends AcceptCallable {};
+        new class (callable: 'sleep') extends AcceptCallable {};
         new class (string: 'sleep') extends AcceptCallable {};
         new class (callable: 'strlen', array: [], string: 'sleep') extends AcceptCallable {};
-        new class ('x', [], [$class, 'forbiddenMethod']) extends AcceptCallable {}; // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
-        new class (callable: [$class, 'forbiddenMethod']) extends AcceptCallable {}; // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        new class ('x', [], [$class, 'forbiddenMethod']) extends AcceptCallable {};
+        new class (callable: [$class, 'forbiddenMethod']) extends AcceptCallable {};
 
         $class->allowedMethod();
         $class->forbiddenMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
         $class?->forbiddenMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
-        $class->forbiddenMethod(...); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        $class->forbiddenMethod(...);
         $class->allowedInterfaceMethod();
-        $class->forbiddenInterfaceMethod(); // error: Method ForbidCustomFunctionsRule\SomeInterface::forbiddenInterfaceMethod() is forbidden. Description 6
-        $class->forbiddenMethodOfParent(); // error: Method ForbidCustomFunctionsRule\SomeParent::forbiddenMethodOfParent() is forbidden. Description 8
+        $class->forbiddenInterfaceMethod(); // error: Method ForbidCustomFunctionsRule\SomeInterface::forbiddenInterfaceMethod() (as ForbidCustomFunctionsRule\SomeClass::forbiddenInterfaceMethod()) is forbidden. Description 6
+        $class->forbiddenMethodOfParent();
 
-        $forbiddenClass->foo(); // error: Class ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods is forbidden. Description 2
-        $forbiddenClass->bar(); // error: Class ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods is forbidden. Description 2
-        $forbiddenClassChild->baz(); // error: Class ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods is forbidden. Description 2
+        $forbiddenClass->foo(); // error: Method ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods::foo() is forbidden. Description 2. [ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods::foo() matches ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods::*()]
+        $forbiddenClass->bar(); // error: Method ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods::bar() is forbidden. Description 2. [ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods::bar() matches ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods::*()]
+        $forbiddenClassChild->baz();
 
         $forbiddenConstructor->foo();
-        $union->forbiddenMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
+        $union->forbiddenMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() (as {ForbidCustomFunctionsRule\SomeClass,ForbidCustomFunctionsRule\AnotherClass}::forbiddenMethod()) is forbidden. Description 4
 
         new class {};
-        new class extends ClassWithForbiddenConstructor {}; // error: Method ForbidCustomFunctionsRule\ClassWithForbiddenConstructor::__construct() is forbidden. Description 3
-        new class extends ClassWithForbiddenAllMethods {}; // error: Class ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods is forbidden. Description 2
+        new class extends ClassWithForbiddenConstructor {};
+        new class extends ClassWithForbiddenAllMethods {};
         new ClassWithForbiddenConstructor(); // error: Method ForbidCustomFunctionsRule\ClassWithForbiddenConstructor::__construct() is forbidden. Description 3
-        new ClassWithForbiddenAllMethods(); // error: Class ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods is forbidden. Description 2
+        new ClassWithForbiddenAllMethods(); // error: Method ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods::__construct() is forbidden. Description 2. [ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods::__construct() matches ForbidCustomFunctionsRule\ClassWithForbiddenAllMethods::*()]
 
         $interface->allowedInterfaceMethod();
         $interface->forbiddenInterfaceMethod(); // error: Method ForbidCustomFunctionsRule\SomeInterface::forbiddenInterfaceMethod() is forbidden. Description 6
 
-        SomeClass::forbiddenInterfaceStaticMethod(); // error: Method ForbidCustomFunctionsRule\SomeInterface::forbiddenInterfaceStaticMethod() is forbidden. Description 7
+        SomeClass::forbiddenInterfaceStaticMethod(); // error: Method ForbidCustomFunctionsRule\SomeInterface::forbiddenInterfaceStaticMethod() (as ForbidCustomFunctionsRule\SomeClass::forbiddenInterfaceStaticMethod()) is forbidden. Description 7
         SomeClass::forbiddenStaticMethod(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
-        SomeClass::forbiddenStaticMethod(...); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
+        SomeClass::forbiddenStaticMethod(...);
 
-        forbidden_namespaced_function(); // error: Function ForbidCustomFunctionsRule\forbidden_namespaced_function() is forbidden. Description 1
-        forbidden_namespaced_function(...); // error: Function ForbidCustomFunctionsRule\forbidden_namespaced_function() is forbidden. Description 1
+        forbidden_namespaced_function(); // error: Method ForbidCustomFunctionsRule\forbidden_namespaced_function() (as forbidden_namespaced_function()) is forbidden. Description 1
+        forbidden_namespaced_function(...);
 
         $forbiddenClassName = 'ForbidCustomFunctionsRule\ClassWithForbiddenConstructor';
         $forbiddenMethodName = 'forbiddenMethod';
@@ -165,14 +165,14 @@ class Test
         $forbiddenGlobalFunctionName = 'sleep';
         $forbiddenFunctionName = 'ForbidCustomFunctionsRule\forbidden_namespaced_function';
 
-        $forbiddenGlobalFunctionName(); // error: Function sleep() is forbidden. Description 0
-        $forbiddenFunctionName(); // error: Function ForbidCustomFunctionsRule\forbidden_namespaced_function() is forbidden. Description 1
-        $class->$forbiddenMethodName(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
-        $class::$forbiddenStaticMethodName(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
-        $class->getSelf()->$forbiddenMethodName(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenMethod() is forbidden. Description 4
-        $class->getSelf()::$forbiddenStaticMethodName(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
-        $classString::$forbiddenStaticMethodName(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
-        $classStringOrTheClass::$forbiddenStaticMethodName(); // error: Method ForbidCustomFunctionsRule\SomeClass::forbiddenStaticMethod() is forbidden. Description 5
+        $forbiddenGlobalFunctionName();
+        $forbiddenFunctionName();
+        $class->$forbiddenMethodName();
+        $class::$forbiddenStaticMethodName();
+        $class->getSelf()->$forbiddenMethodName();
+        $class->getSelf()::$forbiddenStaticMethodName();
+        $classString::$forbiddenStaticMethodName();
+        $classStringOrTheClass::$forbiddenStaticMethodName();
         new $forbiddenClassName(); // error: Method ForbidCustomFunctionsRule\ClassWithForbiddenConstructor::__construct() is forbidden. Description 3
     }
 

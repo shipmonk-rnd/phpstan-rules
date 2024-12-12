@@ -23,7 +23,8 @@
         "shipmonk/composer-dependency-analyser": "^1.7.0",
         "shipmonk/dead-code-detector": "^0.6.0",
         "shipmonk/name-collision-detector": "^2.1.1",
-        "slevomat/coding-standard": "^8.15.0"
+        "slevomat/coding-standard": "^8.15.0",
+        "spaze/phpstan-disallowed-calls": "^4.0"
     },
     "autoload": {
         "psr-4": {
