@@ -60,10 +60,10 @@ class ForbidVariableTypeOverwritingRule implements Rule
             return [];
         }
 
-        if (
-            !$previousVariableType->isSuperTypeOf($newVariableType)->yes() // allow narrowing
-            && !$newVariableType->isSuperTypeOf($previousVariableType)->yes() // allow generalization
-        ) {
+        $narrowing = $previousVariableType->accepts($newVariableType, true)->yes();
+        $generalization = $newVariableType->accepts($previousVariableType, true)->yes();
+
+        if (!$narrowing && !$generalization) {
             $error = RuleErrorBuilder::message("Overwriting variable \$$variableName while changing its type from {$previousVariableType->describe(VerbosityLevel::precise())} to {$newVariableType->describe(VerbosityLevel::precise())}")
                 ->identifier('shipmonk.variableTypeOverwritten')
                 ->build();

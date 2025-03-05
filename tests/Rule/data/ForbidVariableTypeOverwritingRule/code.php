@@ -151,3 +151,11 @@ function testEnumCaseChange() {
 function testIntToInt(int $positive, int $negative) {
     $positive = $negative;
 }
+
+function testFloatToInt(float $float, int $int) {
+    $float = $int;
+}
+
+function testFIntToFloat(int $int, float $float) {
+    $int = $float;
+}
