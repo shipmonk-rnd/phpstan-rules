@@ -2,6 +2,17 @@
 
 namespace ForbidVariableTypeOverwritingRule;
 
+/**
+ * Make PHPStan lose info about possible descendants (new Foo)
+ *
+ * @template T
+ * @param T
+ * @return T
+ */
+function passThru($iterable) {
+    return $iterable;
+}
+
 interface SomeInterface {
 
 }
@@ -39,14 +50,14 @@ function testGeneralizationAndNarrowing(
     ChildClass1 $childClass1,
     ChildClass2 $childClass2,
 ) {
-    $childClass1 = new ParentClass();
+    $childClass1 = passThru(new ParentClass());
     $parentClass = new ChildClass2();
     $childClass2 = new ChildClass1(); // error: Overwriting variable $childClass2 while changing its type from ForbidVariableTypeOverwritingRule\ChildClass2 to ForbidVariableTypeOverwritingRule\ChildClass1
 
     $object = new ParentClass();
     $intOrString1 = 1;
     $intOrString2 = []; // error: Overwriting variable $intOrString2 while changing its type from int|string to array{}
-    $classWithInterface1 = new ParentClass();
+    $classWithInterface1 = passThru(new ParentClass());
     $classWithInterface2 = new AnotherClassWithInterface(); // error: Overwriting variable $classWithInterface2 while changing its type from ForbidVariableTypeOverwritingRule\ParentClass&ForbidVariableTypeOverwritingRule\SomeInterface to ForbidVariableTypeOverwritingRule\AnotherClassWithInterface
     $classWithInterface3 = $interface;
 }
