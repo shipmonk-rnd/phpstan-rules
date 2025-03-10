@@ -11,7 +11,7 @@
     ],
     "require": {
         "php": "^7.4 || ^8.0",
-        "phpstan/phpstan": "^2.0"
+        "phpstan/phpstan": "^2.1.8"
     },
     "require-dev": {
         "editorconfig-checker/editorconfig-checker": "^10.6.0",
