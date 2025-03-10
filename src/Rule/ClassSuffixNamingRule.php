@@ -19,6 +19,8 @@ use function substr_compare;
 class ClassSuffixNamingRule implements Rule
 {
 
+    private ReflectionProvider $reflectionProvider;
+
     /**
      * @var array<class-string, string>
      */
@@ -35,6 +37,7 @@ class ClassSuffixNamingRule implements Rule
             }
         }
 
+        $this->reflectionProvider = $reflectionProvider;
         $this->superclassToSuffixMapping = $superclassToSuffixMapping;
     }
 
@@ -63,7 +66,9 @@ class ClassSuffixNamingRule implements Rule
         }
 
         foreach ($this->superclassToSuffixMapping as $superClass => $suffix) {
-            if (!$classReflection->isSubclassOf($superClass)) {
+            $superClassReflection = $this->reflectionProvider->getClass($superClass);
+
+            if (!$classReflection->isSubclassOfClass($superClassReflection)) {
                 continue;
             }
 

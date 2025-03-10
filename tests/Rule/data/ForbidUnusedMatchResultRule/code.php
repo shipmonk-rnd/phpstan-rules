@@ -88,7 +88,7 @@ class Clazz {
             true => 1,
         };
 
-        match ($int) { // error: Unused match result detected, possible returns: Exception
+        match ($int) { // error: Unused match result detected, possible returns: Exception|LogicException|RuntimeException
             0 => new LogicException(),
             1 => new RuntimeException(),
             default => new Exception(),

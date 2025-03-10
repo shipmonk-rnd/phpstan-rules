@@ -112,7 +112,7 @@ class ForbidVariableTypeOverwritingRule implements Rule
             $newInnerTypes = [];
 
             foreach ($type->getTypes() as $innerType) {
-                if ($innerType instanceof AccessoryType) { // @phpstan-ignore phpstanApi.instanceofType
+                if ($innerType instanceof AccessoryType) {
                     continue;
                 }
 
