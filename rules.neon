@@ -324,6 +324,8 @@ services:
             allowNumericString: %shipmonkRules.forbidArithmeticOperationOnNonNumber.allowNumericString%
     -
         class: ShipMonk\PHPStan\Rule\ForbidCastRule
+        arguments:
+            blacklist: %shipmonkRules.forbidCast.blacklist%
     -
         class: ShipMonk\PHPStan\Rule\ForbidCheckedExceptionInCallableRule
         arguments:
