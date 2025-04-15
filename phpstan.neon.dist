@@ -9,7 +9,9 @@ includes:
     - ./rules.neon
 
 parameters:
-    phpVersion: 70400
+    phpVersion:
+        min: 70400
+        max: 80499
     internalErrorsCountLimit: 1
     paths:
         - src
