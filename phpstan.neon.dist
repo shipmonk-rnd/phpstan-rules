@@ -55,6 +55,11 @@ parameters:
             reportUnmatched: false # fails only for PHP < 8 https://github.com/phpstan/phpstan/issues/6290
 
         -
+            message: "#Call to method PHPStan\\\\Reflection\\\\ClassReflection::isEnum\\(\\) will always evaluate to false\\.#"
+            path: src/Rule/ForbidProtectedEnumMethodRule.php
+            reportUnmatched: false # fails only for PHP < 8 https://github.com/phpstan/phpstan-src/pull/3925/files#diff-df58b1c8117cfa9b77453fb2cc8fdeeb0803ad0acfd2dec85a441a8fa5a53c06R24
+
+        -
             message: "#but it's missing from the PHPDoc @throws tag\\.$#" # allow uncatched exceptions in tests
             path: tests/*
 
