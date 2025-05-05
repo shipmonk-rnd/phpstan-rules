@@ -7,6 +7,7 @@ use PhpParser\Node\Arg;
 use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
+use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\NullsafeMethodCall;
@@ -94,6 +95,7 @@ class UnusedExceptionVisitor extends NodeVisitorAbstract
             || $parent instanceof Ternary
             || $parent instanceof Yield_
             || $parent instanceof Throw_
+            || $parent instanceof ClassConstFetch
             || $parent instanceof MatchArm;
     }
 

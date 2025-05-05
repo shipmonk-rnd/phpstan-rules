@@ -59,6 +59,11 @@ class ExampleClass
         };
     }
 
+    public function okUsage8(): void
+    {
+        echo $this->getException()::class;
+    }
+
     public function getExceptionAtRuntime(): RuntimeException
     {
         return new RuntimeException();
