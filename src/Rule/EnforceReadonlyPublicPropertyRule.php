@@ -52,6 +52,22 @@ class EnforceReadonlyPublicPropertyRule implements Rule
             return [];
         }
 
+        if ($this->phpVersion->supportsPropertyHooks()) {
+            foreach ($node->getHooks() as $hook) {
+                if ($hook->name->toString() === 'set') {
+                    $error = RuleErrorBuilder::message("Public property `{$node->getName()}` cannot have a setter hook, because is mark as readonly.")
+                        ->identifier('shipmonk.publicPropertyNotReadonly')
+                        ->build();
+
+                    return [$error];
+                }
+            }
+
+            if ($classReflection->isInterface()) {
+                return [];
+            }
+        }
+
         $error = RuleErrorBuilder::message("Public property `{$node->getName()}` not marked as readonly.")
             ->identifier('shipmonk.publicPropertyNotReadonly')
             ->build();

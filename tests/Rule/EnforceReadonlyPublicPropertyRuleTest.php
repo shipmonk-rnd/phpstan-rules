@@ -5,6 +5,7 @@ namespace ShipMonk\PHPStan\Rule;
 use PHPStan\Php\PhpVersion;
 use PHPStan\Rules\Rule;
 use ShipMonk\PHPStan\RuleTestCase;
+use const PHP_VERSION_ID;
 
 /**
  * @extends RuleTestCase<EnforceReadonlyPublicPropertyRule>
@@ -18,6 +19,16 @@ class EnforceReadonlyPublicPropertyRuleTest extends RuleTestCase
     {
         self::assertNotNull($this->phpVersion);
         return new EnforceReadonlyPublicPropertyRule($this->phpVersion);
+    }
+
+    public function testPhp84(): void
+    {
+        if (PHP_VERSION_ID < 80_400) {
+            self::markTestSkipped('Test requires PHP 8.4.');
+        }
+
+        $this->phpVersion = $this->createPhpVersion(80_400);
+        $this->analyseFile(__DIR__ . '/data/EnforceReadonlyPublicPropertyRule/code-84.php');
     }
 
     public function testPhp81(): void
