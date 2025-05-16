@@ -42,10 +42,10 @@ class EnforceReadonlyPublicPropertyRule implements Rule
             return [];
         }
 
-        $classReflection = $scope->getClassReflection();
+        $classReflection = $node->getClassReflection();
 
-        if ($classReflection === null) {
-            return [];
+        if ($classReflection->isInterface()) {
+            return []; // unable to mark hooked properties on interfaces as readonly
         }
 
         if (($classReflection->getNativeReflection()->getModifiers() & 65_536) !== 0) { // readonly class, since PHP 8.2
