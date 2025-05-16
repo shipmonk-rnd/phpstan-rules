@@ -20,6 +20,12 @@ class EnforceReadonlyPublicPropertyRuleTest extends RuleTestCase
         return new EnforceReadonlyPublicPropertyRule($this->phpVersion);
     }
 
+    public function testPhp84(): void
+    {
+        $this->phpVersion = $this->createPhpVersion(80_400);
+        $this->analyseFile(__DIR__ . '/data/EnforceReadonlyPublicPropertyRule/code-84.php');
+    }
+
     public function testPhp81(): void
     {
         $this->phpVersion = $this->createPhpVersion(80_100);
