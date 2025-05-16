@@ -50,3 +50,10 @@ interface MyInterface {
     public string $key { get; }
 }
 
+class ImplementingClass implements MyInterface {
+    public string $key; // error: Public property `key` not marked as readonly.
+}
+
+class ImplementingClass2 implements MyInterface {
+    public readonly string $key;
+}
