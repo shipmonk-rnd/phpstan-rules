@@ -38,15 +38,11 @@ class EnforceReadonlyPublicPropertyRule implements Rule
             return [];
         }
 
-        if (!$node->isPublic() || $node->isReadOnly()) {
+        if (!$node->isPublic() || $node->isReadOnly() || $node->hasHooks()) {
             return [];
         }
 
-        $classReflection = $scope->getClassReflection();
-
-        if ($classReflection === null) {
-            return [];
-        }
+        $classReflection = $node->getClassReflection();
 
         if (($classReflection->getNativeReflection()->getModifiers() & 65_536) !== 0) { // readonly class, since PHP 8.2
             return [];
