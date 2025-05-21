@@ -43,6 +43,12 @@ class EnforceReadonlyPublicPropertyRuleTest extends RuleTestCase
         $this->analyseFile(__DIR__ . '/data/EnforceReadonlyPublicPropertyRule/code-80.php');
     }
 
+    public function testNetteInject(): void
+    {
+        $this->phpVersion = $this->createPhpVersion(80_100);
+        $this->analyseFile(__DIR__ . '/data/EnforceReadonlyPublicPropertyRule/code-nette-inject.php');
+    }
+
     private function createPhpVersion(int $version): PhpVersion
     {
         return new PhpVersion($version); // @phpstan-ignore phpstanApi.constructor
