@@ -5,6 +5,7 @@ namespace ShipMonk\PHPStan\Visitor;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\ArrayItem;
+use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\AssignOp;
 use PhpParser\Node\Expr\BinaryOp\Coalesce;
@@ -86,7 +87,8 @@ class UnusedMatchVisitor extends NodeVisitorAbstract
             || $parent instanceof Ternary
             || $parent instanceof MatchArm
             || $parent instanceof Yield_
-            || $parent instanceof YieldFrom;
+            || $parent instanceof YieldFrom
+            || $parent instanceof ArrowFunction;
     }
 
 }
