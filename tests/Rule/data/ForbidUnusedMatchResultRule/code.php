@@ -70,6 +70,18 @@ class Clazz {
             1 => 'y',
         } : null;
 
+        function ($int) {
+            return match ($int) {
+                0 => 'x',
+                1 => 'y',
+            };
+        };
+
+        fn () => match ($int) {
+            0 => 'x',
+            1 => 'y',
+        };
+
         return match ($bool) {
             false => 1,
             true => 2,
