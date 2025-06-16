@@ -56,7 +56,10 @@ class ForbidNullInAssignOperationsRule implements Rule
      * @param AssignOp $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         $exprType = $scope->getType($node->expr);
         $operator = $this->getOperatorString($node);

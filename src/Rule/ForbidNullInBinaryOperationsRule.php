@@ -42,7 +42,10 @@ class ForbidNullInBinaryOperationsRule implements Rule
      * @param BinaryOp $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if (in_array($node->getOperatorSigil(), $this->blacklist, true)) {
             return [];

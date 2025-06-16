@@ -34,7 +34,10 @@ class ForbidNullInInterpolatedStringRule implements Rule
      * @param InterpolatedString $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         $errors = [];
 

@@ -29,7 +29,10 @@ class ClassSuffixNamingRule implements Rule
     /**
      * @param array<class-string, string> $superclassToSuffixMapping
      */
-    public function __construct(ReflectionProvider $reflectionProvider, array $superclassToSuffixMapping = [])
+    public function __construct(
+        ReflectionProvider $reflectionProvider,
+        array $superclassToSuffixMapping = []
+    )
     {
         foreach ($superclassToSuffixMapping as $className => $suffix) {
             if (!$reflectionProvider->hasClass($className)) {

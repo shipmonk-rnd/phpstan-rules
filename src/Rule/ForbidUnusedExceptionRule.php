@@ -38,7 +38,10 @@ class ForbidUnusedExceptionRule implements Rule
      * @param Expr $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if ($node instanceof MethodCall || $node instanceof StaticCall) {
             return $this->processCall($node, $scope);
@@ -55,7 +58,10 @@ class ForbidUnusedExceptionRule implements Rule
      * @param MethodCall|StaticCall $node
      * @return list<IdentifierRuleError>
      */
-    private function processCall(CallLike $node, Scope $scope): array
+    private function processCall(
+        CallLike $node,
+        Scope $scope
+    ): array
     {
         if (!$this->isException($node, $scope)) {
             return [];
@@ -74,7 +80,10 @@ class ForbidUnusedExceptionRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function processNew(New_ $node, Scope $scope): array
+    private function processNew(
+        New_ $node,
+        Scope $scope
+    ): array
     {
         if (!$this->isException($node, $scope)) {
             return [];
@@ -90,7 +99,10 @@ class ForbidUnusedExceptionRule implements Rule
         return [];
     }
 
-    private function isException(Expr $node, Scope $scope): bool
+    private function isException(
+        Expr $node,
+        Scope $scope
+    ): bool
     {
         $type = $scope->getType($node);
 

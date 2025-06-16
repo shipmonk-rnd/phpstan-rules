@@ -38,7 +38,10 @@ class AllowComparingOnlyComparableTypesRule implements Rule
      * @param BinaryOp $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if (
             !$node instanceof Greater
@@ -99,7 +102,10 @@ class AllowComparingOnlyComparableTypesRule implements Rule
         return true;
     }
 
-    private function isComparableTogether(Type $leftType, Type $rightType): bool
+    private function isComparableTogether(
+        Type $leftType,
+        Type $rightType
+    ): bool
     {
         $intType = new IntegerType();
         $floatType = new FloatType();
@@ -149,7 +155,10 @@ class AllowComparingOnlyComparableTypesRule implements Rule
     /**
      * @param Type[] $allowedTypes
      */
-    private function containsOnlyTypes(Type $checkedType, array $allowedTypes): bool
+    private function containsOnlyTypes(
+        Type $checkedType,
+        array $allowedTypes
+    ): bool
     {
         $allowedType = TypeCombinator::union(...$allowedTypes);
         return $allowedType->isSuperTypeOf($checkedType)->yes();

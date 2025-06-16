@@ -32,7 +32,10 @@ class EnforceReadonlyPublicPropertyRule implements Rule
      * @param ClassPropertyNode $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if (!$this->phpVersion->supportsReadOnlyProperties()) {
             return [];

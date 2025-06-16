@@ -25,7 +25,10 @@ class ForbidReturnInConstructorRule implements Rule
      * @param Return_ $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if ($scope->isInAnonymousFunction()) {
             return [];

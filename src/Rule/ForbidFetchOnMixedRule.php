@@ -29,7 +29,10 @@ class ForbidFetchOnMixedRule implements Rule
 
     private bool $checkExplicitMixed;
 
-    public function __construct(Printer $printer, bool $checkExplicitMixed)
+    public function __construct(
+        Printer $printer,
+        bool $checkExplicitMixed
+    )
     {
         $this->printer = $printer;
         $this->checkExplicitMixed = $checkExplicitMixed;
@@ -43,7 +46,10 @@ class ForbidFetchOnMixedRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if ($this->checkExplicitMixed) {
             return []; // already checked by native PHPStan
@@ -60,7 +66,10 @@ class ForbidFetchOnMixedRule implements Rule
      * @param PropertyFetch|StaticPropertyFetch|ClassConstFetch $node
      * @return list<IdentifierRuleError>
      */
-    private function processFetch(Node $node, Scope $scope): array
+    private function processFetch(
+        Node $node,
+        Scope $scope
+    ): array
     {
         $caller = $node instanceof PropertyFetch
             ? $node->var
@@ -123,7 +132,10 @@ class ForbidFetchOnMixedRule implements Rule
      *
      * @param PropertyFetch|StaticPropertyFetch|ClassConstFetch $node
      */
-    private function isObjectClassFetch(Type $callerType, Node $node): bool
+    private function isObjectClassFetch(
+        Type $callerType,
+        Node $node
+    ): bool
     {
         $isObjectWithoutClassName = $callerType->isObject()->yes() && $callerType->getObjectClassNames() === [];
 

@@ -44,7 +44,10 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if (
             $node instanceof UnaryPlus
@@ -70,7 +73,11 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function processUnary(Expr $expr, Scope $scope, string $operator): array
+    private function processUnary(
+        Expr $expr,
+        Scope $scope,
+        string $operator
+    ): array
     {
         $exprType = $scope->getType($expr);
 
@@ -92,7 +99,12 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function processBinary(Expr $left, Expr $right, Scope $scope, string $operator): array
+    private function processBinary(
+        Expr $left,
+        Expr $right,
+        Scope $scope,
+        string $operator
+    ): array
     {
         $leftType = $scope->getType($left);
         $rightType = $scope->getType($right);
@@ -130,7 +142,12 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function buildBinaryErrors(string $operator, string $type, Type $leftType, Type $rightType): array
+    private function buildBinaryErrors(
+        string $operator,
+        string $type,
+        Type $leftType,
+        Type $rightType
+    ): array
     {
         $errorMessage = sprintf(
             'Using %s over %s (%s %s %s)',

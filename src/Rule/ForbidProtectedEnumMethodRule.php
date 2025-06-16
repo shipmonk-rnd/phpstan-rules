@@ -24,7 +24,10 @@ class ForbidProtectedEnumMethodRule implements Rule
      * @param ClassMethodsNode $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if ($scope->getClassReflection() === null || !$scope->getClassReflection()->isEnum()) {
             return [];

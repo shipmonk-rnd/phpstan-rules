@@ -67,7 +67,10 @@ class EnforceNativeReturnTypehintRule implements Rule
      * @param ReturnStatementsNode $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if ($this->treatPhpDocTypesAsCertain === false) {
             return [];
@@ -202,7 +205,10 @@ class EnforceNativeReturnTypehintRule implements Rule
         return TypeCombinator::union(...$types);
     }
 
-    private function getPhpDocReturnType(Node $node, Scope $scope): ?Type
+    private function getPhpDocReturnType(
+        Node $node,
+        Scope $scope
+    ): ?Type
     {
         $docComment = $node->getDocComment();
 

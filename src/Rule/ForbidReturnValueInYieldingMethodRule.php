@@ -80,7 +80,10 @@ class ForbidReturnValueInYieldingMethodRule implements Rule
         return $errors;
     }
 
-    private function getReturnType(ReturnStatementsNode $node, Scope $scope): Type
+    private function getReturnType(
+        ReturnStatementsNode $node,
+        Scope $scope
+    ): Type
     {
         $methodReflection = $scope->getFunction();
 

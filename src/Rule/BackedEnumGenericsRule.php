@@ -27,7 +27,10 @@ class BackedEnumGenericsRule implements Rule
      * @param InClassNode $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         $classReflection = $node->getClassReflection();
         $backedEnumType = $classReflection->getBackedEnumType();
@@ -55,7 +58,10 @@ class BackedEnumGenericsRule implements Rule
         return [$error];
     }
 
-    private function hasGenericsTag(ClassReflection $classReflection, string $expectedTag): bool
+    private function hasGenericsTag(
+        ClassReflection $classReflection,
+        string $expectedTag
+    ): bool
     {
         if ($classReflection->isBackedEnum()) {
             $tags = $classReflection->getImplementsTags();

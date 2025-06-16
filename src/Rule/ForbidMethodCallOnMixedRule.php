@@ -28,7 +28,10 @@ class ForbidMethodCallOnMixedRule implements Rule
 
     private bool $checkExplicitMixed;
 
-    public function __construct(Printer $printer, bool $checkExplicitMixed)
+    public function __construct(
+        Printer $printer,
+        bool $checkExplicitMixed
+    )
     {
         $this->printer = $printer;
         $this->checkExplicitMixed = $checkExplicitMixed;
@@ -43,7 +46,10 @@ class ForbidMethodCallOnMixedRule implements Rule
      * @param CallLike $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if ($this->checkExplicitMixed) {
             return []; // already checked by native PHPStan
@@ -61,7 +67,10 @@ class ForbidMethodCallOnMixedRule implements Rule
      * @param MethodCall|StaticCall $node
      * @return list<IdentifierRuleError>
      */
-    private function checkCall(CallLike $node, Scope $scope): array
+    private function checkCall(
+        CallLike $node,
+        Scope $scope
+    ): array
     {
         $caller = $node instanceof StaticCall ? $node->class : $node->var;
 

@@ -116,7 +116,10 @@ class ForbidNotNormalizedTypeRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function checkCatchNativeType(Catch_ $node, Scope $scope): array
+    private function checkCatchNativeType(
+        Catch_ $node,
+        Scope $scope
+    ): array
     {
         $multiTypeNode = new UnionType($node->types, $node->getAttributes());
         return $this->processMultiTypePhpParserNode($multiTypeNode, $scope, 'catch statement');
@@ -159,7 +162,10 @@ class ForbidNotNormalizedTypeRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function checkPropertyNativeType(Property $node, Scope $scope): array
+    private function checkPropertyNativeType(
+        Property $node,
+        Scope $scope
+    ): array
     {
         $errors = [];
 
@@ -178,7 +184,10 @@ class ForbidNotNormalizedTypeRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function checkParamAndReturnNativeType(FunctionLike $node, Scope $scope): array
+    private function checkParamAndReturnNativeType(
+        FunctionLike $node,
+        Scope $scope
+    ): array
     {
         $errors = [];
 
@@ -239,7 +248,10 @@ class ForbidNotNormalizedTypeRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function checkInlineVarDoc(PhpParserNode $node, Scope $scope): array
+    private function checkInlineVarDoc(
+        PhpParserNode $node,
+        Scope $scope
+    ): array
     {
         $docComment = $node->getDocComment();
 
@@ -426,7 +438,10 @@ class ForbidNotNormalizedTypeRule implements Rule
     /**
      * @return list<UnionTypeNode|IntersectionTypeNode>
      */
-    private function extractUnionAndIntersectionPhpDocTypeNodes(TypeNode $typeNode, int $line): array
+    private function extractUnionAndIntersectionPhpDocTypeNodes(
+        TypeNode $typeNode,
+        int $line
+    ): array
     {
         /** @var list<UnionTypeNode|IntersectionTypeNode> $nodes */
         $nodes = [];
@@ -638,7 +653,10 @@ class ForbidNotNormalizedTypeRule implements Rule
         return implode(',', $propertyNames);
     }
 
-    private function getPhpDocLine(PhpParserNode $node, PhpDocRootNode $phpDocNode): int
+    private function getPhpDocLine(
+        PhpParserNode $node,
+        PhpDocRootNode $phpDocNode
+    ): int
     {
         /** @var int|null $phpDocTagLine */
         $phpDocTagLine = $phpDocNode->getAttribute('startLine');

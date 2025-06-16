@@ -30,7 +30,10 @@ class ForbidIncrementDecrementOnNonIntegerRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if (
             $node instanceof PostInc
@@ -48,7 +51,10 @@ class ForbidIncrementDecrementOnNonIntegerRule implements Rule
      * @param PostInc|PostDec|PreInc|PreDec $node
      * @return list<IdentifierRuleError>
      */
-    private function process(Node $node, Scope $scope): array
+    private function process(
+        Node $node,
+        Scope $scope
+    ): array
     {
         $exprType = $scope->getType($node->var);
 

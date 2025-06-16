@@ -58,7 +58,10 @@ class RequirePreviousExceptionPassRule implements Rule
      * @param TryCatch $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         $errors = [];
         $previouslyCaughtExceptionsUnion = new NeverType();
@@ -158,7 +161,10 @@ class RequirePreviousExceptionPassRule implements Rule
     /**
      * @return list<ParameterReflection>
      */
-    private function getCallLikeParameters(CallLike $node, Scope $scope): array
+    private function getCallLikeParameters(
+        CallLike $node,
+        Scope $scope
+    ): array
     {
         $methodReflection = null;
 

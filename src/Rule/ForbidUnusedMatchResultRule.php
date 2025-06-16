@@ -29,7 +29,10 @@ class ForbidUnusedMatchResultRule implements Rule
      * @param Match_ $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         $returnedTypes = [];
 

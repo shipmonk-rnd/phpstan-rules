@@ -56,9 +56,13 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
 
     /**
      * @param list<string> $checkedExceptions
+     *
      * @dataProvider provideSetup
      */
-    public function test(bool $implicitThrows, array $checkedExceptions): void
+    public function test(
+        bool $implicitThrows,
+        array $checkedExceptions
+    ): void
     {
         self::$implicitThrows = $implicitThrows;
         $this->checkedExceptions = $checkedExceptions;
