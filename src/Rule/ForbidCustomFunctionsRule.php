@@ -57,7 +57,10 @@ class ForbidCustomFunctionsRule implements Rule
     /**
      * @param array<mixed, mixed> $forbiddenFunctions
      */
-    public function __construct(array $forbiddenFunctions, ReflectionProvider $reflectionProvider)
+    public function __construct(
+        array $forbiddenFunctions,
+        ReflectionProvider $reflectionProvider
+    )
     {
         $this->reflectionProvider = $reflectionProvider;
 
@@ -98,7 +101,10 @@ class ForbidCustomFunctionsRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if ($this->isFirstClassCallableNode($node)) {
             $node = $node->getOriginalNode(); // @phpstan-ignore shipmonk.variableTypeOverwritten
@@ -141,7 +147,10 @@ class ForbidCustomFunctionsRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function validateFunctionCall(FuncCall $node, Scope $scope): array
+    private function validateFunctionCall(
+        FuncCall $node,
+        Scope $scope
+    ): array
     {
         $functionNames = $this->getFunctionNames($node->name, $scope);
 
@@ -161,7 +170,10 @@ class ForbidCustomFunctionsRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function validateCallOverExpr(string $methodName, Type $caller): array
+    private function validateCallOverExpr(
+        string $methodName,
+        Type $caller
+    ): array
     {
         $classNames = $caller->getObjectTypeOrClassStringObjectType()->getObjectClassNames();
         $errors = [];
@@ -179,7 +191,10 @@ class ForbidCustomFunctionsRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function validateMethod(string $methodName, string $className): array
+    private function validateMethod(
+        string $methodName,
+        string $className
+    ): array
     {
         if (!$this->reflectionProvider->hasClass($className)) {
             return [];
@@ -229,7 +244,10 @@ class ForbidCustomFunctionsRule implements Rule
      * @param Name|Expr $name
      * @return list<string>
      */
-    private function getFunctionNames(Node $name, Scope $scope): array
+    private function getFunctionNames(
+        Node $name,
+        Scope $scope
+    ): array
     {
         if ($name instanceof Name) {
             $functionName = $this->reflectionProvider->resolveFunctionName($name, $scope);
@@ -248,7 +266,10 @@ class ForbidCustomFunctionsRule implements Rule
      * @param Name|Expr|Identifier $name
      * @return list<string>
      */
-    private function getMethodNames(Node $name, Scope $scope): array
+    private function getMethodNames(
+        Node $name,
+        Scope $scope
+    ): array
     {
         if ($name instanceof Name) {
             return [$name->toString()];
@@ -315,7 +336,12 @@ class ForbidCustomFunctionsRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function validateCallLikeArguments(Type $caller, string $methodName, CallLike $node, Scope $scope): array
+    private function validateCallLikeArguments(
+        Type $caller,
+        string $methodName,
+        CallLike $node,
+        Scope $scope
+    ): array
     {
         if ($node->isFirstClassCallable()) {
             return [];
@@ -369,7 +395,11 @@ class ForbidCustomFunctionsRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function validateFunctionArguments(string $functionName, FuncCall $node, Scope $scope): array
+    private function validateFunctionArguments(
+        string $functionName,
+        FuncCall $node,
+        Scope $scope
+    ): array
     {
         if ($node->isFirstClassCallable()) {
             return [];
@@ -393,7 +423,11 @@ class ForbidCustomFunctionsRule implements Rule
         return $this->validateCallableArguments($orderedArgs, $parametersAcceptor, $scope);
     }
 
-    private function getMethodReflection(string $className, string $methodName, Scope $scope): ?ExtendedMethodReflection
+    private function getMethodReflection(
+        string $className,
+        string $methodName,
+        Scope $scope
+    ): ?ExtendedMethodReflection
     {
         if (!$this->reflectionProvider->hasClass($className)) {
             return null;
@@ -408,14 +442,20 @@ class ForbidCustomFunctionsRule implements Rule
         return $classReflection->getMethod($methodName, $scope);
     }
 
-    private function getFunctionReflection(Name $functionName, Scope $scope): ?FunctionReflection
+    private function getFunctionReflection(
+        Name $functionName,
+        Scope $scope
+    ): ?FunctionReflection
     {
         return $this->reflectionProvider->hasFunction($functionName, $scope)
             ? $this->reflectionProvider->getFunction($functionName, $scope)
             : null;
     }
 
-    private function getNewCaller(New_ $new, Scope $scope): Type
+    private function getNewCaller(
+        New_ $new,
+        Scope $scope
+    ): Type
     {
         if ($new->class instanceof Class_) {
             $anonymousClassReflection = $this->reflectionProvider->getAnonymousClassReflection($new->class, $scope);

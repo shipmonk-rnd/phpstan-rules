@@ -49,7 +49,10 @@ class ForbidCastRule implements Rule
      * @param Cast $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         $castString = $this->getCastString($node);
 

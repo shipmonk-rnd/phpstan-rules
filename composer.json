@@ -20,10 +20,10 @@
         "phpstan/phpstan-phpunit": "^2.0.4",
         "phpstan/phpstan-strict-rules": "^2.0.3",
         "phpunit/phpunit": "^9.6.22",
+        "shipmonk/coding-standard": "^0.1.3",
         "shipmonk/composer-dependency-analyser": "^1.8.1",
         "shipmonk/dead-code-detector": "^0.9.0",
-        "shipmonk/name-collision-detector": "^2.1.1",
-        "slevomat/coding-standard": "^8.16.0"
+        "shipmonk/name-collision-detector": "^2.1.1"
     },
     "autoload": {
         "psr-4": {

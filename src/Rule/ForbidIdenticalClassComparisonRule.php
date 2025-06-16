@@ -58,7 +58,10 @@ class ForbidIdenticalClassComparisonRule implements Rule
      * @param BinaryOp $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if (count($this->blacklist) === 0) {
             return [];
@@ -95,7 +98,10 @@ class ForbidIdenticalClassComparisonRule implements Rule
         return $errors;
     }
 
-    private function containsClass(Type $type, string $className): bool
+    private function containsClass(
+        Type $type,
+        string $className
+    ): bool
     {
         $benevolentType = TypeUtils::toBenevolentUnion($type);
 

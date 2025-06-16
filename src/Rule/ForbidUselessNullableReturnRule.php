@@ -30,7 +30,10 @@ class ForbidUselessNullableReturnRule implements Rule
      * @param ReturnStatementsNode $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         $verbosity = VerbosityLevel::precise();
         $methodReflection = $scope->getFunction();

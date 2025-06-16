@@ -352,7 +352,10 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      *
      * @param FunctionReflection|MethodReflection $reflection
      */
-    private function isImmediatelyInvokedCallable(object $reflection, ?ParameterReflection $parameter): bool
+    private function isImmediatelyInvokedCallable(
+        object $reflection,
+        ?ParameterReflection $parameter
+    ): bool
     {
         if ($parameter instanceof ExtendedParameterReflection) {
             $parameterCallImmediately = $parameter->isImmediatelyInvokedCallable();
@@ -411,7 +414,10 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         return false;
     }
 
-    private function whitelistAllowedCallables(CallLike $node, Scope $scope): void
+    private function whitelistAllowedCallables(
+        CallLike $node,
+        Scope $scope
+    ): void
     {
         if ($node instanceof MethodCall && $node->name instanceof Identifier) {
             $callerType = $scope->getType($node->var);
@@ -491,7 +497,11 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     /**
      * @param array<int, ParameterReflection> $parameters
      */
-    private function getParameterIndex(Arg $arg, int $argumentIndex, array $parameters): ?int
+    private function getParameterIndex(
+        Arg $arg,
+        int $argumentIndex,
+        array $parameters
+    ): ?int
     {
         if ($arg->name === null) {
             return $argumentIndex;
@@ -534,7 +544,10 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         return $builder->build();
     }
 
-    private function getFunctionReflection(Name $functionName, Scope $scope): ?FunctionReflection
+    private function getFunctionReflection(
+        Name $functionName,
+        Scope $scope
+    ): ?FunctionReflection
     {
         return $this->reflectionProvider->hasFunction($functionName, $scope)
             ? $this->reflectionProvider->getFunction($functionName, $scope)

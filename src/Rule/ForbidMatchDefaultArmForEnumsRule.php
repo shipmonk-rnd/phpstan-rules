@@ -25,7 +25,10 @@ class ForbidMatchDefaultArmForEnumsRule implements Rule
      * @param MatchExpressionNode $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         $matchCondition = $node->getCondition();
         $matchArgument = $scope->getType($matchCondition);

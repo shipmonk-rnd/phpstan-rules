@@ -25,7 +25,10 @@ class ForbidUnsetClassFieldRule implements Rule
      * @param Unset_ $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         foreach ($node->vars as $item) {
             if ($item instanceof PropertyFetch) {

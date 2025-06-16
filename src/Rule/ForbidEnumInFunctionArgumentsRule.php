@@ -56,7 +56,10 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
      * @param FuncCall $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if (!$node->name instanceof Name) {
             return [];
@@ -109,7 +112,10 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
         return [];
     }
 
-    private function matchesPosition(int $position, int $forbiddenArgumentPosition): bool
+    private function matchesPosition(
+        int $position,
+        int $forbiddenArgumentPosition
+    ): bool
     {
         return $position === $forbiddenArgumentPosition;
     }
@@ -133,7 +139,10 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
         return $type->isEnum()->yes();
     }
 
-    private function getFunctionReflection(Name $functionName, Scope $scope): ?FunctionReflection
+    private function getFunctionReflection(
+        Name $functionName,
+        Scope $scope
+    ): ?FunctionReflection
     {
         return $this->reflectionProvider->hasFunction($functionName, $scope)
             ? $this->reflectionProvider->getFunction($functionName, $scope)

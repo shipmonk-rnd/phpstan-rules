@@ -37,7 +37,10 @@ class ForbidVariableTypeOverwritingRule implements Rule
      * @param Assign $node
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if (!$node->var instanceof Variable) {
             return []; // array append not yet supported

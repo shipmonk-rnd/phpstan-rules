@@ -44,7 +44,10 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    public function processNode(Node $node, Scope $scope): array
+    public function processNode(
+        Node $node,
+        Scope $scope
+    ): array
     {
         if ($node instanceof FunctionLike) {
             return [
@@ -63,7 +66,10 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function checkReturnTypes(FunctionLike $node, Scope $scope): array
+    private function checkReturnTypes(
+        FunctionLike $node,
+        Scope $scope
+    ): array
     {
         $phpDocReturnType = $this->getFunctionPhpDocReturnType($node, $scope);
         $nativeReturnType = $this->getFunctionNativeReturnType($node, $scope);
@@ -74,7 +80,10 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function checkPropertyTypes(Property $node, Scope $scope): array
+    private function checkPropertyTypes(
+        Property $node,
+        Scope $scope
+    ): array
     {
         $phpDocReturnType = $this->getPropertyPhpDocType($node, $scope);
         $nativeReturnType = $this->getParamOrPropertyNativeType($node, $scope);
@@ -85,7 +94,10 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     /**
      * @return list<IdentifierRuleError>
      */
-    private function checkParamTypes(FunctionLike $node, Scope $scope): array
+    private function checkParamTypes(
+        FunctionLike $node,
+        Scope $scope
+    ): array
     {
         $errors = [];
 
@@ -111,7 +123,10 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
     /**
      * @param Param|Property $node
      */
-    private function getParamOrPropertyNativeType(Node $node, Scope $scope): ?Type
+    private function getParamOrPropertyNativeType(
+        Node $node,
+        Scope $scope
+    ): ?Type
     {
         if ($node->type === null) {
             return null;
@@ -120,7 +135,10 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
         return $scope->getFunctionType($node->type, false, false);
     }
 
-    private function getFunctionNativeReturnType(FunctionLike $node, Scope $scope): ?Type
+    private function getFunctionNativeReturnType(
+        FunctionLike $node,
+        Scope $scope
+    ): ?Type
     {
         if ($node->getReturnType() === null) {
             return null;
@@ -129,7 +147,10 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
         return $scope->getFunctionType($node->getReturnType(), false, false);
     }
 
-    private function getPropertyPhpDocType(Property $node, Scope $scope): ?Type
+    private function getPropertyPhpDocType(
+        Property $node,
+        Scope $scope
+    ): ?Type
     {
         $resolvedPhpDoc = $this->resolvePhpDoc($node, $scope);
 
@@ -146,7 +167,10 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
         return null;
     }
 
-    private function getFunctionPhpDocReturnType(FunctionLike $node, Scope $scope): ?Type
+    private function getFunctionPhpDocReturnType(
+        FunctionLike $node,
+        Scope $scope
+    ): ?Type
     {
         $resolvedPhpDoc = $this->resolvePhpDoc($node, $scope);
 
@@ -163,7 +187,10 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
         return $returnTag->getType();
     }
 
-    private function resolvePhpDoc(Node $node, Scope $scope): ?ResolvedPhpDocBlock
+    private function resolvePhpDoc(
+        Node $node,
+        Scope $scope
+    ): ?ResolvedPhpDocBlock
     {
         $docComment = $node->getDocComment();
 
@@ -180,7 +207,11 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
         );
     }
 
-    private function getPhpDocParamType(FunctionLike $node, Scope $scope, string $parameterName): ?Type
+    private function getPhpDocParamType(
+        FunctionLike $node,
+        Scope $scope,
+        string $parameterName
+    ): ?Type
     {
         $resolvedPhpDoc = $this->resolvePhpDoc($node, $scope);
 
