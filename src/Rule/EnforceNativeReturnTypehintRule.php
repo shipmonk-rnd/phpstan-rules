@@ -7,6 +7,7 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\Throw_;
 use PhpParser\Node\Stmt\Expression;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\PropertyHookReturnStatementsNode;
 use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Php\PhpVersion;
 use PHPStan\Rules\IdentifierRuleError;
@@ -78,6 +79,10 @@ class EnforceNativeReturnTypehintRule implements Rule
 
         if ($node->hasNativeReturnTypehint()) {
             return [];
+        }
+
+        if ($node instanceof PropertyHookReturnStatementsNode) {
+            return []; // hooks cannot have native return typehints
         }
 
         if (!$scope->isInAnonymousFunction() && in_array($scope->getFunctionName(), ['__construct', '__destruct', '__clone'], true)) {

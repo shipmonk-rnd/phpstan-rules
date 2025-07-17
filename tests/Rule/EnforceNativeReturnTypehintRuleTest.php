@@ -37,6 +37,16 @@ class EnforceNativeReturnTypehintRuleTest extends RuleTestCase
         $this->analyseFile(__DIR__ . '/data/EnforceNativeReturnTypehintRule/code-enum.php');
     }
 
+    public function testHooks(): void
+    {
+        if (PHP_VERSION_ID < 80_400) {
+            self::markTestSkipped('Requires PHP 8.4');
+        }
+
+        $this->phpVersion = self::getContainer()->getByType(PhpVersion::class);
+        $this->analyseFile(__DIR__ . '/data/EnforceNativeReturnTypehintRule/code-hook.php');
+    }
+
     public function testPhp82(): void
     {
         $this->phpVersion = $this->createPhpVersion(80_200);
