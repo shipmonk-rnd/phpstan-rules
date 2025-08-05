@@ -45,7 +45,7 @@ class EnforceReadonlyPublicPropertyRuleTest extends RuleTestCase
 
     private function createPhpVersion(int $version): PhpVersion
     {
-        return new PhpVersion($version); // @phpstan-ignore phpstanApi.constructor
+        return new PhpVersion($version);
     }
 
 }
