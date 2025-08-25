@@ -621,6 +621,14 @@ match ($foo) { // unused match result
 ```
 
 
+### forbidUnusedClosureParameters
+- Reports unused parameters in closures and arrow functions
+- Only reports trailing unused parameters (parameters that are unused and all parameters after them are also unused)
+```php
+fn (int $key, Item $item, string $unused) => $item->ok(); // unused parameter $unused is reported, $key not
+```
+
+
 ### requirePreviousExceptionPass
 - Detects forgotten exception pass-as-previous when re-throwing
 - Checks if caught exception can be passed as argument to the call (including constructor call) in `throw` node inside the catch block
