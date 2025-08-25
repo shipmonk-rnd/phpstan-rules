@@ -12,7 +12,7 @@ use ShipMonk\PHPStanDev\RuleTestCase as ShipMonkDevRuleTestCase;
 abstract class RuleTestCase extends ShipMonkDevRuleTestCase
 {
 
-    public function analyseFile(
+    protected function analyseFile(
         string $file,
         bool $autofix = false
     ): void
