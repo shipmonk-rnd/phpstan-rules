@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dcc60f74a8a3476b573f431a97e3c556",
+    "content-hash": "6fb0c988abe9eb2fd7f966302480f059",
     "packages": [
         {
             "name": "phpstan/phpstan",
@@ -3132,16 +3132,16 @@
         },
         {
             "name": "shipmonk/phpstan-dev",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shipmonk-rnd/phpstan-dev.git",
-                "reference": "d2d02fb885bd6c99c1c6b1893a1d5ca381094cda"
+                "reference": "ec564f68d893fa966f70afa8274d03fa8f0103df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shipmonk-rnd/phpstan-dev/zipball/d2d02fb885bd6c99c1c6b1893a1d5ca381094cda",
-                "reference": "d2d02fb885bd6c99c1c6b1893a1d5ca381094cda",
+                "url": "https://api.github.com/repos/shipmonk-rnd/phpstan-dev/zipball/ec564f68d893fa966f70afa8274d03fa8f0103df",
+                "reference": "ec564f68d893fa966f70afa8274d03fa8f0103df",
                 "shasum": ""
             },
             "require": {
@@ -3181,9 +3181,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shipmonk-rnd/phpstan-dev/issues",
-                "source": "https://github.com/shipmonk-rnd/phpstan-dev/tree/0.1.0"
+                "source": "https://github.com/shipmonk-rnd/phpstan-dev/tree/0.1.1"
             },
-            "time": "2025-08-06T08:14:26+00:00"
+            "time": "2025-08-25T12:16:48+00:00"
         },
         {
             "name": "slevomat/coding-standard",
@@ -3387,12 +3387,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": "^7.4 || ^8.0"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
