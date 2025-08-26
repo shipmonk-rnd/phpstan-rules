@@ -81,6 +81,8 @@ parameters:
             enabled: %shipmonkRules.enableAllRules%
         forbidUnusedMatchResult:
             enabled: %shipmonkRules.enableAllRules%
+        forbidUnusedClosureParameters:
+            enabled: %shipmonkRules.enableAllRules%
         requirePreviousExceptionPass:
             enabled: %shipmonkRules.enableAllRules%
             reportEvenIfExceptionIsNotAcceptableByRethrownOne: true
@@ -203,6 +205,9 @@ parametersSchema:
         forbidUnusedMatchResult: structure([
             enabled: bool()
         ])
+        forbidUnusedClosureParameters: structure([
+            enabled: bool()
+        ])
         requirePreviousExceptionPass: structure([
             enabled: bool()
             reportEvenIfExceptionIsNotAcceptableByRethrownOne: bool()
@@ -279,6 +284,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.forbidUnusedException.enabled%
     ShipMonk\PHPStan\Rule\ForbidUnusedMatchResultRule:
         phpstan.rules.rule: %shipmonkRules.forbidUnusedMatchResult.enabled%
+    ShipMonk\PHPStan\Rule\ForbidUnusedClosureParametersRule:
+        phpstan.rules.rule: %shipmonkRules.forbidUnusedClosureParameters.enabled%
     ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule:
         phpstan.rules.rule: %shipmonkRules.uselessPrivatePropertyDefaultValue.enabled%
     ShipMonk\PHPStan\Rule\RequirePreviousExceptionPassRule:
@@ -394,6 +401,8 @@ services:
         class: ShipMonk\PHPStan\Rule\ForbidUnusedExceptionRule
     -
         class: ShipMonk\PHPStan\Rule\ForbidUnusedMatchResultRule
+    -
+        class: ShipMonk\PHPStan\Rule\ForbidUnusedClosureParametersRule
     -
         class: ShipMonk\PHPStan\Rule\ForbidReturnInConstructorRule
     -
