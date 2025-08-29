@@ -6,6 +6,7 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\ReturnStatementsNode;
+use PHPStan\Reflection\MethodReflection;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -37,6 +38,10 @@ class ForbidUselessNullableReturnRule implements Rule
     {
         $verbosity = VerbosityLevel::precise();
         $methodReflection = $scope->getFunction();
+
+        if ($methodReflection instanceof MethodReflection && $this->isOverridable($methodReflection)) {
+            return [];
+        }
 
         if ($node instanceof ClosureReturnStatementsNode) {
             $declaredType = $scope->getFunctionType($node->getClosureExpr()->getReturnType(), false, false);
@@ -78,6 +83,11 @@ class ForbidUselessNullableReturnRule implements Rule
         }
 
         return [];
+    }
+
+    private function isOverridable(MethodReflection $methodReflection): bool
+    {
+        return !$methodReflection->isFinal()->yes() && !$methodReflection->isPrivate() && !$methodReflection->isStatic() && !$methodReflection->getDeclaringClass()->isFinalByKeyword();
     }
 
 }
