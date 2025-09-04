@@ -2,7 +2,7 @@
 
 namespace ForbidUselessNullableReturnRule;
 
-class ExampleClass {
+final class ExampleClass {
 
     private ?int $foo;
 
@@ -87,3 +87,30 @@ function nullableFunction(int $int): ?int // error: Declared return type int|nul
 $globalFn = static function (int $int): ?int { // error: Declared return type int|null contains null, but it is never returned. Returned types: int.
     return $int;
 };
+
+class NonFinalClass {
+    public static function staticMethod(): ?int // error: Declared return type int|null contains null, but it is never returned. Returned types: 1.
+    {
+        return 1;
+    }
+
+    final public function finalMethod(): ?int // error: Declared return type int|null contains null, but it is never returned. Returned types: 1.
+    {
+        return 1;
+    }
+
+    private function privateMethod(): ?int // error: Declared return type int|null contains null, but it is never returned. Returned types: 1.
+    {
+        return 1;
+    }
+
+    public function publicMethod(): ?int
+    {
+        return 1;
+    }
+
+    protected function protectedMethod(): ?int
+    {
+        return 1;
+    }
+}
