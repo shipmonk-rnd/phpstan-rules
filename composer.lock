@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6fb0c988abe9eb2fd7f966302480f059",
+    "content-hash": "e738cc5a6c2b4685ae7384b3dcf97bcf",
     "packages": [
         {
             "name": "phpstan/phpstan",
@@ -3132,16 +3132,16 @@
         },
         {
             "name": "shipmonk/phpstan-dev",
-            "version": "0.1.1",
+            "version": "0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shipmonk-rnd/phpstan-dev.git",
-                "reference": "ec564f68d893fa966f70afa8274d03fa8f0103df"
+                "reference": "a411e26470e351909cfc69b3ca2d51a78d0210d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shipmonk-rnd/phpstan-dev/zipball/ec564f68d893fa966f70afa8274d03fa8f0103df",
-                "reference": "ec564f68d893fa966f70afa8274d03fa8f0103df",
+                "url": "https://api.github.com/repos/shipmonk-rnd/phpstan-dev/zipball/a411e26470e351909cfc69b3ca2d51a78d0210d9",
+                "reference": "a411e26470e351909cfc69b3ca2d51a78d0210d9",
                 "shasum": ""
             },
             "require": {
@@ -3149,7 +3149,6 @@
                 "phpstan/phpstan": "^2.1.8"
             },
             "require-dev": {
-                "editorconfig-checker/editorconfig-checker": "^10.6.0",
                 "ergebnis/composer-normalize": "^2.45.0",
                 "phpstan/phpstan-deprecation-rules": "^2.0.1",
                 "phpstan/phpstan-phpunit": "^2.0.4",
@@ -3181,9 +3180,9 @@
             ],
             "support": {
                 "issues": "https://github.com/shipmonk-rnd/phpstan-dev/issues",
-                "source": "https://github.com/shipmonk-rnd/phpstan-dev/tree/0.1.1"
+                "source": "https://github.com/shipmonk-rnd/phpstan-dev/tree/0.1.2"
             },
-            "time": "2025-08-25T12:16:48+00:00"
+            "time": "2025-09-06T21:20:10+00:00"
         },
         {
             "name": "slevomat/coding-standard",
