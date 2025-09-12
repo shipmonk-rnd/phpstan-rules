@@ -124,7 +124,7 @@ public function getIds(array $entities): array {
 ```
 
 
-### enforceEnumMatchRule
+### enforceEnumMatch
 - Enforces usage of `match ($enum)` instead of exhaustive conditions like `if ($enum === Enum::One) elseif ($enum === Enum::Two)`
 - This rule aims to "fix" a bit problematic behaviour of PHPStan (introduced at 1.10.0 and fixed in [1.10.34](https://github.com/phpstan/phpstan-src/commit/fc7c0283176e5dc3867ade26ac835ee7f52599a9)). It understands enum cases very well and forces you to adjust following code:
 ```php
