@@ -18,6 +18,7 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
@@ -113,6 +114,12 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
             return []; // array merge syntax
         }
 
+        if (($this->isBcMathNumber($leftType) && $this->isFloat($rightType))
+            || ($this->isFloat($leftType) && $this->isBcMathNumber($rightType))
+        ) {
+            return $this->buildBinaryErrors($operator, 'BcMath\\Number and float', $leftType, $rightType);
+        }
+
         if (
             $operator === '%' &&
             (!$leftType->isInteger()->yes() || !$rightType->isInteger()->yes())
@@ -136,7 +143,8 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
         return $int->isSuperTypeOf($type)->yes()
             || $float->isSuperTypeOf($type)->yes()
             || $intOrFloat->isSuperTypeOf($type)->yes()
-            || ($this->allowNumericString && $type->isNumericString()->yes());
+            || ($this->allowNumericString && $type->isNumericString()->yes())
+            || $this->isBcMathNumber($type);
     }
 
     /**
@@ -162,6 +170,20 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
             ->build();
 
         return [$error];
+    }
+
+    private function isBcMathNumber(Type $type): bool
+    {
+        $bcMathNumber = new ObjectType('BcMath\Number');
+
+        return $type->isSuperTypeOf($bcMathNumber)->yes();
+    }
+
+    private function isFloat(Type $type): bool
+    {
+        $float = new FloatType();
+
+        return $type->isSuperTypeOf($float)->yes();
     }
 
 }
