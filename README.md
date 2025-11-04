@@ -284,6 +284,7 @@ parameters:
         check:
             missingCheckedExceptionInThrows: true # enforce checked exceptions to be stated in @throws
             tooWideThrowType: true # report invalid @throws (exceptions that are not actually thrown in annotated method)
+            throwTypeCovariance: true # enable LSP checks
         implicitThrows: false # no @throws means nothing is thrown (otherwise Throwable is thrown)
         checkedExceptionClasses:
             - YourApp\TopLevelRuntimeException # track only your exceptions (children of some, typically RuntimeException)
