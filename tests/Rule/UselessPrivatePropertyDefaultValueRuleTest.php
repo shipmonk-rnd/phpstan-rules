@@ -33,4 +33,9 @@ class UselessPrivatePropertyDefaultValueRuleTest extends RuleTestCase
         $this->analyseFile(__DIR__ . '/data/UselessPrivatePropertyDefaultValueRule/code.php');
     }
 
+    public function testAsymmetricVisibility(): void
+    {
+        $this->analyseFile(__DIR__ . '/data/UselessPrivatePropertyDefaultValueRule/asymmetric.php');
+    }
+
 }
