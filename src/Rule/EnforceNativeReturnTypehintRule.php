@@ -117,7 +117,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         bool $topLevel
     ): ?string
     {
-        if ($type instanceof MixedType) {
+        if ($type instanceof MixedType || $this->isUnionTypeWithMixed($type)) {
             return $this->phpVersion->getVersionId() >= 80_000 ? 'mixed' : null;
         }
 
@@ -349,6 +349,21 @@ class EnforceNativeReturnTypehintRule implements Rule
         }
 
         return $exitPoints !== [];
+    }
+
+    private function isUnionTypeWithMixed(Type $type): bool
+    {
+        if (!$type instanceof UnionType) {
+            return false;
+        }
+
+        foreach ($type->getTypes() as $innerType) {
+            if ($innerType instanceof MixedType) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

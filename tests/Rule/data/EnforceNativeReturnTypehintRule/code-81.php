@@ -80,6 +80,13 @@ class DeductFromPhpDocs {
     /** @return mixed|int|null */
     public function requireMixed4() {} // error: Missing native return typehint mixed
 
+    /**
+     * @template T
+     * @param callable(): T $function
+     * @return T|false
+     */
+    public function requireMixed5(callable $function) {} // error: Missing native return typehint mixed
+
     /** @return void */
     public function requireVoid() {} // error: Missing native return typehint void
 
@@ -124,7 +131,6 @@ class DeductFromPhpDocs {
 
     /** @return true|null */
     public function requireTrueOrNull() {} // error: Missing native return typehint ?bool
-
 }
 
 class DeductFromReturnStatements {
