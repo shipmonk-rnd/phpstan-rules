@@ -131,6 +131,7 @@ class DeductFromPhpDocs {
 
     /** @return true|null */
     public function requireTrueOrNull() {} // error: Missing native return typehint ?bool
+
 }
 
 class DeductFromReturnStatements {
