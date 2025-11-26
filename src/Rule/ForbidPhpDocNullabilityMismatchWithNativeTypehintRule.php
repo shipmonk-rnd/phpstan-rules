@@ -17,8 +17,8 @@ use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NullType;
-use PHPStan\Type\VoidType;
 use PHPStan\Type\Type;
+use PHPStan\Type\VoidType;
 use function array_merge;
 use function is_string;
 
