@@ -16,6 +16,7 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\VoidType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
 use function array_merge;
@@ -244,7 +245,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
             return [];
         }
 
-        if ($nativeReturnType instanceof MixedType) {
+        if ($nativeReturnType instanceof MixedType || $nativeReturnType instanceof VoidType) {
             return [];
         }
 
