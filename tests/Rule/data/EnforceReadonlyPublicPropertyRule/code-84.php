@@ -57,3 +57,9 @@ class ImplementingClass implements MyInterface {
 class ImplementingClass2 implements MyInterface {
     public readonly string $key;
 }
+
+class AsymmetricVisibility {
+    public private(set) string $privateSet;
+    public protected(set) string $protectedSet;
+    public public(set) string $publicSet; // error: Public property `publicSet` not marked as readonly.
+}
