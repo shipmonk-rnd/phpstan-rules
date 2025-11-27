@@ -244,7 +244,7 @@ class ForbidPhpDocNullabilityMismatchWithNativeTypehintRule implements Rule
             return [];
         }
 
-        if ($nativeReturnType instanceof MixedType) {
+        if ($nativeReturnType instanceof MixedType || $nativeReturnType->isVoid()->yes()) {
             return [];
         }
 

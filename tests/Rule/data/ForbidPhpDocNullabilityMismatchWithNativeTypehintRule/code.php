@@ -2,6 +2,7 @@
 
 namespace ForbidPhpDocNotMatchingNativeTypehintRule;
 
+use Exception;
 
 class HelloWorld
 {
@@ -103,6 +104,14 @@ class HelloWorld
     public static function getStringMissingNull($stringOrNullInTemplate): ?string // error: The @return phpdoc does not contain null, but native return type does
     {
         return $stringOrNullInTemplate;
+    }
+
+    /**
+     * @return never
+     */
+    public function throwSomeException(): void
+    {
+        throw new Exception();
     }
 
 }
