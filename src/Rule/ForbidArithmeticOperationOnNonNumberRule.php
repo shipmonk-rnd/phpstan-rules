@@ -182,8 +182,9 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
     private function containsBcMathNumber(Type $type): bool
     {
         $bcMathFound = false;
-        TypeTraverser::map($type, static function (Type $traversedTyped, callable $traverse) use (&$bcMathFound): Type {
-            $bcMathNumber = new ObjectType('BcMath\Number');
+        $bcMathNumber = new ObjectType('BcMath\Number');
+
+        TypeTraverser::map($type, static function (Type $traversedTyped, callable $traverse) use (&$bcMathFound, $bcMathNumber): Type {
             if ($bcMathNumber->isSuperTypeOf($traversedTyped)->yes()) {
                 $bcMathFound = true;
             }
