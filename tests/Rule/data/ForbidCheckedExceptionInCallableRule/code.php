@@ -11,6 +11,11 @@ function throwing_function() {}
 
 function allowed_function(callable $callable) {}
 
+/**
+ * @param-later-invoked-callable $callable
+ */
+function allowed_function_not_immediate(callable $callable) {}
+
 interface CallableTest {
 
     public function allowThrowInInterface(callable $callable): void;
@@ -94,6 +99,12 @@ class FirstClassCallableTest extends BaseCallableTest {
     public function testPassedCallbacksA5(): void
     {
         $this->allowThrow(42, throwing_function(...));
+    }
+
+    public function testPassedCallbacksA6(): void
+    {
+        allowed_function(throwing_function(...));
+        allowed_function_not_immediate(throwing_function(...));
     }
 
     public function testPassedCallbacksA6(): void
@@ -510,3 +521,5 @@ class ArgumentSwappingTest {
         throw new CheckedException();
     }
 }
+
+
