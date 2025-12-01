@@ -227,10 +227,11 @@ class EnforceReadonlyPublicPropertyRule {
 ```
 
 ### forbidArithmeticOperationOnNonNumber
-- Disallows using [arithmetic operators](https://www.php.net/manual/en/language.operators.arithmetic.php) with non-numeric types (only float and int is allowed)
+- Disallows using [arithmetic operators](https://www.php.net/manual/en/language.operators.arithmetic.php) with non-numeric types (only `float`, `int` and `BcMath\Number` is allowed)
 - You can allow numeric-string by using `allowNumericString: true` configuration
 - Modulo operator (`%`) allows only integers as it [emits deprecation otherwise](https://3v4l.org/VpVoq)
 - Plus operator is allowed for merging arrays
+- `float` and `BcMath\Number` cannot be combined as it emits deprecations
 
 ```php
 function add(string $a, string $b) {
