@@ -5,7 +5,6 @@ namespace ShipMonk\PHPStan\Rule;
 use LogicException;
 use PHPStan\Rules\Rule;
 use ShipMonk\PHPStan\RuleTestCase;
-use const PHP_VERSION_ID;
 
 /**
  * @extends RuleTestCase<ForbidArithmeticOperationOnNonNumberRule>
@@ -38,20 +37,12 @@ class ForbidArithmeticOperationOnNonNumberRuleTest extends RuleTestCase
 
     public function testBcMathNumber(): void
     {
-        if (PHP_VERSION_ID < 80_400) {
-            self::markTestSkipped('Requires PHP 8.4');
-        }
-
         $this->allowNumericString = true;
         $this->analyseFile(__DIR__ . '/data/ForbidArithmeticOperationOnNonNumberRule/bcmath-number.php');
     }
 
     public function testBcMathNumberNoNumeric(): void
     {
-        if (PHP_VERSION_ID < 80_400) {
-            self::markTestSkipped('Requires PHP 8.4');
-        }
-
         $this->allowNumericString = false;
         $this->analyseFile(__DIR__ . '/data/ForbidArithmeticOperationOnNonNumberRule/bcmath-number-no-numeric.php');
     }

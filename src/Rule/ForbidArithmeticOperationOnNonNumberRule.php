@@ -20,6 +20,7 @@ use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 use function sprintf;
@@ -114,8 +115,8 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
             return []; // array merge syntax
         }
 
-        if (($this->isBcMathNumber($leftType) && $this->isFloat($rightType))
-            || ($this->isFloat($leftType) && $this->isBcMathNumber($rightType))
+        if (($this->containsBcMathNumber($leftType) && $this->isFloat($rightType))
+            || ($this->isFloat($leftType) && $this->containsBcMathNumber($rightType))
         ) {
             return $this->buildBinaryErrors($operator, 'BcMath\\Number and float', $leftType, $rightType);
         }
@@ -138,13 +139,14 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
     {
         $int = new IntegerType();
         $float = new FloatType();
-        $intOrFloat = new UnionType([$int, $float]);
+        $bcNumber = new ObjectType('BcMath\Number');
+        $intOrFloatOrBcNumber = new UnionType([$int, $float, $bcNumber]);
 
         return $int->isSuperTypeOf($type)->yes()
             || $float->isSuperTypeOf($type)->yes()
-            || $intOrFloat->isSuperTypeOf($type)->yes()
-            || ($this->allowNumericString && $type->isNumericString()->yes())
-            || $this->isBcMathNumber($type);
+            || $bcNumber->isSuperTypeOf($type)->yes()
+            || $intOrFloatOrBcNumber->isSuperTypeOf($type)->yes()
+            || ($this->allowNumericString && $type->isNumericString()->yes());
     }
 
     /**
@@ -172,18 +174,24 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
         return [$error];
     }
 
-    private function isBcMathNumber(Type $type): bool
-    {
-        $bcMathNumber = new ObjectType('BcMath\Number');
-
-        return $type->isSuperTypeOf($bcMathNumber)->yes();
-    }
-
     private function isFloat(Type $type): bool
     {
         $float = new FloatType();
 
         return $type->isSuperTypeOf($float)->yes();
+    }
+
+    private function containsBcMathNumber(Type $type): bool
+    {
+        $bcMathFound = false;
+        TypeTraverser::map($type, static function (Type $traversedTyped, callable $traverse) use (&$bcMathFound): Type {
+            $bcMathNumber = new ObjectType('BcMath\Number');
+            if ($bcMathNumber->isSuperTypeOf($traversedTyped)->yes()) {
+                $bcMathFound = true;
+            }
+            return $traverse($traversedTyped);
+        });
+        return $bcMathFound;
     }
 
 }
