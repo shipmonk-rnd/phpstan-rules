@@ -14,4 +14,10 @@
     <php>
         <ini name="error_reporting" value="-1"/>
     </php>
+
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </coverage>
 </phpunit>

@@ -22,6 +22,7 @@
         "phpunit/phpunit": "^9.6.22",
         "shipmonk/coding-standard": "^0.2.0",
         "shipmonk/composer-dependency-analyser": "^1.8.1",
+        "shipmonk/coverage-guard": "dev-master",
         "shipmonk/dead-code-detector": "^0.9.0",
         "shipmonk/name-collision-detector": "^2.1.1",
         "shipmonk/phpstan-dev": "^0.1.2"
@@ -59,7 +60,7 @@
             "@check:ec",
             "@check:cs",
             "@check:types",
-            "@check:tests",
+            "@check:coverage",
             "@check:dependencies",
             "@check:collisions",
             "@check:ignores"
@@ -69,11 +70,15 @@
             "composer normalize --dry-run --no-check-lock --no-update-lock",
             "composer validate --strict"
         ],
+        "check:coverage": [
+            "XDEBUG_MODE=coverage phpunit tests --coverage-clover cache/clover.xml",
+            "coverage-guard check cache/clover.xml"
+        ],
         "check:cs": "phpcs",
         "check:dependencies": "composer-dependency-analyser",
         "check:ec": "ec src tests",
         "check:ignores": "php bin/verify-inline-ignore.php",
-        "check:tests": "phpunit -vvv tests",
+        "check:tests": "phpunit tests",
         "check:types": "phpstan analyse -vv --ansi",
         "fix:cs": "phpcbf"
     }
