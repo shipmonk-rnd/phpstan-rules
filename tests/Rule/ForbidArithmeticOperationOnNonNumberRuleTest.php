@@ -35,6 +35,18 @@ class ForbidArithmeticOperationOnNonNumberRuleTest extends RuleTestCase
         $this->analyseFile(__DIR__ . '/data/ForbidArithmeticOperationOnNonNumberRule/no-numeric-string.php');
     }
 
+    public function testBcMathNumber(): void
+    {
+        $this->allowNumericString = true;
+        $this->analyseFile(__DIR__ . '/data/ForbidArithmeticOperationOnNonNumberRule/bcmath-number.php');
+    }
+
+    public function testBcMathNumberNoNumeric(): void
+    {
+        $this->allowNumericString = false;
+        $this->analyseFile(__DIR__ . '/data/ForbidArithmeticOperationOnNonNumberRule/bcmath-number-no-numeric.php');
+    }
+
     protected function shouldFailOnPhpErrors(): bool
     {
         return false; // https://github.com/phpstan/phpstan-src/pull/3031
