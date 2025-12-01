@@ -137,15 +137,13 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
 
     private function isNumeric(Type $type): bool
     {
-        $int = new IntegerType();
-        $float = new FloatType();
-        $bcNumber = new ObjectType('BcMath\Number');
-        $intOrFloatOrBcNumber = new UnionType([$int, $float, $bcNumber]);
+        $numericUnion = new UnionType([
+            new IntegerType(),
+            new FloatType(),
+            new ObjectType('BcMath\Number'),
+        ]);
 
-        return $int->isSuperTypeOf($type)->yes()
-            || $float->isSuperTypeOf($type)->yes()
-            || $bcNumber->isSuperTypeOf($type)->yes()
-            || $intOrFloatOrBcNumber->isSuperTypeOf($type)->yes()
+        return $numericUnion->isSuperTypeOf($type)->yes()
             || ($this->allowNumericString && $type->isNumericString()->yes());
     }
 

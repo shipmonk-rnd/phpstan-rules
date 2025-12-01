@@ -130,6 +130,8 @@ class Ari {
         -$intFloat;
         -$intFloatString; // error: Using - over non-number (float|int|string)
         -$intArray; // error: Using - over non-number (array|int)
+
+        $intString - $intArray; // error: Using - over non-number (int|string - array|int)
     }
 
     /**
