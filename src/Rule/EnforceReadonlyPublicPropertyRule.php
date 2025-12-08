@@ -49,6 +49,7 @@ class EnforceReadonlyPublicPropertyRule implements Rule
             || $node->isProtectedSet()
             || $node->isStatic()
             || $node->getDefault() !== null
+            || $node->getNativeType() === null
         ) {
             return [];
         }

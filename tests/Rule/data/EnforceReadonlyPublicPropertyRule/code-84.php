@@ -18,6 +18,8 @@ trait MyTrait {
 
     public int $default = 42;
 
+    public $untyped;
+
 }
 
 class MyClass {
@@ -37,6 +39,8 @@ class MyClass {
     public static string $static;
 
     public int $quux = 7;
+
+    public $quuz;
 
 }
 
