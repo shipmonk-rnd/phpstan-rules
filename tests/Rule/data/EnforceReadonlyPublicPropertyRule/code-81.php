@@ -14,6 +14,8 @@ trait MyTrait {
 
     public static string $static;
 
+    public int $default = 42;
+
 }
 
 class MyClass {
@@ -29,6 +31,8 @@ class MyClass {
     private int $bag;
 
     public static string $static;
+
+    public int $quux = 7;
 
 }
 
