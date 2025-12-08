@@ -12,6 +12,8 @@ trait MyTrait {
 
     private string $private;
 
+    public static string $static;
+
 }
 
 class MyClass {
@@ -25,6 +27,8 @@ class MyClass {
     protected int $baz;
 
     private int $bag;
+
+    public static string $static;
 
 }
 
