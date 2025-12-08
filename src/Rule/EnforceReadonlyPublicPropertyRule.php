@@ -41,7 +41,7 @@ class EnforceReadonlyPublicPropertyRule implements Rule
             return [];
         }
 
-        if (!$node->isPublic() || $node->isReadOnly() || $node->hasHooks() || $node->isPrivateSet() || $node->isProtectedSet()) {
+        if (!$node->isPublic() || $node->isReadOnly() || $node->hasHooks() || $node->isPrivateSet() || $node->isProtectedSet() || $node->isStatic()) {
             return [];
         }
 
