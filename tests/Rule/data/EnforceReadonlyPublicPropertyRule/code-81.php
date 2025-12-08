@@ -14,7 +14,7 @@ trait MyTrait {
 
     public static string $static;
 
-    public int $default = 42;
+    public int $default = 42; // error: Public property `default` not marked as readonly.
 
     public $untyped;
 
@@ -34,7 +34,7 @@ class MyClass {
 
     public static string $static;
 
-    public int $quux = 7;
+    public int $quux = 7; // error: Public property `quux` not marked as readonly.
 
     public $quuz;
 
