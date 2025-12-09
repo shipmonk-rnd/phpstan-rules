@@ -16,10 +16,16 @@ use PHPStan\Rules\RuleErrorBuilder;
 class EnforceReadonlyPublicPropertyRule implements Rule
 {
 
+    private bool $excludePropertyWithDefaultValue;
+
     private PhpVersion $phpVersion;
 
-    public function __construct(PhpVersion $phpVersion)
+    public function __construct(
+        bool $excludePropertyWithDefaultValue,
+        PhpVersion $phpVersion
+    )
     {
+        $this->excludePropertyWithDefaultValue = $excludePropertyWithDefaultValue;
         $this->phpVersion = $phpVersion;
     }
 
@@ -41,7 +47,16 @@ class EnforceReadonlyPublicPropertyRule implements Rule
             return [];
         }
 
-        if (!$node->isPublic() || $node->isReadOnly() || $node->hasHooks() || $node->isPrivateSet() || $node->isProtectedSet() || $node->isStatic()) {
+        if (
+            !$node->isPublic()
+            || $node->isReadOnly()
+            || $node->hasHooks()
+            || $node->isPrivateSet()
+            || $node->isProtectedSet()
+            || $node->isStatic()
+            || $node->getNativeType() === null
+            || ($this->excludePropertyWithDefaultValue && $node->getDefault() !== null)
+        ) {
             return [];
         }
 

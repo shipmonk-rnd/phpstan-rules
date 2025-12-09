@@ -16,6 +16,10 @@ trait MyTrait {
 
     public static string $static;
 
+    public int $default = 42; // error: Public property `default` not marked as readonly.
+
+    public $untyped;
+
 }
 
 class MyClass {
@@ -33,6 +37,10 @@ class MyClass {
     private int $bag;
 
     public static string $static;
+
+    public int $quux = 7; // error: Public property `quux` not marked as readonly.
+
+    public $quuz;
 
 }
 
