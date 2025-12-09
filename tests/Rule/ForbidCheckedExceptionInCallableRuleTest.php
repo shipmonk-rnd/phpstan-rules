@@ -49,7 +49,8 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
                 'ForbidCheckedExceptionInCallableRule\FirstClassCallableTest::allowThrow' => [1],
                 'ForbidCheckedExceptionInCallableRule\ArrowFunctionTest::allowThrow' => [0],
                 'ForbidCheckedExceptionInCallableRule\ArrowFunctionTest::__construct' => [0],
-                'allowed_function' => [0],
+                'ForbidCheckedExceptionInCallableRule\allowed_function' => [0], // not really needed as functions are always considered immediately invoked (https://phpstan.org/writing-php-code/phpdocs-basics#callables)
+                'ForbidCheckedExceptionInCallableRule\allowed_function_not_immediate' => [0],
             ],
         );
     }
