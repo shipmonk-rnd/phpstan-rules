@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\Cast\Int_;
 use PhpParser\Node\Expr\Cast\Object_;
 use PhpParser\Node\Expr\Cast\String_;
 use PhpParser\Node\Expr\Cast\Unset_;
+use PhpParser\Node\Expr\Cast\Void_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
@@ -94,6 +95,10 @@ class ForbidCastRule implements Rule
 
         if ($node instanceof Unset_) {
             return '(unset)';
+        }
+
+        if ($node instanceof Void_) {
+            return '(void)';
         }
 
         throw new LogicException('Unexpected Cast child: ' . get_class($node));
