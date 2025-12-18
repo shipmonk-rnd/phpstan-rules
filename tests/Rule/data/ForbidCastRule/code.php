@@ -12,4 +12,5 @@ function test(
     (string) $mixed;
     (float) $mixed;
     (bool) $mixed;
+    (void) $mixed;
 }

@@ -21,9 +21,4 @@ class ForbidCastRuleTest extends RuleTestCase
         $this->analyseFile(__DIR__ . '/data/ForbidCastRule/code.php');
     }
 
-    public function testClassPhp85(): void
-    {
-        $this->analyseFile(__DIR__ . '/data/ForbidCastRule/code-85.php');
-    }
-
 }
