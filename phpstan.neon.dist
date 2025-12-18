@@ -11,7 +11,7 @@ includes:
 parameters:
     phpVersion:
         min: 70400
-        max: 80499
+        max: 80599
     internalErrorsCountLimit: 1
     paths:
         - src
@@ -62,25 +62,6 @@ parameters:
         -
             message: "#but it's missing from the PHPDoc @throws tag\\.$#" # allow uncatched exceptions in tests
             path: tests/*
-
-        -
-            message: "#Comparison operation \"(>=|<)\" between int\\<70400\\, 80499\\> and 80500 is always (false|true)\\.#"
-            path: tests/*
-            reportUnmatched: false # fails only for PHP < 8.5
-
-        -
-            identifier: deadCode.unreachable
-            path: tests/Rule/ForbidCastRuleTest.php
-
-        -
-            message: "#(.*)createPhpVersion(.*)#"
-            identifier: method.unused
-            path: tests/Rule/ForbidCastRuleTest.php
-
-        -
-            message: "#(.*)createPhpVersion(.*)#"
-            identifier: shipmonk.deadMethod
-            path: tests/Rule/ForbidCastRuleTest.php
 
         # ignore BC promises
         - identifier: phpstanApi.class
