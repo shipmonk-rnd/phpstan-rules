@@ -16,11 +16,12 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Expression;
+use PhpParser\Node\Stmt\Namespace_;
 use PHPStan\Analyser\ArgumentsNormalizer;
-use PHPStan\Analyser\ExpressionContext;
 use PHPStan\Analyser\MutatingScope;
 use PHPStan\Analyser\NodeScopeResolver;
 use PHPStan\Analyser\Scope;
+use PHPStan\Analyser\StatementContext;
 use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\FileNode;
 use PHPStan\Node\FunctionCallableNode;
@@ -236,13 +237,13 @@ class ForbidCheckedExceptionInCallableRule implements Rule
             return [];
         }
 
-        $result = $this->nodeScopeResolver->processExprNode(
-            new Expression($node->expr),
-            $node->expr,
+        $result = $this->nodeScopeResolver->processStmtNodes(
+            new Namespace_(null),
+            [new Expression($node->expr)],
             $scope->enterArrowFunction($node, null),
             static function (): void {
             },
-            ExpressionContext::createDeep(),
+            StatementContext::createTopLevel(),
         );
 
         $errors = [];
