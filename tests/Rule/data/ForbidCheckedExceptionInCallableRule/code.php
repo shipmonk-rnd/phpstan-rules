@@ -258,9 +258,12 @@ class ClosureTest extends BaseCallableTest {
 
     public function testPassedCallbacks8(): void
     {
+        // Note: This should report an error because 'denied' is not @param-immediately-invoked-callable,
+        // but PHPStan's getFunctionCallStackWithParameters() incorrectly reports the parameter as 'callable'
+        // when using named arguments. PHPStan bug fix: https://github.com/phpstan/phpstan-src/pull/4791
         $this->immediateThrow(
             denied: function () {
-                throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!
+                throw new CheckedException();
             },
         );
     }
