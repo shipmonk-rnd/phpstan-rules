@@ -2,6 +2,7 @@
 
 namespace ShipMonk\PHPStan\Rule;
 
+use Generator;
 use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
@@ -22,6 +23,7 @@ use PHPStan\Analyser\MutatingScope;
 use PHPStan\Analyser\NodeScopeResolver;
 use PHPStan\Analyser\Scope;
 use PHPStan\Analyser\StatementContext;
+use PHPStan\Node\ClassMethodsNode;
 use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\FileNode;
 use PHPStan\Node\FunctionCallableNode;
@@ -39,7 +41,7 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Type;
 use function array_map;
-use function array_merge;
+use function array_shift;
 use function array_values;
 use function explode;
 use function in_array;
@@ -77,6 +79,15 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      * @var array<string, list<int>>
      */
     private array $callablesAllowingCheckedExceptions;
+
+    /**
+     * PHPStan's fiber-based processing no longer guarantees that CallLike nodes are processed before their Arg nodes.
+     * This caused false positives when callables (e.g. closures) were processed before their parent CallLike, seeing empty allowedCallables and incorrectly reporting errors.
+     * So we delay processing of those until the end of the file.
+     *
+     * @var list<Generator<IdentifierRuleError>>
+     */
+    private array $pending = [];
 
     /**
      * @param array<string, int|list<int>> $allowedCheckedExceptionCallables
@@ -117,6 +128,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         $errors = [];
 
         if ($node instanceof FileNode) {
+            $this->pending = [];
             $this->allowedCallables = [];
             $this->callablesInArguments = [];
 
@@ -128,90 +140,20 @@ class ForbidCheckedExceptionInCallableRule implements Rule
             || $node instanceof StaticMethodCallableNode
             || $node instanceof FunctionCallableNode
         ) {
-            return $this->processFirstClassCallable($node->getOriginalNode(), $scope);
+            $this->pending[] = $this->processFirstClassCallable($node->getOriginalNode(), $scope);
 
         } elseif ($node instanceof ClosureReturnStatementsNode) {
-            return $this->processClosure($node);
+            $this->pending[] = $this->processClosure($node);
 
         } elseif ($node instanceof ArrowFunction) {
-            return $this->processArrowFunction($node, $scope);
+            $this->pending[] = $this->processArrowFunction($node, $scope);
         }
 
-        return $errors;
-    }
-
-    /**
-     * @param MethodCall|StaticCall|FuncCall $callNode
-     * @return list<IdentifierRuleError>
-     */
-    public function processFirstClassCallable(
-        CallLike $callNode,
-        Scope $scope
-    ): array
-    {
-        if (!$callNode->isFirstClassCallable()) {
-            throw new LogicException('This should be ensured by using XxxCallableNode');
-        }
-
-        $nodeHash = spl_object_hash($callNode);
-
-        if (isset($this->allowedCallables[$nodeHash])) {
-            return [];
-        }
-
-        $errors = [];
-        $line = $callNode->getStartLine();
-
-        if ($callNode instanceof MethodCall && $callNode->name instanceof Identifier) {
-            $callerType = $scope->getType($callNode->var);
-            $methodName = $callNode->name->toString();
-
-            $errors = array_merge($errors, $this->processCall($scope, $callerType, $methodName, $line, $nodeHash));
-        }
-
-        if ($callNode instanceof StaticCall && $callNode->class instanceof Name && $callNode->name instanceof Identifier) {
-            $callerType = $scope->resolveTypeByName($callNode->class);
-            $methodName = $callNode->name->toString();
-
-            $errors = array_merge($errors, $this->processCall($scope, $callerType, $methodName, $line, $nodeHash));
-        }
-
-        if ($callNode instanceof FuncCall && $callNode->name instanceof Name && $this->reflectionProvider->hasFunction($callNode->name, $scope)) {
-            $functionReflection = $this->reflectionProvider->getFunction($callNode->name, $scope);
-            $errors = array_merge($errors, $this->processThrowType($functionReflection->getThrowType(), $scope, $line, $nodeHash));
-        }
-
-        return $errors;
-    }
-
-    /**
-     * @return list<IdentifierRuleError>
-     */
-    public function processClosure(
-        ClosureReturnStatementsNode $node
-    ): array
-    {
-        $nodeHash = spl_object_hash($node->getClosureExpr());
-
-        if (isset($this->allowedCallables[$nodeHash])) {
-            return [];
-        }
-
-        $errors = [];
-
-        foreach ($node->getStatementResult()->getThrowPoints() as $throwPoint) {
-            if (!$throwPoint->isExplicit()) {
-                continue;
-            }
-
-            foreach ($throwPoint->getType()->getObjectClassNames() as $exceptionClass) {
-                if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $throwPoint->getScope())) {
-                    $errors[] = $this->buildError(
-                        $exceptionClass,
-                        'closure',
-                        $throwPoint->getNode()->getStartLine(),
-                        $this->callablesInArguments[$nodeHash] ?? null,
-                    );
+        if (!$scope->isInClass() || $node instanceof ClassMethodsNode) {
+            while ($this->pending !== []) {
+                $generator = array_shift($this->pending);
+                foreach ($generator as $error) {
+                    $errors[] = $error;
                 }
             }
         }
@@ -220,12 +162,84 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     }
 
     /**
-     * @return list<IdentifierRuleError>
+     * @param MethodCall|StaticCall|FuncCall $callNode
+     * @return Generator<IdentifierRuleError>
+     */
+    public function processFirstClassCallable(
+        CallLike $callNode,
+        Scope $scope
+    ): Generator
+    {
+        if (!$callNode->isFirstClassCallable()) {
+            throw new LogicException('This should be ensured by using XxxCallableNode');
+        }
+
+        $nodeHash = spl_object_hash($callNode);
+
+        if (isset($this->allowedCallables[$nodeHash])) {
+            return;
+        }
+
+        $line = $callNode->getStartLine();
+
+        if ($callNode instanceof MethodCall && $callNode->name instanceof Identifier) {
+            $callerType = $scope->getType($callNode->var);
+            $methodName = $callNode->name->toString();
+
+            yield from $this->processCall($scope, $callerType, $methodName, $line, $nodeHash);
+        }
+
+        if ($callNode instanceof StaticCall && $callNode->class instanceof Name && $callNode->name instanceof Identifier) {
+            $callerType = $scope->resolveTypeByName($callNode->class);
+            $methodName = $callNode->name->toString();
+
+            yield from $this->processCall($scope, $callerType, $methodName, $line, $nodeHash);
+        }
+
+        if ($callNode instanceof FuncCall && $callNode->name instanceof Name && $this->reflectionProvider->hasFunction($callNode->name, $scope)) {
+            $functionReflection = $this->reflectionProvider->getFunction($callNode->name, $scope);
+            yield from $this->processThrowType($functionReflection->getThrowType(), $scope, $line, $nodeHash);
+        }
+    }
+
+    /**
+     * @return Generator<IdentifierRuleError>
+     */
+    public function processClosure(
+        ClosureReturnStatementsNode $node
+    ): Generator
+    {
+        $nodeHash = spl_object_hash($node->getClosureExpr());
+
+        if (isset($this->allowedCallables[$nodeHash])) {
+            return;
+        }
+
+        foreach ($node->getStatementResult()->getThrowPoints() as $throwPoint) {
+            if (!$throwPoint->isExplicit()) {
+                continue;
+            }
+
+            foreach ($throwPoint->getType()->getObjectClassNames() as $exceptionClass) {
+                if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $throwPoint->getScope())) {
+                    yield $this->buildError(
+                        $exceptionClass,
+                        'closure',
+                        $throwPoint->getNode()->getStartLine(),
+                        $this->callablesInArguments[$nodeHash] ?? null,
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * @return Generator<IdentifierRuleError>
      */
     public function processArrowFunction(
         ArrowFunction $node,
         Scope $scope
-    ): array
+    ): Generator
     {
         if (!$scope instanceof MutatingScope) {
             throw new LogicException('Unexpected scope implementation');
@@ -234,7 +248,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         $nodeHash = spl_object_hash($node);
 
         if (isset($this->allowedCallables[$nodeHash])) {
-            return [];
+            return;
         }
 
         $result = $this->nodeScopeResolver->processStmtNodes(
@@ -246,8 +260,6 @@ class ForbidCheckedExceptionInCallableRule implements Rule
             StatementContext::createTopLevel(),
         );
 
-        $errors = [];
-
         foreach ($result->getThrowPoints() as $throwPoint) {
             if (!$throwPoint->isExplicit()) {
                 continue;
@@ -255,7 +267,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
             foreach ($throwPoint->getType()->getObjectClassNames() as $exceptionClass) {
                 if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $throwPoint->getScope())) {
-                    $errors[] = $this->buildError(
+                    yield $this->buildError(
                         $exceptionClass,
                         'arrow function',
                         $throwPoint->getNode()->getStartLine(),
@@ -264,12 +276,10 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                 }
             }
         }
-
-        return $errors;
     }
 
     /**
-     * @return list<IdentifierRuleError>
+     * @return Generator<IdentifierRuleError>
      */
     private function processCall(
         Scope $scope,
@@ -277,36 +287,32 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         string $methodName,
         int $line,
         string $nodeHash
-    ): array
+    ): Generator
     {
         $methodReflection = $scope->getMethodReflection($callerType, $methodName);
 
         if ($methodReflection !== null) {
-            return $this->processThrowType($methodReflection->getThrowType(), $scope, $line, $nodeHash);
+            yield from $this->processThrowType($methodReflection->getThrowType(), $scope, $line, $nodeHash);
         }
-
-        return [];
     }
 
     /**
-     * @return list<IdentifierRuleError>
+     * @return Generator<IdentifierRuleError>
      */
     private function processThrowType(
         ?Type $throwType,
         Scope $scope,
         int $line,
         string $nodeHash
-    ): array
+    ): Generator
     {
         if ($throwType === null) {
-            return [];
+            return;
         }
-
-        $errors = [];
 
         foreach ($throwType->getObjectClassNames() as $exceptionClass) {
             if ($this->exceptionTypeResolver->isCheckedException($exceptionClass, $scope)) {
-                $errors[] = $this->buildError(
+                yield $this->buildError(
                     $exceptionClass,
                     'first-class-callable',
                     $line,
@@ -314,8 +320,6 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                 );
             }
         }
-
-        return $errors;
     }
 
     /**
