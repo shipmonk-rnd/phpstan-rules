@@ -4,6 +4,7 @@ namespace ShipMonk\PHPStan;
 
 use PHPStan\Rules\Rule;
 use ShipMonk\PHPStanDev\RuleTestCase as ShipMonkDevRuleTestCase;
+use function is_array;
 
 /**
  * @template TRule of Rule
@@ -12,12 +13,15 @@ use ShipMonk\PHPStanDev\RuleTestCase as ShipMonkDevRuleTestCase;
 abstract class RuleTestCase extends ShipMonkDevRuleTestCase
 {
 
+    /**
+     * @param string|list<string> $files
+     */
     protected function analyseFile(
-        string $file,
+        $files,
         bool $autofix = false
     ): void
     {
-        $this->analyzeFiles([$file], $autofix);
+        $this->analyzeFiles(is_array($files) ? $files : [$files], $autofix);
     }
 
 }

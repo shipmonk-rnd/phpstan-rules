@@ -71,6 +71,16 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
         $this->analyseFile(__DIR__ . '/data/ForbidCheckedExceptionInCallableRule/code.php');
     }
 
+    public function testTrait(): void
+    {
+        self::$implicitThrows = false;
+        $this->checkedExceptions = ['Exception'];
+        $this->analyseFile([
+            __DIR__ . '/data/ForbidCheckedExceptionInCallableRule/code-for-trait.php',
+            __DIR__ . '/data/ForbidCheckedExceptionInCallableRule/trait.php',
+        ]);
+    }
+
     /**
      * @return iterable<mixed>
      */

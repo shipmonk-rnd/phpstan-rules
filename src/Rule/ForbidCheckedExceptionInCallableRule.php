@@ -225,6 +225,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                     yield $this->buildError(
                         $exceptionClass,
                         'closure',
+                        $throwPoint->getScope(),
                         $throwPoint->getNode()->getStartLine(),
                         $this->callablesInArguments[$nodeHash] ?? null,
                     );
@@ -270,6 +271,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                     yield $this->buildError(
                         $exceptionClass,
                         'arrow function',
+                        $throwPoint->getScope(),
                         $throwPoint->getNode()->getStartLine(),
                         $this->callablesInArguments[$nodeHash] ?? null,
                     );
@@ -315,6 +317,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                 yield $this->buildError(
                     $exceptionClass,
                     'first-class-callable',
+                    $scope,
                     $line,
                     $this->callablesInArguments[$nodeHash] ?? null,
                 );
@@ -534,11 +537,16 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     private function buildError(
         string $exceptionClass,
         string $where,
+        Scope $scope,
         int $line,
         ?string $usedAsArgumentOfMethodName
     ): IdentifierRuleError
     {
+        $file = $scope->getFile();
+        $fileDescription = $scope->getFileDescription();
+
         $builder = RuleErrorBuilder::message("Throwing checked exception $exceptionClass in $where!")
+            ->file($file, $fileDescription)
             ->line($line)
             ->identifier('shipmonk.checkedExceptionInCallable');
 
