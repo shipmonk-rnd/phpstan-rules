@@ -19,7 +19,7 @@
         "phpstan/phpstan-deprecation-rules": "^2.0.1",
         "phpstan/phpstan-phpunit": "^2.0.4",
         "phpstan/phpstan-strict-rules": "^2.0.3",
-        "phpunit/phpunit": "^9.6.22",
+        "phpunit/phpunit": "^9.6.33",
         "shipmonk/coding-standard": "^0.2.0",
         "shipmonk/composer-dependency-analyser": "^1.8.1",
         "shipmonk/coverage-guard": "^1.0.0",
