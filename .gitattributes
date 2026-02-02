@@ -3,6 +3,7 @@
 /bin export-ignore
 /cache export-ignore
 /tests export-ignore
+/composer.lock export-ignore
 /.editorconfig export-ignore
 /.gitattributes export-ignore
 /.github export-ignore
