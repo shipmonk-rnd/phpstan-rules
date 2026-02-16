@@ -2,6 +2,7 @@
 
 namespace ForbidCheckedExceptionInYieldingMethodRule;
 
+use Closure;
 use Generator;
 use LogicException;
 use RuntimeException;
@@ -20,6 +21,20 @@ class A {
         if ($throw) {
             throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInYieldingMethodRule\CheckedException in yielding method is denied as it gets thrown upon Generator iteration
         }
+    }
+
+    /**
+     * @return iterable<int>
+     * @throws CheckedException
+     */
+    public function throwPointOfYieldingMethodThruImmediatellyInvokedCallable(bool $throw): iterable
+    {
+        return $this->passThru(function () use ($throw): iterable {
+            yield 1;
+            if ($throw) {
+                throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInYieldingMethodRule\CheckedException in yielding closure is denied as it gets thrown upon Generator iteration
+            }
+        });
     }
 
     /**
@@ -48,6 +63,19 @@ class A {
     }
 
     /**
+     * @param Closure(): T $callback
+     * @return T
+     *
+     * @template T
+     *
+     * @param-immediately-invoked-callable $callback
+     */
+    private function passThru(Closure $callback): mixed
+    {
+        return $callback();
+    }
+
+    /**
      * @throws CheckedException
      * @return Generator<int>
      */
@@ -60,3 +88,9 @@ class A {
 
 }
 
+function testFunction(): iterable {
+    yield 1;
+    if (random_int(0, 1)) {
+        throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInYieldingMethodRule\CheckedException in yielding function is denied as it gets thrown upon Generator iteration
+    }
+};
