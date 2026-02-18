@@ -76,6 +76,14 @@ class A {
     }
 
     /**
+     * @param Closure(): mixed $callback
+     */
+    private function passThruNotImmediate(Closure $callback): mixed
+    {
+        return $callback();
+    }
+
+    /**
      * @throws CheckedException
      * @return Generator<int>
      */
@@ -86,6 +94,32 @@ class A {
         yield from self::methodWithUncheckedException($throw);
     }
 
+    /**
+     * Closure passed to method WITHOUT param-immediately-invoked-callable — no error (handled by callable rule)
+     */
+    public function throwPointOfYieldingClosureNotImmediate(bool $throw): iterable
+    {
+        return $this->passThruNotImmediate(function () use ($throw): iterable {
+            yield 1;
+            if ($throw) {
+                throw new CheckedException();
+            }
+        });
+    }
+
+    /**
+     * Closure passed via named argument to immediately-invoked-callable — error
+     */
+    public function throwPointOfYieldingClosureWithNamedArg(bool $throw): iterable
+    {
+        return $this->passThru(callback: function () use ($throw): iterable {
+            yield 1;
+            if ($throw) {
+                throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInYieldingMethodRule\CheckedException in yielding closure is denied as it gets thrown upon Generator iteration
+            }
+        });
+    }
+
 }
 
 function testFunction(): iterable {
@@ -94,3 +128,19 @@ function testFunction(): iterable {
         throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInYieldingMethodRule\CheckedException in yielding function is denied as it gets thrown upon Generator iteration
     }
 };
+
+// Standalone closure assigned to variable — no error (handled by callable rule)
+$standaloneClosure = function (): iterable {
+    yield 1;
+    if (random_int(0, 1)) {
+        throw new CheckedException();
+    }
+};
+
+// Directly invoked closure — error (not handled by callable rule)
+(function (): void {
+    yield 1;
+    if (random_int(0, 1)) {
+        throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInYieldingMethodRule\CheckedException in yielding closure is denied as it gets thrown upon Generator iteration
+    }
+})();
