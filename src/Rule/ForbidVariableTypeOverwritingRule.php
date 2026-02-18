@@ -16,6 +16,7 @@ use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\StaticType;
 use PHPStan\Type\SubtractableType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -85,6 +86,10 @@ class ForbidVariableTypeOverwritingRule implements Rule
 
     private function generalize(Type $type): Type
     {
+        if ($type instanceof StaticType) {
+            $type = $type->getStaticObjectType(); // @phpstan-ignore shipmonk.variableTypeOverwritten
+        }
+
         if (
             $type->isConstantValue()->yes()
             || $type instanceof IntegerRangeType
