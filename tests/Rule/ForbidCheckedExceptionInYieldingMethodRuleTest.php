@@ -3,6 +3,7 @@
 namespace ShipMonk\PHPStan\Rule;
 
 use ForbidCheckedExceptionInYieldingMethodRule\CheckedException;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Exceptions\ExceptionTypeResolver;
 use PHPStan\Rules\Rule;
 use ShipMonk\PHPStan\RuleTestCase;
@@ -24,7 +25,10 @@ class ForbidCheckedExceptionInYieldingMethodRuleTest extends RuleTestCase
                 return $className === CheckedException::class || $className === Throwable::class;
             });
 
-        return new ForbidCheckedExceptionInYieldingMethodRule($exceptionTypeResolverMock);
+        return new ForbidCheckedExceptionInYieldingMethodRule(
+            $exceptionTypeResolverMock,
+            self::getContainer()->getByType(ReflectionProvider::class),
+        );
     }
 
     public function testClass(): void
