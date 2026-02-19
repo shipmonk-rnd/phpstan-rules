@@ -18,6 +18,8 @@ parameters:
             enabled: %shipmonkRules.enableAllRules%
         enforceListReturn:
             enabled: %shipmonkRules.enableAllRules%
+        enforceNativePropertyTypehint:
+            enabled: %shipmonkRules.enableAllRules%
         enforceNativeReturnTypehint:
             enabled: %shipmonkRules.enableAllRules%
         enforceReadonlyPublicProperty:
@@ -115,6 +117,9 @@ parametersSchema:
             enabled: bool()
         ])
         enforceListReturn: structure([
+            enabled: bool()
+        ])
+        enforceNativePropertyTypehint: structure([
             enabled: bool()
         ])
         enforceNativeReturnTypehint: structure([
@@ -232,6 +237,8 @@ conditionalTags:
         phpstan.rules.rule: %shipmonkRules.enforceEnumMatch.enabled%
     ShipMonk\PHPStan\Rule\EnforceIteratorToArrayPreserveKeysRule:
         phpstan.rules.rule: %shipmonkRules.enforceIteratorToArrayPreserveKeys.enabled%
+    ShipMonk\PHPStan\Rule\EnforceNativePropertyTypehintRule:
+        phpstan.rules.rule: %shipmonkRules.enforceNativePropertyTypehint.enabled%
     ShipMonk\PHPStan\Rule\EnforceNativeReturnTypehintRule:
         phpstan.rules.rule: %shipmonkRules.enforceNativeReturnTypehint.enabled%
     ShipMonk\PHPStan\Rule\EnforceListReturnRule:
@@ -321,6 +328,10 @@ services:
         class: ShipMonk\PHPStan\Rule\EnforceIteratorToArrayPreserveKeysRule
     -
         class: ShipMonk\PHPStan\Rule\EnforceListReturnRule
+    -
+        class: ShipMonk\PHPStan\Rule\EnforceNativePropertyTypehintRule
+        arguments:
+            treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
     -
         class: ShipMonk\PHPStan\Rule\EnforceNativeReturnTypehintRule
         arguments:
