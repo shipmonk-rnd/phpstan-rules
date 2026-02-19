@@ -162,3 +162,62 @@ function testEnumCaseChange() {
 function testIntToInt(int $positive, int $negative) {
     $positive = $negative;
 }
+
+function testFloatToInt(float $float, int $int) {
+    $float = $int; // error: Overwriting variable $float while changing its type from float to int
+}
+
+function testIntToFloat(int $int, float $float) {
+    $int = $float; // error: Overwriting variable $int while changing its type from int to float
+}
+
+class FluentClass {
+    /** @return $this */
+    public function orderBy(): static {
+        return $this;
+    }
+
+    /** @return $this */
+    public function setFirstResult(): static {
+        return $this;
+    }
+
+    /** @return $this */
+    public function setMaxResults(): static {
+        return $this;
+    }
+}
+
+function testFluentInterfaceSameType(FluentClass $qb): void {
+    $qb = $qb
+        ->orderBy()
+        ->setFirstResult()
+        ->setMaxResults();
+}
+
+abstract class AbstractBuilder {
+    /** @return $this */
+    public function orderBy(): self {
+        return $this;
+    }
+
+    /** @return $this */
+    public function setFirstResult(): self {
+        return $this;
+    }
+
+    /** @return $this */
+    public function setMaxResults(): self {
+        return $this;
+    }
+}
+
+class ConcreteBuilder extends AbstractBuilder {
+}
+
+function testFluentInterfaceInherited(ConcreteBuilder $qb): void {
+    $qb = $qb
+        ->orderBy()
+        ->setFirstResult()
+        ->setMaxResults();
+}
