@@ -9,9 +9,11 @@ use PhpParser\Node\Expr\PostInc;
 use PhpParser\Node\Expr\PreDec;
 use PhpParser\Node\Expr\PreInc;
 use PHPStan\Analyser\Scope;
+use PHPStan\Php\PhpVersion;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\VerbosityLevel;
 use function get_class;
 use function sprintf;
@@ -21,6 +23,13 @@ use function sprintf;
  */
 class ForbidIncrementDecrementOnNonIntegerRule implements Rule
 {
+
+    private PhpVersion $phpVersion;
+
+    public function __construct(PhpVersion $phpVersion)
+    {
+        $this->phpVersion = $phpVersion;
+    }
 
     public function getNodeType(): string
     {
@@ -57,6 +66,13 @@ class ForbidIncrementDecrementOnNonIntegerRule implements Rule
     ): array
     {
         $exprType = $scope->getType($node->var);
+
+        if (
+            $this->phpVersion->supportsBcMathNumberOperatorOverloading()
+            && (new ObjectType('BcMath\Number'))->isSuperTypeOf($exprType)->yes()
+        ) {
+            return [];
+        }
 
         if (!$exprType->isInteger()->yes()) {
             $errorMessage = sprintf(

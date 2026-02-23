@@ -414,7 +414,7 @@ parameters:
 ```
 
 ### forbidIncrementDecrementOnNonInteger
-- Denies using `$i++`, `$i--`, `++$i`, `--$i` with any non-integer
+- Denies using `$i++`, `$i--`, `++$i`, `--$i` with types other than `int` and `BcMath\Number`
 - PHP itself is leading towards stricter behaviour here and soft-deprecated **some** non-integer usages in 8.3, see [RFC](https://wiki.php.net/rfc/saner-inc-dec-operators)
 
 ```php
