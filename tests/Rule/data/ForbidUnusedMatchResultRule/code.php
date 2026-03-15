@@ -38,6 +38,11 @@ class Clazz {
             default => 1,
         };
 
+        $c = 'The number is ' . match ($number % 2) {
+            0 => 'even',
+            1 => 'odd',
+        };
+
         $this->use(match ($bool) {
             false => new LogicException(),
             true => new RuntimeException(),

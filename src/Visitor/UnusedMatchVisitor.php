@@ -8,7 +8,7 @@ use PhpParser\Node\ArrayItem;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Assign;
 use PhpParser\Node\Expr\AssignOp;
-use PhpParser\Node\Expr\BinaryOp\Coalesce;
+use PhpParser\Node\Expr\BinaryOp;
 use PhpParser\Node\Expr\Match_;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
@@ -81,7 +81,7 @@ class UnusedMatchVisitor extends NodeVisitorAbstract
             || $parent instanceof MethodCall
             || $parent instanceof Return_
             || $parent instanceof Arg
-            || $parent instanceof Coalesce
+            || $parent instanceof BinaryOp
             || $parent instanceof ArrayItem
             || $parent instanceof NullsafeMethodCall
             || $parent instanceof Ternary
