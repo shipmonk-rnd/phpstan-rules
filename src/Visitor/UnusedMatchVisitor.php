@@ -3,21 +3,8 @@
 namespace ShipMonk\PHPStan\Visitor;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
-use PhpParser\Node\ArrayItem;
-use PhpParser\Node\Expr\ArrowFunction;
-use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\AssignOp;
-use PhpParser\Node\Expr\BinaryOp\Coalesce;
 use PhpParser\Node\Expr\Match_;
-use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\NullsafeMethodCall;
-use PhpParser\Node\Expr\Ternary;
-use PhpParser\Node\Expr\Throw_;
-use PhpParser\Node\Expr\Yield_;
-use PhpParser\Node\Expr\YieldFrom;
-use PhpParser\Node\MatchArm;
-use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeVisitorAbstract;
 use function array_pop;
 use function end;
@@ -44,18 +31,11 @@ class UnusedMatchVisitor extends NodeVisitorAbstract
 
     public function enterNode(Node $node): ?Node
     {
-        if ($this->stack !== []) {
-            $parent = end($this->stack);
-
-            if ($node instanceof Match_ && $this->isUsed($parent)) {
-                $node->setAttribute(self::MATCH_RESULT_USED, true);
-            }
+        if ($node instanceof Match_ && !$this->hasUnusedResult()) {
+            $node->setAttribute(self::MATCH_RESULT_USED, true);
         }
 
-        if ($this->shouldBuildStack($node)) {
-            $this->stack[] = $node;
-        }
-
+        $this->stack[] = $node;
         return null;
     }
 
@@ -65,30 +45,10 @@ class UnusedMatchVisitor extends NodeVisitorAbstract
         return null;
     }
 
-    private function shouldBuildStack(Node $node): bool
+    private function hasUnusedResult(): bool
     {
-        return $this->stack !== [] || $this->isUsed($node);
-    }
-
-    /**
-     * Those parent nodes are marking the match as used
-     */
-    private function isUsed(Node $parent): bool
-    {
-        return $parent instanceof Throw_
-            || $parent instanceof Assign
-            || $parent instanceof AssignOp
-            || $parent instanceof MethodCall
-            || $parent instanceof Return_
-            || $parent instanceof Arg
-            || $parent instanceof Coalesce
-            || $parent instanceof ArrayItem
-            || $parent instanceof NullsafeMethodCall
-            || $parent instanceof Ternary
-            || $parent instanceof MatchArm
-            || $parent instanceof Yield_
-            || $parent instanceof YieldFrom
-            || $parent instanceof ArrowFunction;
+        $parent = end($this->stack);
+        return $parent === false || $parent instanceof Expression;
     }
 
 }

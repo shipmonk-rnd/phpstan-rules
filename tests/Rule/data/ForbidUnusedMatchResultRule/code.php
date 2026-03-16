@@ -82,6 +82,16 @@ class Clazz {
             1 => 'y',
         };
 
+        $c = 'The number is ' . match ($int) {
+            0 => 'even',
+            1 => 'odd',
+        };
+
+        !match ($int) {
+            0 => true,
+            1 => false,
+        };
+
         return match ($bool) {
             false => 1,
             true => 2,
