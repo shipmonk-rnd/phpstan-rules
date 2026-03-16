@@ -3,20 +3,10 @@
 namespace ShipMonk\PHPStan\Visitor;
 
 use PhpParser\Node;
-use PhpParser\Node\Arg;
-use PhpParser\Node\ArrayItem;
-use PhpParser\Node\Expr\Assign;
-use PhpParser\Node\Expr\BinaryOp\Coalesce;
-use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
-use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Expr\Ternary;
-use PhpParser\Node\Expr\Throw_;
-use PhpParser\Node\Expr\Yield_;
-use PhpParser\Node\MatchArm;
-use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Stmt\Expression;
 use PhpParser\NodeVisitorAbstract;
 use function array_pop;
 use function end;
@@ -43,18 +33,11 @@ class UnusedExceptionVisitor extends NodeVisitorAbstract
 
     public function enterNode(Node $node): ?Node
     {
-        if ($this->stack !== []) {
-            $parent = end($this->stack);
-
-            if ($this->isNodeInInterest($node) && $this->isUsed($parent)) {
-                $node->setAttribute(self::RESULT_USED, true);
-            }
+        if ($this->isNodeInInterest($node) && !$this->hasUnusedResult()) {
+            $node->setAttribute(self::RESULT_USED, true);
         }
 
-        if ($this->shouldBuildStack($node)) {
-            $this->stack[] = $node;
-        }
-
+        $this->stack[] = $node;
         return null;
     }
 
@@ -75,28 +58,10 @@ class UnusedExceptionVisitor extends NodeVisitorAbstract
             || $node instanceof StaticCall;
     }
 
-    private function shouldBuildStack(Node $node): bool
+    private function hasUnusedResult(): bool
     {
-        return $this->stack !== [] || $this->isUsed($node);
-    }
-
-    /**
-     * Those parent nodes are marking the exception as used
-     */
-    private function isUsed(Node $parent): bool
-    {
-        return $parent instanceof Assign
-            || $parent instanceof MethodCall
-            || $parent instanceof Return_
-            || $parent instanceof Arg
-            || $parent instanceof Coalesce
-            || $parent instanceof ArrayItem
-            || $parent instanceof NullsafeMethodCall
-            || $parent instanceof Ternary
-            || $parent instanceof Yield_
-            || $parent instanceof Throw_
-            || $parent instanceof ClassConstFetch
-            || $parent instanceof MatchArm;
+        $parent = end($this->stack);
+        return $parent === false || $parent instanceof Expression;
     }
 
 }
