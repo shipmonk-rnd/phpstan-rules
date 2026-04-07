@@ -304,6 +304,8 @@ conditionalTags:
 
 services:
     -
+        class: ShipMonk\PHPStan\Helper\ImmediatelyInvokedCallableHelper
+    -
         class: ShipMonk\PHPStan\Rule\AllowComparingOnlyComparableTypesRule
     -
         class: ShipMonk\PHPStan\Rule\BackedEnumGenericsRule

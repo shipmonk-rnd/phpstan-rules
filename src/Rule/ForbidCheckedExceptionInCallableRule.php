@@ -5,20 +5,15 @@ namespace ShipMonk\PHPStan\Rule;
 use Generator;
 use LogicException;
 use PhpParser\Node;
-use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\CallLike;
-use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\New_;
-use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Expression;
 use PhpParser\Node\Stmt\Namespace_;
-use PHPStan\Analyser\ArgumentsNormalizer;
 use PHPStan\Analyser\MutatingScope;
 use PHPStan\Analyser\NodeScopeResolver;
 use PHPStan\Analyser\Scope;
@@ -29,20 +24,15 @@ use PHPStan\Node\FileNode;
 use PHPStan\Node\FunctionCallableNode;
 use PHPStan\Node\MethodCallableNode;
 use PHPStan\Node\StaticMethodCallableNode;
-use PHPStan\Reflection\ExtendedParameterReflection;
-use PHPStan\Reflection\FunctionReflection;
-use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ParameterReflection;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Type;
+use ShipMonk\PHPStan\Helper\ImmediatelyInvokedCallableHelper;
 use function array_map;
 use function array_shift;
-use function array_values;
 use function explode;
 use function in_array;
 use function is_int;
@@ -60,6 +50,8 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     private ReflectionProvider $reflectionProvider;
 
     private DefaultExceptionTypeResolver $exceptionTypeResolver;
+
+    private ImmediatelyInvokedCallableHelper $callableHelper;
 
     /**
      * @var array<string, bool> spl_hash => true
@@ -96,7 +88,8 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         NodeScopeResolver $nodeScopeResolver,
         ReflectionProvider $reflectionProvider,
         DefaultExceptionTypeResolver $exceptionTypeResolver,
-        array $allowedCheckedExceptionCallables
+        array $allowedCheckedExceptionCallables,
+        ImmediatelyInvokedCallableHelper $callableHelper
     )
     {
         $this->checkClassExistence($reflectionProvider, $allowedCheckedExceptionCallables);
@@ -110,6 +103,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         $this->exceptionTypeResolver = $exceptionTypeResolver;
         $this->reflectionProvider = $reflectionProvider;
         $this->nodeScopeResolver = $nodeScopeResolver;
+        $this->callableHelper = $callableHelper;
     }
 
     public function getNodeType(): string
@@ -355,29 +349,6 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         }
     }
 
-    /**
-     * Copied from phpstan https://github.com/phpstan/phpstan-src/commit/cefa296f24b8c0b7d4dc3d383cbceea35267cb3f#diff-0c3f50d118357d9cb6d6f4d0eade75b83797d57056ff3b9c58ec881a13eaa6feR4113
-     *
-     * @param FunctionReflection|MethodReflection $reflection
-     */
-    private function isImmediatelyInvokedCallable(
-        object $reflection,
-        ?ParameterReflection $parameter
-    ): bool
-    {
-        if ($parameter instanceof ExtendedParameterReflection) {
-            $parameterCallImmediately = $parameter->isImmediatelyInvokedCallable();
-
-            if ($parameterCallImmediately->maybe()) {
-                return $reflection instanceof FunctionReflection;
-            }
-
-            return $parameterCallImmediately->yes();
-        }
-
-        return $reflection instanceof FunctionReflection;
-    }
-
     private function isAllowedCheckedExceptionCallable(
         ?Type $caller,
         string $calledMethodName,
@@ -427,111 +398,34 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         Scope $scope
     ): void
     {
-        if ($node instanceof MethodCall && $node->name instanceof Identifier) {
-            $callerType = $scope->getType($node->var);
-            $methodReflection = $scope->getMethodReflection($callerType, $node->name->name);
-
-        } elseif ($node instanceof StaticCall && $node->name instanceof Identifier && $node->class instanceof Name) {
-            $callerType = $scope->resolveTypeByName($node->class);
-            $methodReflection = $scope->getMethodReflection($callerType, $node->name->name);
-
-        } elseif ($node instanceof New_ && $node->class instanceof Name) {
-            $callerType = $scope->resolveTypeByName($node->class);
-            $methodReflection = $scope->getMethodReflection($callerType, '__construct');
-
-        } elseif ($node instanceof FuncCall && $node->name instanceof Name) {
-            $callerType = null;
-            $methodReflection = $this->getFunctionReflection($node->name, $scope);
-
-        } elseif ($node instanceof FuncCall && $this->isFirstClassCallableOrClosureOrArrowFunction($node->name)) { // immediately called callable syntax
+        // Directly invoked callable syntax: (function(){...})(), (fn() => ...)()
+        if ($node instanceof FuncCall && $this->callableHelper->isCallableExpression($node->name)) {
             $this->allowedCallables[spl_object_hash($node->name)] = true;
             return;
+        }
 
-        } else {
+        $analysis = $this->callableHelper->analyzeCall($node, $scope);
+
+        if ($analysis === null) {
             return;
         }
 
-        if ($methodReflection === null) {
-            return;
-        }
-
-        $parametersAcceptor = ParametersAcceptorSelector::selectFromArgs(
-            $scope,
-            $node->getArgs(),
-            $methodReflection->getVariants(),
-            $methodReflection->getNamedArgumentsVariants(),
-        );
-
-        if ($node instanceof New_) {
-            $arguments = (ArgumentsNormalizer::reorderNewArguments($parametersAcceptor, $node) ?? $node)->getArgs();
-
-        } elseif ($node instanceof FuncCall) {
-            $arguments = (ArgumentsNormalizer::reorderFuncArguments($parametersAcceptor, $node) ?? $node)->getArgs();
-
-        } elseif ($node instanceof MethodCall) {
-            $arguments = (ArgumentsNormalizer::reorderMethodArguments($parametersAcceptor, $node) ?? $node)->getArgs();
-
-        } elseif ($node instanceof StaticCall) {
-            $arguments = (ArgumentsNormalizer::reorderStaticCallArguments($parametersAcceptor, $node) ?? $node)->getArgs();
-
-        } else {
-            throw new LogicException('Unexpected node type');
-        }
-
-        /** @var list<Arg> $args */
-        $args = array_values($arguments);
-        $parameters = $parametersAcceptor->getParameters();
-
-        foreach ($args as $index => $arg) {
-            $parameterIndex = $this->getParameterIndex($arg, $index, $parameters) ?? -1;
-            $parameter = $parameters[$parameterIndex] ?? null;
+        foreach ($analysis->reorderedArguments as $index => $arg) {
             $argHash = spl_object_hash($arg->value);
 
             if (
-                $this->isImmediatelyInvokedCallable($methodReflection, $parameter)
-                || $this->isAllowedCheckedExceptionCallable($callerType, $methodReflection->getName(), $index)
+                isset($analysis->immediatelyInvokedHashes[$argHash])
+                || $this->isAllowedCheckedExceptionCallable($analysis->callerType, $analysis->reflection->getName(), $index)
             ) {
                 $this->allowedCallables[$argHash] = true;
             }
 
-            if ($this->isFirstClassCallableOrClosureOrArrowFunction($arg->value)) {
-                $callerClass = $callerType !== null && $callerType->getObjectClassNames() !== [] ? $callerType->getObjectClassNames()[0] : null;
-                $methodReference = $callerClass !== null ? "$callerClass::{$methodReflection->getName()}" : $methodReflection->getName();
+            if ($this->callableHelper->isCallableExpression($arg->value)) {
+                $callerClass = $analysis->callerType !== null && $analysis->callerType->getObjectClassNames() !== [] ? $analysis->callerType->getObjectClassNames()[0] : null;
+                $methodReference = $callerClass !== null ? "$callerClass::{$analysis->reflection->getName()}" : $analysis->reflection->getName();
                 $this->callablesInArguments[$argHash] = $methodReference;
             }
         }
-    }
-
-    /**
-     * @param array<int, ParameterReflection> $parameters
-     */
-    private function getParameterIndex(
-        Arg $arg,
-        int $argumentIndex,
-        array $parameters
-    ): ?int
-    {
-        if ($arg->name === null) {
-            return $argumentIndex;
-        }
-
-        foreach ($parameters as $parameterIndex => $parameter) {
-            if ($parameter->getName() === $arg->name->toString()) {
-                return $parameterIndex;
-            }
-        }
-
-        return null;
-    }
-
-    private function isFirstClassCallableOrClosureOrArrowFunction(Node $node): bool
-    {
-        return $node instanceof Closure
-            || $node instanceof ArrowFunction
-            || ($node instanceof MethodCall && $node->isFirstClassCallable())
-            || ($node instanceof NullsafeMethodCall && $node->isFirstClassCallable())
-            || ($node instanceof StaticCall && $node->isFirstClassCallable())
-            || ($node instanceof FuncCall && $node->isFirstClassCallable());
     }
 
     private function buildError(
@@ -555,16 +449,6 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         }
 
         return $builder->build();
-    }
-
-    private function getFunctionReflection(
-        Name $functionName,
-        Scope $scope
-    ): ?FunctionReflection
-    {
-        return $this->reflectionProvider->hasFunction($functionName, $scope)
-            ? $this->reflectionProvider->getFunction($functionName, $scope)
-            : null;
     }
 
 }
