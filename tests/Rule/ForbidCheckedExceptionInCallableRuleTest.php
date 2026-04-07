@@ -7,6 +7,7 @@ use PHPStan\Analyser\NodeScopeResolver;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver;
 use PHPStan\Rules\Rule;
+use ShipMonk\PHPStan\Helper\ImmediatelyInvokedCallableHelper;
 use ShipMonk\PHPStan\RuleTestCase;
 
 /**
@@ -32,11 +33,13 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
             throw new LogicException('Missing implicitThrows');
         }
 
+        $reflectionProvider = self::getContainer()->getByType(ReflectionProvider::class);
+
         return new ForbidCheckedExceptionInCallableRule(
             self::getContainer()->getByType(NodeScopeResolver::class),
-            self::getContainer()->getByType(ReflectionProvider::class),
+            $reflectionProvider,
             new DefaultExceptionTypeResolver( // @phpstan-ignore phpstanApi.constructor
-                self::getContainer()->getByType(ReflectionProvider::class),
+                $reflectionProvider,
                 [],
                 [],
                 [],
@@ -52,6 +55,7 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
                 'ForbidCheckedExceptionInCallableRule\allowed_function' => [0], // not really needed as functions are always considered immediately invoked (https://phpstan.org/writing-php-code/phpdocs-basics#callables)
                 'ForbidCheckedExceptionInCallableRule\allowed_function_not_immediate' => [0],
             ],
+            new ImmediatelyInvokedCallableHelper($reflectionProvider),
         );
     }
 
