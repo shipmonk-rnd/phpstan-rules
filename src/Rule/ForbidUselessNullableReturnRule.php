@@ -5,6 +5,7 @@ namespace ShipMonk\PHPStan\Rule;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClosureReturnStatementsNode;
+use PHPStan\Node\PropertyHookReturnStatementsNode;
 use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Rules\IdentifierRuleError;
@@ -36,6 +37,10 @@ class ForbidUselessNullableReturnRule implements Rule
         Scope $scope
     ): array
     {
+        if ($node instanceof PropertyHookReturnStatementsNode) {
+            return []; // hooks cannot have their own return type, it is inherited from the property
+        }
+
         $verbosity = VerbosityLevel::precise();
         $methodReflection = $scope->getFunction();
 
