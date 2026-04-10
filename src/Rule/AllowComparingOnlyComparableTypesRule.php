@@ -149,8 +149,12 @@ class AllowComparingOnlyComparableTypesRule implements Rule
                         return false;
                     }
 
-                    for ($i = 0; $i < count($leftValueTypes); $i++) {
-                        if (!$this->isComparableTogether($leftValueTypes[$i], $rightValueTypes[$i])) { // @phpstan-ignore offsetAccess.notFound, offsetAccess.notFound
+                    foreach ($leftValueTypes as $i => $leftValueType) {
+                        if (!isset($rightValueTypes[$i])) {
+                            return false;
+                        }
+
+                        if (!$this->isComparableTogether($leftValueType, $rightValueTypes[$i])) {
                             return false;
                         }
                     }
