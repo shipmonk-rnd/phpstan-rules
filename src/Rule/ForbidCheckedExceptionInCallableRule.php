@@ -72,13 +72,18 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     private array $callablesInArguments = [];
 
     /**
+     * @var array<string, int|list<int>>
+     */
+    private array $rawAllowedCheckedExceptionCallables;
+
+    /**
      * class::method => callable argument index
      * or
      * function => callable argument index
      *
-     * @var array<string, list<int>>
+     * @var array<string, list<int>>|null
      */
-    private array $callablesAllowingCheckedExceptions;
+    private ?array $callablesAllowingCheckedExceptions = null;
 
     /**
      * PHPStan's fiber-based processing no longer guarantees that CallLike nodes are processed before their Arg nodes.
@@ -99,17 +104,28 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         array $allowedCheckedExceptionCallables
     )
     {
-        $this->checkClassExistence($reflectionProvider, $allowedCheckedExceptionCallables);
-
-        $this->callablesAllowingCheckedExceptions = array_map(
-            function ($argumentIndexes): array {
-                return $this->normalizeArgumentIndexes($argumentIndexes);
-            },
-            $allowedCheckedExceptionCallables,
-        );
+        $this->rawAllowedCheckedExceptionCallables = $allowedCheckedExceptionCallables;
         $this->exceptionTypeResolver = $exceptionTypeResolver;
         $this->reflectionProvider = $reflectionProvider;
         $this->nodeScopeResolver = $nodeScopeResolver;
+    }
+
+    /**
+     * @return array<string, list<int>>
+     */
+    private function getCallablesAllowingCheckedExceptions(): array
+    {
+        if ($this->callablesAllowingCheckedExceptions === null) {
+            $this->checkClassExistence($this->reflectionProvider, $this->rawAllowedCheckedExceptionCallables);
+            $this->callablesAllowingCheckedExceptions = array_map(
+                function ($argumentIndexes): array {
+                    return $this->normalizeArgumentIndexes($argumentIndexes);
+                },
+                $this->rawAllowedCheckedExceptionCallables,
+            );
+        }
+
+        return $this->callablesAllowingCheckedExceptions;
     }
 
     public function getNodeType(): string
@@ -385,7 +401,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     ): bool
     {
         if ($caller === null) {
-            foreach ($this->callablesAllowingCheckedExceptions as $immediateFunction => $indexes) {
+            foreach ($this->getCallablesAllowingCheckedExceptions() as $immediateFunction => $indexes) {
                 if (strpos($immediateFunction, '::') !== false) {
                     continue;
                 }
@@ -402,7 +418,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         }
 
         foreach ($caller->getObjectClassReflections() as $callerReflection) {
-            foreach ($this->callablesAllowingCheckedExceptions as $immediateCallerAndMethod => $indexes) {
+            foreach ($this->getCallablesAllowingCheckedExceptions() as $immediateCallerAndMethod => $indexes) {
                 if (strpos($immediateCallerAndMethod, '::') === false) {
                     continue;
                 }
