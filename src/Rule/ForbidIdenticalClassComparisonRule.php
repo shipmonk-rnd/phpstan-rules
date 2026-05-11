@@ -27,10 +27,14 @@ class ForbidIdenticalClassComparisonRule implements Rule
 
     private const DEFAULT_BLACKLIST = [DateTimeInterface::class];
 
+    private ReflectionProvider $reflectionProvider;
+
     /**
      * @var array<int, class-string<object>>
      */
     private array $blacklist;
+
+    private bool $validated = false;
 
     /**
      * @param array<int, class-string<object>> $blacklist
@@ -40,13 +44,22 @@ class ForbidIdenticalClassComparisonRule implements Rule
         array $blacklist = self::DEFAULT_BLACKLIST
     )
     {
-        foreach ($blacklist as $className) {
-            if (!$reflectionProvider->hasClass($className)) {
+        $this->reflectionProvider = $reflectionProvider;
+        $this->blacklist = $blacklist;
+    }
+
+    private function validateBlacklist(): void
+    {
+        if ($this->validated) {
+            return;
+        }
+
+        foreach ($this->blacklist as $className) {
+            if (!$this->reflectionProvider->hasClass($className)) {
                 throw new LogicException("Class {$className} used in 'forbidIdenticalClassComparison' does not exist.");
             }
         }
-
-        $this->blacklist = $blacklist;
+        $this->validated = true;
     }
 
     public function getNodeType(): string
@@ -70,6 +83,8 @@ class ForbidIdenticalClassComparisonRule implements Rule
         if (!$node instanceof Identical && !$node instanceof NotIdentical) {
             return [];
         }
+
+        $this->validateBlacklist();
 
         $nodeType = $scope->getType($node);
         $rightType = $scope->getType($node->right);

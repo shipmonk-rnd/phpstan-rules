@@ -31,6 +31,7 @@ use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use function array_keys;
 use function array_map;
 use function count;
 use function explode;
@@ -54,6 +55,8 @@ class ForbidCustomFunctionsRule implements Rule
 
     private ReflectionProvider $reflectionProvider;
 
+    private bool $validated = false;
+
     /**
      * @param array<mixed, mixed> $forbiddenFunctions
      */
@@ -63,7 +66,6 @@ class ForbidCustomFunctionsRule implements Rule
     )
     {
         $this->reflectionProvider = $reflectionProvider;
-
         foreach ($forbiddenFunctions as $forbiddenFunction => $description) {
             if (!is_string($forbiddenFunction)) {
                 throw new LogicException("Unexpected forbidden function name, string expected, got $forbiddenFunction. Usage: ['var_dump' => 'Remove debug code!'].");
@@ -85,12 +87,22 @@ class ForbidCustomFunctionsRule implements Rule
                 throw new LogicException("Unexpected format of forbidden function {$forbiddenFunction}, expected Namespace\Class::methodName");
             }
 
-            if ($className !== self::FUNCTION && !$reflectionProvider->hasClass($className)) {
-                throw new LogicException("Class {$className} used in 'forbiddenFunctions' does not exist");
-            }
-
             $this->forbiddenFunctions[$className][$methodName] = $description;
         }
+    }
+
+    private function validateForbiddenFunctions(): void
+    {
+        if ($this->validated) {
+            return;
+        }
+
+        foreach (array_keys($this->forbiddenFunctions) as $className) {
+            if ($className !== self::FUNCTION && !$this->reflectionProvider->hasClass($className)) {
+                throw new LogicException("Class {$className} used in 'forbiddenFunctions' does not exist");
+            }
+        }
+        $this->validated = true;
     }
 
     public function getNodeType(): string
@@ -111,6 +123,7 @@ class ForbidCustomFunctionsRule implements Rule
         }
 
         if ($node instanceof FuncCall) {
+            $this->validateForbiddenFunctions();
             return $this->validateFunctionCall($node, $scope);
         }
 
@@ -131,6 +144,7 @@ class ForbidCustomFunctionsRule implements Rule
             return [];
         }
 
+        $this->validateForbiddenFunctions();
         $errors = [];
 
         foreach ($methodNames as $methodName) {

@@ -26,6 +26,8 @@ class ClassSuffixNamingRule implements Rule
      */
     private array $superclassToSuffixMapping;
 
+    private bool $validated = false;
+
     /**
      * @param array<class-string, string> $superclassToSuffixMapping
      */
@@ -34,14 +36,22 @@ class ClassSuffixNamingRule implements Rule
         array $superclassToSuffixMapping = []
     )
     {
-        foreach ($superclassToSuffixMapping as $className => $suffix) {
-            if (!$reflectionProvider->hasClass($className)) {
+        $this->reflectionProvider = $reflectionProvider;
+        $this->superclassToSuffixMapping = $superclassToSuffixMapping;
+    }
+
+    private function validateSuperclassToSuffixMapping(): void
+    {
+        if ($this->validated) {
+            return;
+        }
+
+        foreach ($this->superclassToSuffixMapping as $className => $suffix) {
+            if (!$this->reflectionProvider->hasClass($className)) {
                 throw new LogicException("Class $className used in 'superclassToSuffixMapping' does not exist");
             }
         }
-
-        $this->reflectionProvider = $reflectionProvider;
-        $this->superclassToSuffixMapping = $superclassToSuffixMapping;
+        $this->validated = true;
     }
 
     public function getNodeType(): string
@@ -58,6 +68,11 @@ class ClassSuffixNamingRule implements Rule
         Scope $scope
     ): array
     {
+        $this->validateSuperclassToSuffixMapping();
+        if ($this->superclassToSuffixMapping === []) {
+            return [];
+        }
+
         $classReflection = $scope->getClassReflection();
 
         if ($classReflection === null) {
