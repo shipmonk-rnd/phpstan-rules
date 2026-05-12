@@ -1,0 +1,3 @@
+services:
+    betterReflectionSourceLocator:
+        class: ShipMonk\PHPStan\ThrowingSourceLocator
