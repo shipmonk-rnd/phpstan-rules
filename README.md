@@ -56,8 +56,8 @@ Few rules are enabled, but do nothing unless configured, those are marked with `
 ## Rules:
 
 ### allowComparingOnlyComparableTypes
-- Denies using comparison operators `>,<,<=,>=,<=>` over anything other than `int|string|float|DateTimeInterface` or same size tuples containing comparable types. Null is not allowed.
-- Mixing different types in those operators is also forbidden, only exception is comparing floats with integers
+- Denies using comparison operators `>,<,<=,>=,<=>` over anything other than `int|string|float|DateTimeInterface|BcMath\Number` or same size tuples containing comparable types. Null is not allowed.
+- Mixing different types in those operators is also forbidden, only exception is comparing floats with integers and integers with `BcMath\Number`
 - Mainly targets to accidental comparisons of objects, enums or arrays which is valid in PHP, but very tricky
 
 ```php

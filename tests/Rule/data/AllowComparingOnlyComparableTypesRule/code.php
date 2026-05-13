@@ -2,6 +2,7 @@
 
 namespace AllowComparingOnlyComparableTypesRule;
 
+use BcMath\Number;
 use DateTime;
 use DateTimeImmutable;
 
@@ -19,6 +20,7 @@ $fn = function (
     Foo&Bar $fooAndBar,
     DateTime $dateTime,
     DateTimeImmutable $dateTimeImmutable,
+    Number $number,
     string $string,
     int $int,
     ?int $nullableInt,
@@ -45,10 +47,21 @@ $fn = function (
     $string > $int; // error: Cannot compare different types in string > int.
     $float > $int;
     $dateTime > $string; // error: Cannot compare different types in DateTime > string.
+    $int > $number;
+    $number > $int;
+    $number > $float; // error: Cannot compare different types in BcMath\Number > float.
+    $number > $string; // error: Cannot compare different types in BcMath\Number > string.
+    $number > $intOrFloat; // error: Cannot compare different types in BcMath\Number > float|int.
+    $number > $foo; // error: Comparison BcMath\Number > AllowComparingOnlyComparableTypesRule\Foo contains non-comparable type, only int|float|string|DateTimeInterface or comparable tuple is allowed.
+    $number > $nullableInt; // error: Comparison BcMath\Number > int|null contains non-comparable type, only int|float|string|DateTimeInterface or comparable tuple is allowed.
 
     [$int, $string] > [$int, $string];
     [[$int]] > [[$int]];
     [$int, $float, $intOrFloat, $intOrFloat] > [$int, $int, $int, $float];
+    [$number] > [$number];
+    [$number] > [$int];
+    [$number, $int] > [$int, $number];
+    [$number] > [$string]; // error: Cannot compare different types in array{BcMath\Number} > array{string}.
     [$int, $string] > $foos; // error: Comparison array{int, string} > array contains non-comparable type, only int|float|string|DateTimeInterface or comparable tuple is allowed.
     [$int] > [$int, $int]; // error: Cannot compare different types in array{int} > array{int, int}.
     [$int, $string] > [$int]; // error: Cannot compare different types in array{int, string} > array{int}.
