@@ -118,12 +118,9 @@ class AllowComparingOnlyComparableTypesRule implements Rule
         $dateTimeType = new ObjectType(DateTimeInterface::class);
         $bcMathNumberType = new ObjectType('BcMath\Number');
 
-        if ($this->containsOnlyTypes($leftType, [$bcMathNumberType])) {
-            return $this->containsOnlyTypes($rightType, [$bcMathNumberType, $intType]);
-        }
-
-        if ($this->containsOnlyTypes($rightType, [$bcMathNumberType])) {
-            return $this->containsOnlyTypes($leftType, [$bcMathNumberType, $intType]);
+        if ($this->containsOnlyTypes($leftType, [$bcMathNumberType, $intType])
+            && $this->containsOnlyTypes($rightType, [$bcMathNumberType, $intType])) {
+            return true;
         }
 
         if ($this->containsOnlyTypes($leftType, [$intType, $floatType])) {

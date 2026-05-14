@@ -25,6 +25,7 @@ $fn = function (
     int $int,
     ?int $nullableInt,
     int|float $intOrFloat,
+    int|Number $intOrNumber,
     float $float,
     bool $bool,
     $mixed,
@@ -54,6 +55,9 @@ $fn = function (
     $number > $intOrFloat; // error: Cannot compare different types in BcMath\Number > float|int.
     $number > $foo; // error: Comparison BcMath\Number > AllowComparingOnlyComparableTypesRule\Foo contains non-comparable type, only int|float|string|DateTimeInterface or comparable tuple is allowed.
     $number > $nullableInt; // error: Comparison BcMath\Number > int|null contains non-comparable type, only int|float|string|DateTimeInterface or comparable tuple is allowed.
+    $number > $intOrNumber;
+    $intOrNumber > $intOrNumber;
+    $intOrNumber > $int;
 
     [$int, $string] > [$int, $string];
     [[$int]] > [[$int]];
