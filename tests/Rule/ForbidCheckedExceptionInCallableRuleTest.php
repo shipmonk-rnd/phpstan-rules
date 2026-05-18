@@ -7,6 +7,7 @@ use PHPStan\Analyser\NodeScopeResolver;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Exceptions\DefaultExceptionTypeResolver;
 use PHPStan\Rules\Rule;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ShipMonk\PHPStan\RuleTestCase;
 
 /**
@@ -57,9 +58,8 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
 
     /**
      * @param list<string> $checkedExceptions
-     *
-     * @dataProvider provideSetup
      */
+    #[DataProvider('provideSetup')]
     public function test(
         bool $implicitThrows,
         array $checkedExceptions,
@@ -84,7 +84,7 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
     /**
      * @return iterable<mixed>
      */
-    public function provideSetup(): iterable
+    public static function provideSetup(): iterable
     {
         yield ['implicitThrows' => true, 'checkedExceptions' => []];
         yield ['implicitThrows' => true, 'checkedExceptions' => ['ForbidCheckedExceptionInCallableRule\CheckedException']];
