@@ -22,6 +22,7 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
 use function count;
+use const PHP_VERSION_ID;
 
 /**
  * @implements Rule<BinaryOp>
@@ -60,9 +61,12 @@ class AllowComparingOnlyComparableTypesRule implements Rule
         $rightTypeDescribed = $rightType->describe($rightType->isArray()->no() ? VerbosityLevel::typeOnly() : VerbosityLevel::value());
 
         if (!$this->isComparable($leftType) || !$this->isComparable($rightType)) {
-            $error = RuleErrorBuilder::message("Comparison {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed} contains non-comparable type, only int|float|string|DateTimeInterface or comparable tuple is allowed.")
-                ->identifier('shipmonk.comparingNonComparableTypes')
-                ->build();
+            $builder = RuleErrorBuilder::message("Comparison {$leftTypeDescribed} {$node->getOperatorSigil()} {$rightTypeDescribed} contains non-comparable type, only int|float|string|DateTimeInterface or comparable tuple is allowed.")
+                ->identifier('shipmonk.comparingNonComparableTypes');
+            if (PHP_VERSION_ID >= 80_400) {
+                $builder->addTip('Also BcMath\Number is allowed.');
+            }
+            $error = $builder->build();
             return [$error];
         }
 
@@ -82,8 +86,9 @@ class AllowComparingOnlyComparableTypesRule implements Rule
         $floatType = new FloatType();
         $stringType = new StringType();
         $dateTimeType = new ObjectType(DateTimeInterface::class);
+        $bcMathNumberType = new ObjectType('BcMath\Number');
 
-        if ($this->containsOnlyTypes($type, [$intType, $floatType, $stringType, $dateTimeType])) {
+        if ($this->containsOnlyTypes($type, [$intType, $floatType, $stringType, $dateTimeType, $bcMathNumberType])) {
             return true;
         }
 
@@ -111,6 +116,12 @@ class AllowComparingOnlyComparableTypesRule implements Rule
         $floatType = new FloatType();
         $stringType = new StringType();
         $dateTimeType = new ObjectType(DateTimeInterface::class);
+        $bcMathNumberType = new ObjectType('BcMath\Number');
+
+        if ($this->containsOnlyTypes($leftType, [$bcMathNumberType, $intType])
+            && $this->containsOnlyTypes($rightType, [$bcMathNumberType, $intType])) {
+            return true;
+        }
 
         if ($this->containsOnlyTypes($leftType, [$intType, $floatType])) {
             return $this->containsOnlyTypes($rightType, [$intType, $floatType]);
