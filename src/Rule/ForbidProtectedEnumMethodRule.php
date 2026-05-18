@@ -26,7 +26,7 @@ class ForbidProtectedEnumMethodRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($scope->getClassReflection() === null || !$scope->getClassReflection()->isEnum()) {

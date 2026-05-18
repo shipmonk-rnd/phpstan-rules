@@ -34,7 +34,7 @@ class ForbidUselessNullableReturnRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($node instanceof PropertyHookReturnStatementsNode) {

@@ -40,11 +40,8 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
         'array_sum' => [0, self::REASON_UNPREDICTABLE_RESULT],
     ];
 
-    private ReflectionProvider $reflectionProvider;
-
-    public function __construct(ReflectionProvider $reflectionProvider)
+    public function __construct(private readonly ReflectionProvider $reflectionProvider)
     {
-        $this->reflectionProvider = $reflectionProvider;
     }
 
     public function getNodeType(): string
@@ -58,7 +55,7 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (!$node->name instanceof Name) {
@@ -114,7 +111,7 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
 
     private function matchesPosition(
         int $position,
-        int $forbiddenArgumentPosition
+        int $forbiddenArgumentPosition,
     ): bool
     {
         return $position === $forbiddenArgumentPosition;
@@ -141,7 +138,7 @@ class ForbidEnumInFunctionArgumentsRule implements Rule
 
     private function getFunctionReflection(
         Name $functionName,
-        Scope $scope
+        Scope $scope,
     ): ?FunctionReflection
     {
         return $this->reflectionProvider->hasFunction($functionName, $scope)

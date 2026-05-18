@@ -47,19 +47,13 @@ use function explode;
 use function in_array;
 use function is_int;
 use function spl_object_hash;
-use function strpos;
+use function str_contains;
 
 /**
  * @implements Rule<Node>
  */
 class ForbidCheckedExceptionInCallableRule implements Rule
 {
-
-    private NodeScopeResolver $nodeScopeResolver;
-
-    private ReflectionProvider $reflectionProvider;
-
-    private DefaultExceptionTypeResolver $exceptionTypeResolver;
 
     /**
      * @var array<string, bool> spl_hash => true
@@ -70,11 +64,6 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      * @var array<string, string> spl_hash => methodName
      */
     private array $callablesInArguments = [];
-
-    /**
-     * @var array<string, int|list<int>>
-     */
-    private array $rawAllowedCheckedExceptionCallables;
 
     /**
      * class::method => callable argument index
@@ -98,16 +87,12 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      * @param array<string, int|list<int>> $allowedCheckedExceptionCallables
      */
     public function __construct(
-        NodeScopeResolver $nodeScopeResolver,
-        ReflectionProvider $reflectionProvider,
-        DefaultExceptionTypeResolver $exceptionTypeResolver,
-        array $allowedCheckedExceptionCallables
+        private readonly NodeScopeResolver $nodeScopeResolver,
+        private readonly ReflectionProvider $reflectionProvider,
+        private readonly DefaultExceptionTypeResolver $exceptionTypeResolver,
+        private readonly array $allowedCheckedExceptionCallables,
     )
     {
-        $this->rawAllowedCheckedExceptionCallables = $allowedCheckedExceptionCallables;
-        $this->exceptionTypeResolver = $exceptionTypeResolver;
-        $this->reflectionProvider = $reflectionProvider;
-        $this->nodeScopeResolver = $nodeScopeResolver;
     }
 
     /**
@@ -116,12 +101,10 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     private function getCallablesAllowingCheckedExceptions(): array
     {
         if ($this->callablesAllowingCheckedExceptions === null) {
-            $this->checkClassExistence($this->reflectionProvider, $this->rawAllowedCheckedExceptionCallables);
+            $this->checkClassExistence($this->reflectionProvider, $this->allowedCheckedExceptionCallables);
             $this->callablesAllowingCheckedExceptions = array_map(
-                function ($argumentIndexes): array {
-                    return $this->normalizeArgumentIndexes($argumentIndexes);
-                },
-                $this->rawAllowedCheckedExceptionCallables,
+                $this->normalizeArgumentIndexes(...),
+                $this->allowedCheckedExceptionCallables,
             );
         }
 
@@ -138,7 +121,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $errors = [];
@@ -183,7 +166,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      */
     public function processFirstClassCallable(
         CallLike $callNode,
-        Scope $scope
+        Scope $scope,
     ): Generator
     {
         if (!$callNode->isFirstClassCallable()) {
@@ -222,7 +205,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      * @return Generator<IdentifierRuleError>
      */
     public function processClosure(
-        ClosureReturnStatementsNode $node
+        ClosureReturnStatementsNode $node,
     ): Generator
     {
         $nodeHash = spl_object_hash($node->getClosureExpr());
@@ -255,7 +238,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      */
     public function processArrowFunction(
         ArrowFunction $node,
-        Scope $scope
+        Scope $scope,
     ): Generator
     {
         if (!$scope instanceof MutatingScope) {
@@ -304,7 +287,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         Type $callerType,
         string $methodName,
         int $line,
-        string $nodeHash
+        string $nodeHash,
     ): Generator
     {
         $methodReflection = $scope->getMethodReflection($callerType, $methodName);
@@ -321,7 +304,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         ?Type $throwType,
         Scope $scope,
         int $line,
-        string $nodeHash
+        string $nodeHash,
     ): Generator
     {
         if ($throwType === null) {
@@ -355,11 +338,11 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      */
     private function checkClassExistence(
         ReflectionProvider $reflectionProvider,
-        array $callables
+        array $callables,
     ): void
     {
         foreach ($callables as $call => $args) {
-            if (strpos($call, '::') === false) {
+            if (!str_contains($call, '::')) {
                 continue;
             }
 
@@ -378,7 +361,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
      */
     private function isImmediatelyInvokedCallable(
         object $reflection,
-        ?ParameterReflection $parameter
+        ?ParameterReflection $parameter,
     ): bool
     {
         if ($parameter instanceof ExtendedParameterReflection) {
@@ -397,12 +380,12 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     private function isAllowedCheckedExceptionCallable(
         ?Type $caller,
         string $calledMethodName,
-        int $argumentIndex
+        int $argumentIndex,
     ): bool
     {
         if ($caller === null) {
             foreach ($this->getCallablesAllowingCheckedExceptions() as $immediateFunction => $indexes) {
-                if (strpos($immediateFunction, '::') !== false) {
+                if (str_contains($immediateFunction, '::')) {
                     continue;
                 }
 
@@ -419,7 +402,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
         foreach ($caller->getObjectClassReflections() as $callerReflection) {
             foreach ($this->getCallablesAllowingCheckedExceptions() as $immediateCallerAndMethod => $indexes) {
-                if (strpos($immediateCallerAndMethod, '::') === false) {
+                if (!str_contains($immediateCallerAndMethod, '::')) {
                     continue;
                 }
 
@@ -440,7 +423,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
     private function whitelistAllowedCallables(
         CallLike $node,
-        Scope $scope
+        Scope $scope,
     ): void
     {
         if ($node instanceof MethodCall && $node->name instanceof Identifier) {
@@ -524,7 +507,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
     private function getParameterIndex(
         Arg $arg,
         int $argumentIndex,
-        array $parameters
+        array $parameters,
     ): ?int
     {
         if ($arg->name === null) {
@@ -555,7 +538,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
         string $where,
         Scope $scope,
         int $line,
-        ?string $usedAsArgumentOfMethodName
+        ?string $usedAsArgumentOfMethodName,
     ): IdentifierRuleError
     {
         $file = $scope->getFile();
@@ -575,7 +558,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
 
     private function getFunctionReflection(
         Name $functionName,
-        Scope $scope
+        Scope $scope,
     ): ?FunctionReflection
     {
         return $this->reflectionProvider->hasFunction($functionName, $scope)

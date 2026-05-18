@@ -6,7 +6,6 @@ use DirectoryIterator;
 use PHPStan\Testing\PHPStanTestCase;
 use function array_keys;
 use function array_merge;
-use function get_class;
 use function implode;
 use function str_replace;
 
@@ -46,7 +45,7 @@ class AllRulesInConfigTest extends PHPStanTestCase
         $registeredRules = self::getContainer()->getServicesByTag('phpstan.rules.rule');
 
         foreach ($registeredRules as $registeredRule) {
-            unset($existingRuleClassNames[get_class($registeredRule)]);
+            unset($existingRuleClassNames[$registeredRule::class]);
         }
 
         if ($existingRuleClassNames !== []) {

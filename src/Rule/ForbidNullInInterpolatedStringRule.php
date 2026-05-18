@@ -18,11 +18,8 @@ use PHPStan\Type\TypeCombinator;
 class ForbidNullInInterpolatedStringRule implements Rule
 {
 
-    private Printer $printer;
-
-    public function __construct(Printer $printer)
+    public function __construct(private readonly Printer $printer)
     {
-        $this->printer = $printer;
     }
 
     public function getNodeType(): string
@@ -36,7 +33,7 @@ class ForbidNullInInterpolatedStringRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $errors = [];

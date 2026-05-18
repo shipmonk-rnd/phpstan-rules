@@ -62,7 +62,7 @@ class ForbidCustomFunctionsRule implements Rule
      */
     public function __construct(
         array $forbiddenFunctions,
-        ReflectionProvider $reflectionProvider
+        ReflectionProvider $reflectionProvider,
     )
     {
         $this->reflectionProvider = $reflectionProvider;
@@ -115,7 +115,7 @@ class ForbidCustomFunctionsRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($this->isFirstClassCallableNode($node)) {
@@ -163,7 +163,7 @@ class ForbidCustomFunctionsRule implements Rule
      */
     private function validateFunctionCall(
         FuncCall $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $functionNames = $this->getFunctionNames($node->name, $scope);
@@ -186,7 +186,7 @@ class ForbidCustomFunctionsRule implements Rule
      */
     private function validateCallOverExpr(
         string $methodName,
-        Type $caller
+        Type $caller,
     ): array
     {
         $classNames = $caller->getObjectTypeOrClassStringObjectType()->getObjectClassNames();
@@ -207,7 +207,7 @@ class ForbidCustomFunctionsRule implements Rule
      */
     private function validateMethod(
         string $methodName,
-        string $className
+        string $className,
     ): array
     {
         if (!$this->reflectionProvider->hasClass($className)) {
@@ -260,7 +260,7 @@ class ForbidCustomFunctionsRule implements Rule
      */
     private function getFunctionNames(
         Node $name,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($name instanceof Name) {
@@ -282,7 +282,7 @@ class ForbidCustomFunctionsRule implements Rule
      */
     private function getMethodNames(
         Node $name,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($name instanceof Name) {
@@ -306,7 +306,7 @@ class ForbidCustomFunctionsRule implements Rule
      */
     private function validateCallable(
         Expr $callable,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $callableType = $scope->getType($callable);
@@ -354,7 +354,7 @@ class ForbidCustomFunctionsRule implements Rule
         Type $caller,
         string $methodName,
         CallLike $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($node->isFirstClassCallable()) {
@@ -389,7 +389,7 @@ class ForbidCustomFunctionsRule implements Rule
     private function validateCallableArguments(
         array $reorderedArgs,
         ParametersAcceptor $parametersAcceptor,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $errors = [];
@@ -412,7 +412,7 @@ class ForbidCustomFunctionsRule implements Rule
     private function validateFunctionArguments(
         string $functionName,
         FuncCall $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($node->isFirstClassCallable()) {
@@ -440,7 +440,7 @@ class ForbidCustomFunctionsRule implements Rule
     private function getMethodReflection(
         string $className,
         string $methodName,
-        Scope $scope
+        Scope $scope,
     ): ?ExtendedMethodReflection
     {
         if (!$this->reflectionProvider->hasClass($className)) {
@@ -458,7 +458,7 @@ class ForbidCustomFunctionsRule implements Rule
 
     private function getFunctionReflection(
         Name $functionName,
-        Scope $scope
+        Scope $scope,
     ): ?FunctionReflection
     {
         return $this->reflectionProvider->hasFunction($functionName, $scope)
@@ -468,7 +468,7 @@ class ForbidCustomFunctionsRule implements Rule
 
     private function getNewCaller(
         New_ $new,
-        Scope $scope
+        Scope $scope,
     ): Type
     {
         if ($new->class instanceof Class_) {

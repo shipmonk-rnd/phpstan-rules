@@ -10,8 +10,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
-use function strlen;
-use function substr_compare;
+use function str_ends_with;
 
 /**
  * @implements Rule<InClassNode>
@@ -19,25 +18,16 @@ use function substr_compare;
 class ClassSuffixNamingRule implements Rule
 {
 
-    private ReflectionProvider $reflectionProvider;
-
-    /**
-     * @var array<class-string, string>
-     */
-    private array $superclassToSuffixMapping;
-
     private bool $validated = false;
 
     /**
      * @param array<class-string, string> $superclassToSuffixMapping
      */
     public function __construct(
-        ReflectionProvider $reflectionProvider,
-        array $superclassToSuffixMapping = []
+        private readonly ReflectionProvider $reflectionProvider,
+        private readonly array $superclassToSuffixMapping = [],
     )
     {
-        $this->reflectionProvider = $reflectionProvider;
-        $this->superclassToSuffixMapping = $superclassToSuffixMapping;
     }
 
     private function validateSuperclassToSuffixMapping(): void
@@ -65,7 +55,7 @@ class ClassSuffixNamingRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $this->validateSuperclassToSuffixMapping();
@@ -92,7 +82,7 @@ class ClassSuffixNamingRule implements Rule
 
             $className = $classReflection->getName();
 
-            if (substr_compare($className, $suffix, -strlen($suffix)) !== 0) {
+            if (!str_ends_with($className, $suffix)) {
                 $error = RuleErrorBuilder::message("Class name $className should end with $suffix suffix")
                     ->identifier('shipmonk.invalidClassSuffix')
                     ->build();

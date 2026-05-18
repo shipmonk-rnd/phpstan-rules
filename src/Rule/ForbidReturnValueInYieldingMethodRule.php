@@ -21,11 +21,8 @@ use function in_array;
 class ForbidReturnValueInYieldingMethodRule implements Rule
 {
 
-    private bool $reportRegardlessOfReturnType;
-
-    public function __construct(bool $reportRegardlessOfReturnType)
+    public function __construct(private readonly bool $reportRegardlessOfReturnType)
     {
-        $this->reportRegardlessOfReturnType = $reportRegardlessOfReturnType;
     }
 
     public function getNodeType(): string
@@ -39,7 +36,7 @@ class ForbidReturnValueInYieldingMethodRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (!$node->getStatementResult()->hasYield()) {
@@ -82,7 +79,7 @@ class ForbidReturnValueInYieldingMethodRule implements Rule
 
     private function getReturnType(
         ReturnStatementsNode $node,
-        Scope $scope
+        Scope $scope,
     ): Type
     {
         $methodReflection = $scope->getFunction();

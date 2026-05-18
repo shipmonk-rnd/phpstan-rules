@@ -27,7 +27,7 @@ class ForbidMatchDefaultArmForEnumsRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $matchCondition = $node->getCondition();

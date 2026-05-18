@@ -53,30 +53,18 @@ use function spl_object_id;
 class ForbidNotNormalizedTypeRule implements Rule
 {
 
-    private FileTypeMapper $fileTypeMapper;
-
-    private TypeNodeResolver $typeNodeResolver;
-
-    private Printer $phpParserPrinter;
-
-    private bool $checkDisjunctiveNormalForm;
-
     /**
      * @var array<int, true>
      */
     private array $processedDocComments = [];
 
     public function __construct(
-        FileTypeMapper $fileTypeMapper,
-        TypeNodeResolver $typeNodeResolver,
-        Printer $phpParserPrinter,
-        bool $checkDisjunctiveNormalForm
+        private readonly FileTypeMapper $fileTypeMapper,
+        private readonly TypeNodeResolver $typeNodeResolver,
+        private readonly Printer $phpParserPrinter,
+        private readonly bool $checkDisjunctiveNormalForm,
     )
     {
-        $this->fileTypeMapper = $fileTypeMapper;
-        $this->typeNodeResolver = $typeNodeResolver;
-        $this->phpParserPrinter = $phpParserPrinter;
-        $this->checkDisjunctiveNormalForm = $checkDisjunctiveNormalForm;
     }
 
     public function getNodeType(): string
@@ -89,7 +77,7 @@ class ForbidNotNormalizedTypeRule implements Rule
      */
     public function processNode(
         PhpParserNode $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($node instanceof FunctionLike) {
@@ -118,7 +106,7 @@ class ForbidNotNormalizedTypeRule implements Rule
      */
     private function checkCatchNativeType(
         Catch_ $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $multiTypeNode = new UnionType($node->types, $node->getAttributes());
@@ -130,7 +118,7 @@ class ForbidNotNormalizedTypeRule implements Rule
      */
     private function checkParamAndReturnAndThrowsPhpDoc(
         FunctionLike $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $errors = [];
@@ -164,7 +152,7 @@ class ForbidNotNormalizedTypeRule implements Rule
      */
     private function checkPropertyNativeType(
         Property $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $errors = [];
@@ -186,7 +174,7 @@ class ForbidNotNormalizedTypeRule implements Rule
      */
     private function checkParamAndReturnNativeType(
         FunctionLike $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $errors = [];
@@ -221,7 +209,7 @@ class ForbidNotNormalizedTypeRule implements Rule
      */
     private function checkPropertyPhpDoc(
         Property $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $errors = [];
@@ -250,7 +238,7 @@ class ForbidNotNormalizedTypeRule implements Rule
      */
     private function checkInlineVarDoc(
         PhpParserNode $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $docComment = $node->getDocComment();
@@ -290,7 +278,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
     private function resolvePhpDoc(
         PhpParserNode $node,
-        Scope $scope
+        Scope $scope,
     ): ?ResolvedPhpDocBlock
     {
         $docComment = $node->getDocComment();
@@ -324,7 +312,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     public function processParamTags(
         PhpParserNode $sourceNode,
         array $paramTagValues,
-        NameScope $nameSpace
+        NameScope $nameSpace,
     ): array
     {
         $errors = [];
@@ -352,7 +340,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     public function processVarTags(
         PhpParserNode $originalNode,
         array $varTagValues,
-        NameScope $nameSpace
+        NameScope $nameSpace,
     ): array
     {
         $errors = [];
@@ -384,7 +372,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     public function processReturnTags(
         PhpParserNode $originalNode,
         array $returnTagValues,
-        NameScope $nameSpace
+        NameScope $nameSpace,
     ): array
     {
         $errors = [];
@@ -408,7 +396,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     public function processThrowsTags(
         PhpParserNode $originalNode,
         array $throwsTagValues,
-        NameScope $nameSpace
+        NameScope $nameSpace,
     ): array
     {
         $thrownTypes = [];
@@ -440,7 +428,7 @@ class ForbidNotNormalizedTypeRule implements Rule
      */
     private function extractUnionAndIntersectionPhpDocTypeNodes(
         TypeNode $typeNode,
-        int $line
+        int $line,
     ): array
     {
         /** @var list<UnionTypeNode|IntersectionTypeNode> $nodes */
@@ -498,7 +486,7 @@ class ForbidNotNormalizedTypeRule implements Rule
      */
     private function traversePhpDocTypeNode(
         $type,
-        callable $callback
+        callable $callback,
     ): void
     {
         if (is_array($type)) {
@@ -523,7 +511,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     private function processMultiTypePhpParserNode(
         ComplexType $multiTypeNode,
         Scope $scope,
-        string $identification
+        string $identification,
     ): array
     {
         $innerTypeNodes = array_values($multiTypeNode->types);
@@ -577,7 +565,7 @@ class ForbidNotNormalizedTypeRule implements Rule
     private function processMultiTypePhpDocNode(
         TypeNode $multiTypeNode,
         NameScope $nameSpace,
-        ?string $identification
+        ?string $identification,
     ): array
     {
         $errors = [];
@@ -655,7 +643,7 @@ class ForbidNotNormalizedTypeRule implements Rule
 
     private function getPhpDocLine(
         PhpParserNode $node,
-        PhpDocRootNode $phpDocNode
+        PhpDocRootNode $phpDocNode,
     ): int
     {
         /** @var int|null $phpDocTagLine */

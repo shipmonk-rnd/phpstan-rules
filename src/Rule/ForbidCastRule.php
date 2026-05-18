@@ -17,7 +17,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
-use function get_class;
 use function in_array;
 
 /**
@@ -29,16 +28,10 @@ class ForbidCastRule implements Rule
     private const DEFAULT_BLACKLIST = ['(array)', '(object)', '(unset)'];
 
     /**
-     * @var string[]
-     */
-    private array $blacklist;
-
-    /**
      * @param string[] $blacklist
      */
-    public function __construct(array $blacklist = self::DEFAULT_BLACKLIST)
+    public function __construct(private readonly array $blacklist = self::DEFAULT_BLACKLIST)
     {
-        $this->blacklist = $blacklist;
     }
 
     public function getNodeType(): string
@@ -52,7 +45,7 @@ class ForbidCastRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $castString = $this->getCastString($node);
@@ -101,7 +94,7 @@ class ForbidCastRule implements Rule
             return '(void)';
         }
 
-        throw new LogicException('Unexpected Cast child: ' . get_class($node));
+        throw new LogicException('Unexpected Cast child: ' . $node::class);
     }
 
 }

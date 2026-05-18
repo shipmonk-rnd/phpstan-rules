@@ -42,21 +42,12 @@ use function sprintf;
 class EnforceNativeReturnTypehintRule implements Rule
 {
 
-    private FileTypeMapper $fileTypeMapper;
-
-    private PhpVersion $phpVersion;
-
-    private bool $treatPhpDocTypesAsCertain;
-
     public function __construct(
-        FileTypeMapper $fileTypeMapper,
-        PhpVersion $phpVersion,
-        bool $treatPhpDocTypesAsCertain
+        private readonly FileTypeMapper $fileTypeMapper,
+        private readonly PhpVersion $phpVersion,
+        private readonly bool $treatPhpDocTypesAsCertain,
     )
     {
-        $this->fileTypeMapper = $fileTypeMapper;
-        $this->phpVersion = $phpVersion;
-        $this->treatPhpDocTypesAsCertain = $treatPhpDocTypesAsCertain;
     }
 
     public function getNodeType(): string
@@ -70,7 +61,7 @@ class EnforceNativeReturnTypehintRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($this->treatPhpDocTypesAsCertain === false) {
@@ -114,7 +105,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         Scope $scope,
         bool $typeFromPhpDoc,
         bool $alwaysThrowsException,
-        bool $topLevel
+        bool $topLevel,
     ): ?string
     {
         if ($type instanceof MixedType || $this->isUnionTypeWithMixed($type)) {
@@ -212,7 +203,7 @@ class EnforceNativeReturnTypehintRule implements Rule
 
     private function getPhpDocReturnType(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): ?Type
     {
         $docComment = $node->getDocComment();
@@ -251,7 +242,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         Type $type,
         Scope $scope,
         bool $typeFromPhpDoc,
-        bool $alwaysThrowsException
+        bool $alwaysThrowsException,
     ): ?string
     {
         if (!$type instanceof UnionType) {
@@ -295,7 +286,7 @@ class EnforceNativeReturnTypehintRule implements Rule
         Type $type,
         Scope $scope,
         bool $typeFromPhpDoc,
-        bool $alwaysThrowsException
+        bool $alwaysThrowsException,
     ): ?string
     {
         if (!$type instanceof IntersectionType) { // @phpstan-ignore phpstanApi.instanceofType

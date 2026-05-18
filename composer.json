@@ -10,7 +10,7 @@
         "static analysis"
     ],
     "require": {
-        "php": "^7.4 || ^8.0",
+        "php": "^8.1",
         "phpstan/phpstan": "^2.1.33"
     },
     "require-dev": {

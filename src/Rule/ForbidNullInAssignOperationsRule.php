@@ -23,7 +23,6 @@ use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\TypeCombinator;
-use function get_class;
 use function in_array;
 
 /**
@@ -35,16 +34,10 @@ class ForbidNullInAssignOperationsRule implements Rule
     private const DEFAULT_BLACKLIST = ['??='];
 
     /**
-     * @var string[]
-     */
-    private array $blacklist;
-
-    /**
      * @param string[] $blacklist
      */
-    public function __construct(array $blacklist = self::DEFAULT_BLACKLIST)
+    public function __construct(private readonly array $blacklist = self::DEFAULT_BLACKLIST)
     {
-        $this->blacklist = $blacklist;
     }
 
     public function getNodeType(): string
@@ -58,7 +51,7 @@ class ForbidNullInAssignOperationsRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $exprType = $scope->getType($node->expr);
@@ -128,7 +121,7 @@ class ForbidNullInAssignOperationsRule implements Rule
             return '&=';
         }
 
-        throw new LogicException('Unexpected AssignOp child: ' . get_class($node));
+        throw new LogicException('Unexpected AssignOp child: ' . $node::class);
     }
 
 }

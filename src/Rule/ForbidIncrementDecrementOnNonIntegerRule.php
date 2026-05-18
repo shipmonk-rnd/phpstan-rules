@@ -13,7 +13,6 @@ use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\VerbosityLevel;
-use function get_class;
 use function sprintf;
 
 /**
@@ -32,7 +31,7 @@ class ForbidIncrementDecrementOnNonIntegerRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (
@@ -53,7 +52,7 @@ class ForbidIncrementDecrementOnNonIntegerRule implements Rule
      */
     private function process(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $exprType = $scope->getType($node->var);
@@ -78,18 +77,11 @@ class ForbidIncrementDecrementOnNonIntegerRule implements Rule
      */
     private function getIncDecSymbol(Node $node): string
     {
-        switch (get_class($node)) {
-            case PostInc::class:
-            case PreInc::class:
-                return '++';
-
-            case PostDec::class:
-            case PreDec::class:
-                return '--';
-
-            default:
-                throw new LogicException('Unexpected node given: ' . get_class($node));
-        }
+        return match ($node::class) {
+            PostInc::class, PreInc::class => '++',
+            PostDec::class, PreDec::class => '--',
+            default => throw new LogicException('Unexpected node given: ' . $node::class),
+        };
     }
 
 }

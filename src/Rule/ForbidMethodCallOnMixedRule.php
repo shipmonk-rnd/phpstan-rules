@@ -15,7 +15,6 @@ use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\TypeUtils;
-use function get_class;
 use function sprintf;
 
 /**
@@ -24,17 +23,11 @@ use function sprintf;
 class ForbidMethodCallOnMixedRule implements Rule
 {
 
-    private Printer $printer;
-
-    private bool $checkExplicitMixed;
-
     public function __construct(
-        Printer $printer,
-        bool $checkExplicitMixed
+        private readonly Printer $printer,
+        private readonly bool $checkExplicitMixed,
     )
     {
-        $this->printer = $printer;
-        $this->checkExplicitMixed = $checkExplicitMixed;
     }
 
     public function getNodeType(): string
@@ -48,7 +41,7 @@ class ForbidMethodCallOnMixedRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($this->checkExplicitMixed) {
@@ -69,7 +62,7 @@ class ForbidMethodCallOnMixedRule implements Rule
      */
     private function checkCall(
         CallLike $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $caller = $node instanceof StaticCall ? $node->class : $node->var;
@@ -104,16 +97,11 @@ class ForbidMethodCallOnMixedRule implements Rule
      */
     private function getCallToken(CallLike $node): string
     {
-        switch (get_class($node)) {
-            case StaticCall::class:
-                return '::';
-
-            case MethodCall::class:
-                return $node->getAttribute('virtualNullsafeMethodCall') === true ? '?->' : '->';
-
-            default:
-                throw new LogicException('Unexpected node given: ' . get_class($node));
-        }
+        return match ($node::class) {
+            StaticCall::class => '::',
+            MethodCall::class => $node->getAttribute('virtualNullsafeMethodCall') === true ? '?->' : '->',
+            default => throw new LogicException('Unexpected node given: ' . $node::class),
+        };
     }
 
 }
