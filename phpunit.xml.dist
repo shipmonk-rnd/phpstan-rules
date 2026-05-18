@@ -15,7 +15,13 @@
     displayDetailsOnTestsThatTriggerNotices="true"
     displayDetailsOnTestsThatTriggerWarnings="true"
     executionOrder="depends,defects"
-    failOnAllIssues="true"
+    failOnDeprecation="true"
+    failOnEmptyTestSuite="true"
+    failOnIncomplete="true"
+    failOnNotice="true"
+    failOnPhpunitDeprecation="true"
+    failOnRisky="true"
+    failOnWarning="true"
 >
     <testsuites>
         <testsuite name="default">
