@@ -23,16 +23,12 @@ class EnforceNativeReturnTypehintRuleTest extends RuleTestCase
         return new EnforceNativeReturnTypehintRule(
             self::getContainer()->getByType(FileTypeMapper::class),
             $this->phpVersion,
-            true,
+            treatPhpDocTypesAsCertain: true,
         );
     }
 
     public function testEnum(): void
     {
-        if (PHP_VERSION_ID < 80_100) {
-            self::markTestSkipped('Requires PHP 8.1');
-        }
-
         $this->phpVersion = self::getContainer()->getByType(PhpVersion::class);
         $this->analyseFile(__DIR__ . '/data/EnforceNativeReturnTypehintRule/code-enum.php');
     }

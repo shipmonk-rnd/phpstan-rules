@@ -30,7 +30,7 @@ class EnforceListReturnRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $methodReflection = $scope->getFunction();

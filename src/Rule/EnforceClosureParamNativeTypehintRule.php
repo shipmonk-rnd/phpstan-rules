@@ -20,17 +20,11 @@ use function is_string;
 class EnforceClosureParamNativeTypehintRule implements Rule
 {
 
-    private PhpVersion $phpVersion;
-
-    private bool $allowMissingTypeWhenInferred;
-
     public function __construct(
-        PhpVersion $phpVersion,
-        bool $allowMissingTypeWhenInferred
+        private readonly PhpVersion $phpVersion,
+        private readonly bool $allowMissingTypeWhenInferred,
     )
     {
-        $this->phpVersion = $phpVersion;
-        $this->allowMissingTypeWhenInferred = $allowMissingTypeWhenInferred;
     }
 
     public function getNodeType(): string
@@ -43,7 +37,7 @@ class EnforceClosureParamNativeTypehintRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (!$node instanceof InClosureNode && !$node instanceof InArrowFunctionNode) {

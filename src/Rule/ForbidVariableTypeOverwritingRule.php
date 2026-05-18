@@ -40,7 +40,7 @@ class ForbidVariableTypeOverwritingRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (!$node->var instanceof Variable) {

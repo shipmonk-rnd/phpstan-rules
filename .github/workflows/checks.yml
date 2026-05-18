@@ -34,7 +34,7 @@ jobs:
             fail-fast: false
             matrix:
                 os: [ ubuntu-latest, windows-latest ]
-                php-version: [ '7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5' ]
+                php-version: [ '8.1', '8.2', '8.3', '8.4', '8.5' ]
                 dependency-version: [ prefer-lowest, prefer-stable ]
         steps:
             -
@@ -47,9 +47,7 @@ jobs:
                     php-version: ${{ matrix.php-version }}
             -
                 name: Update dependencies
-                run: |
-                    composer remove --dev shipmonk/coverage-guard --no-update
-                    composer update --no-progress --${{ matrix.dependency-version }} --prefer-dist --no-interaction
+                run: composer update --no-progress --${{ matrix.dependency-version }} --prefer-dist --no-interaction
             -
                 name: Run tests
                 run: composer check:tests

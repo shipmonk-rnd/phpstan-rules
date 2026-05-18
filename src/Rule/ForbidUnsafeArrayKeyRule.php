@@ -22,17 +22,11 @@ use PHPStan\Type\VerbosityLevel;
 class ForbidUnsafeArrayKeyRule implements Rule
 {
 
-    private bool $reportMixed;
-
-    private bool $reportInsideIsset;
-
     public function __construct(
-        bool $reportMixed,
-        bool $reportInsideIsset
+        private readonly bool $reportMixed,
+        private readonly bool $reportInsideIsset,
     )
     {
-        $this->reportMixed = $reportMixed;
-        $this->reportInsideIsset = $reportInsideIsset;
     }
 
     public function getNodeType(): string
@@ -45,7 +39,7 @@ class ForbidUnsafeArrayKeyRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($node instanceof ArrayItem && $node->key !== null) {
@@ -97,7 +91,7 @@ class ForbidUnsafeArrayKeyRule implements Rule
      */
     private function containsOnlyTypes(
         Type $checkedType,
-        array $allowedTypes
+        array $allowedTypes,
     ): bool
     {
         $allowedType = TypeCombinator::union(...$allowedTypes);

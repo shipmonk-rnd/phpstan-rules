@@ -16,17 +16,11 @@ use PHPStan\Rules\RuleErrorBuilder;
 class EnforceReadonlyPublicPropertyRule implements Rule
 {
 
-    private bool $excludePropertyWithDefaultValue;
-
-    private PhpVersion $phpVersion;
-
     public function __construct(
-        bool $excludePropertyWithDefaultValue,
-        PhpVersion $phpVersion
+        private readonly bool $excludePropertyWithDefaultValue,
+        private readonly PhpVersion $phpVersion,
     )
     {
-        $this->excludePropertyWithDefaultValue = $excludePropertyWithDefaultValue;
-        $this->phpVersion = $phpVersion;
     }
 
     public function getNodeType(): string
@@ -40,7 +34,7 @@ class EnforceReadonlyPublicPropertyRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (!$this->phpVersion->supportsReadOnlyProperties()) {

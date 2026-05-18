@@ -31,7 +31,7 @@ class ForbidUnusedMatchResultRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $returnedTypes = [];

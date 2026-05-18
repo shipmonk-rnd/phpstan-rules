@@ -29,7 +29,7 @@ class UselessPrivatePropertyDefaultValueRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $classReflection = $scope->getClassReflection();

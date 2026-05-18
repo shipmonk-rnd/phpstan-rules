@@ -16,7 +16,6 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeUtils;
-use function get_class;
 use function sprintf;
 
 /**
@@ -25,17 +24,11 @@ use function sprintf;
 class ForbidFetchOnMixedRule implements Rule
 {
 
-    private Printer $printer;
-
-    private bool $checkExplicitMixed;
-
     public function __construct(
-        Printer $printer,
-        bool $checkExplicitMixed
+        private readonly Printer $printer,
+        private readonly bool $checkExplicitMixed,
     )
     {
-        $this->printer = $printer;
-        $this->checkExplicitMixed = $checkExplicitMixed;
     }
 
     public function getNodeType(): string
@@ -48,7 +41,7 @@ class ForbidFetchOnMixedRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($this->checkExplicitMixed) {
@@ -68,7 +61,7 @@ class ForbidFetchOnMixedRule implements Rule
      */
     private function processFetch(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $caller = $node instanceof PropertyFetch
@@ -114,17 +107,11 @@ class ForbidFetchOnMixedRule implements Rule
      */
     private function getFetchToken(Node $node): string
     {
-        switch (get_class($node)) {
-            case ClassConstFetch::class:
-            case StaticPropertyFetch::class:
-                return '::';
-
-            case PropertyFetch::class:
-                return '->';
-
-            default:
-                throw new LogicException('Unexpected node given: ' . get_class($node));
-        }
+        return match ($node::class) {
+            ClassConstFetch::class, StaticPropertyFetch::class => '::',
+            PropertyFetch::class => '->',
+            default => throw new LogicException('Unexpected node given: ' . $node::class),
+        };
     }
 
     /**
@@ -134,7 +121,7 @@ class ForbidFetchOnMixedRule implements Rule
      */
     private function isObjectClassFetch(
         Type $callerType,
-        Node $node
+        Node $node,
     ): bool
     {
         $isObjectWithoutClassName = $callerType->isObject()->yes() && $callerType->getObjectClassNames() === [];

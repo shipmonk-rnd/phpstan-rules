@@ -31,11 +31,8 @@ use function sprintf;
 class ForbidArithmeticOperationOnNonNumberRule implements Rule
 {
 
-    private bool $allowNumericString;
-
-    public function __construct(bool $allowNumericString)
+    public function __construct(private readonly bool $allowNumericString)
     {
-        $this->allowNumericString = $allowNumericString;
     }
 
     public function getNodeType(): string
@@ -48,7 +45,7 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (
@@ -78,7 +75,7 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
     private function processUnary(
         Expr $expr,
         Scope $scope,
-        string $operator
+        string $operator,
     ): array
     {
         $exprType = $scope->getType($expr);
@@ -105,7 +102,7 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
         Expr $left,
         Expr $right,
         Scope $scope,
-        string $operator
+        string $operator,
     ): array
     {
         $leftType = $scope->getType($left);
@@ -154,7 +151,7 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
         string $operator,
         string $type,
         Type $leftType,
-        Type $rightType
+        Type $rightType,
     ): array
     {
         $errorMessage = sprintf(

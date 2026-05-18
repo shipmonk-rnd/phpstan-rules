@@ -34,7 +34,7 @@ class EnforceEnumMatchRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (!$node instanceof Identical && !$node instanceof NotIdentical) {

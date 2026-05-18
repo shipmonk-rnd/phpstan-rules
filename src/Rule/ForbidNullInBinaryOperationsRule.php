@@ -21,16 +21,10 @@ class ForbidNullInBinaryOperationsRule implements Rule
     private const DEFAULT_BLACKLIST = ['===', '!==', '??'];
 
     /**
-     * @var list<string>
-     */
-    private array $blacklist;
-
-    /**
      * @param list<string> $blacklist
      */
-    public function __construct(array $blacklist = self::DEFAULT_BLACKLIST)
+    public function __construct(private readonly array $blacklist = self::DEFAULT_BLACKLIST)
     {
-        $this->blacklist = $blacklist;
     }
 
     public function getNodeType(): string
@@ -44,7 +38,7 @@ class ForbidNullInBinaryOperationsRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (in_array($node->getOperatorSigil(), $this->blacklist, true)) {

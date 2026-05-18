@@ -62,7 +62,7 @@ class ForbidCheckedExceptionInCallableRuleTest extends RuleTestCase
      */
     public function test(
         bool $implicitThrows,
-        array $checkedExceptions
+        array $checkedExceptions,
     ): void
     {
         self::$implicitThrows = $implicitThrows;

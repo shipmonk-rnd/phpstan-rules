@@ -18,7 +18,7 @@ abstract class RuleTestCase extends ShipMonkDevRuleTestCase
      */
     protected function analyseFile(
         $files,
-        bool $autofix = false
+        bool $autofix = false,
     ): void
     {
         $this->analyzeFiles(is_array($files) ? $files : [$files], $autofix);

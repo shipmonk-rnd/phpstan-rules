@@ -41,7 +41,7 @@ class AllowComparingOnlyComparableTypesRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (
@@ -109,7 +109,7 @@ class AllowComparingOnlyComparableTypesRule implements Rule
 
     private function isComparableTogether(
         Type $leftType,
-        Type $rightType
+        Type $rightType,
     ): bool
     {
         $intType = new IntegerType();
@@ -150,7 +150,7 @@ class AllowComparingOnlyComparableTypesRule implements Rule
                     }
 
                     for ($i = 0; $i < count($leftValueTypes); $i++) {
-                        if (!$this->isComparableTogether($leftValueTypes[$i], $rightValueTypes[$i])) { // @phpstan-ignore offsetAccess.notFound
+                        if (!$this->isComparableTogether($leftValueTypes[$i], $rightValueTypes[$i])) { // @phpstan-ignore offsetAccess.notFound, offsetAccess.notFound
                             return false;
                         }
                     }
@@ -168,7 +168,7 @@ class AllowComparingOnlyComparableTypesRule implements Rule
      */
     private function containsOnlyTypes(
         Type $checkedType,
-        array $allowedTypes
+        array $allowedTypes,
     ): bool
     {
         $allowedType = TypeCombinator::union(...$allowedTypes);

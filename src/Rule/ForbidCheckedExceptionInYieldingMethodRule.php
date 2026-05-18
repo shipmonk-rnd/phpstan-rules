@@ -19,11 +19,8 @@ use PHPStan\Rules\RuleErrorBuilder;
 class ForbidCheckedExceptionInYieldingMethodRule implements Rule
 {
 
-    private ExceptionTypeResolver $exceptionTypeResolver;
-
-    public function __construct(ExceptionTypeResolver $exceptionTypeResolver)
+    public function __construct(private readonly ExceptionTypeResolver $exceptionTypeResolver)
     {
-        $this->exceptionTypeResolver = $exceptionTypeResolver;
     }
 
     public function getNodeType(): string
@@ -37,7 +34,7 @@ class ForbidCheckedExceptionInYieldingMethodRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (!$node->getStatementResult()->hasYield()) {

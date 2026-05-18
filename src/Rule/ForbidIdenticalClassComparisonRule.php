@@ -27,25 +27,16 @@ class ForbidIdenticalClassComparisonRule implements Rule
 
     private const DEFAULT_BLACKLIST = [DateTimeInterface::class];
 
-    private ReflectionProvider $reflectionProvider;
-
-    /**
-     * @var array<int, class-string<object>>
-     */
-    private array $blacklist;
-
     private bool $validated = false;
 
     /**
      * @param array<int, class-string<object>> $blacklist
      */
     public function __construct(
-        ReflectionProvider $reflectionProvider,
-        array $blacklist = self::DEFAULT_BLACKLIST
+        private readonly ReflectionProvider $reflectionProvider,
+        private readonly array $blacklist = self::DEFAULT_BLACKLIST,
     )
     {
-        $this->reflectionProvider = $reflectionProvider;
-        $this->blacklist = $blacklist;
     }
 
     private function validateBlacklist(): void
@@ -73,7 +64,7 @@ class ForbidIdenticalClassComparisonRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (count($this->blacklist) === 0) {
@@ -115,7 +106,7 @@ class ForbidIdenticalClassComparisonRule implements Rule
 
     private function containsClass(
         Type $type,
-        string $className
+        string $className,
     ): bool
     {
         $benevolentType = TypeUtils::toBenevolentUnion($type);

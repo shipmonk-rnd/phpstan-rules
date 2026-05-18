@@ -29,7 +29,7 @@ class BackedEnumGenericsRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $classReflection = $node->getClassReflection();
@@ -60,7 +60,7 @@ class BackedEnumGenericsRule implements Rule
 
     private function hasGenericsTag(
         ClassReflection $classReflection,
-        string $expectedTag
+        string $expectedTag,
     ): bool
     {
         if ($classReflection->isBackedEnum()) {

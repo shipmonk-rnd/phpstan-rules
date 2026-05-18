@@ -27,7 +27,7 @@ class ForbidReturnInConstructorRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($scope->isInAnonymousFunction()) {

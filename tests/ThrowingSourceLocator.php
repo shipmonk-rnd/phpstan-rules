@@ -14,7 +14,7 @@ class ThrowingSourceLocator implements SourceLocator
 
     public function locateIdentifier(
         Reflector $reflector,
-        Identifier $identifier
+        Identifier $identifier,
     ): ?Reflection // @phpstan-ignore return.internalInterface
     {
         throw new LogicException('Reflection must not be called during rule construction');
@@ -25,7 +25,7 @@ class ThrowingSourceLocator implements SourceLocator
      */
     public function locateIdentifiersByType(
         Reflector $reflector,
-        IdentifierType $identifierType
+        IdentifierType $identifierType,
     ): array // @phpstan-ignore return.internalInterface
     {
         throw new LogicException('Reflection must not be called during rule construction');

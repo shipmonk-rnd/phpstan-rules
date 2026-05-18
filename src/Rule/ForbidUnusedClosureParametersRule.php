@@ -38,7 +38,7 @@ final class ForbidUnusedClosureParametersRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($node instanceof ArrowFunction) {
@@ -110,7 +110,7 @@ final class ForbidUnusedClosureParametersRule implements Rule
      */
     private function getTrailingUnusedParameterNames(
         array $params,
-        array $referencedVariables
+        array $referencedVariables,
     ): array
     {
         for ($i = count($params) - 1; $i >= 0; $i--) {

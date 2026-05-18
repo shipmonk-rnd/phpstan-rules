@@ -36,17 +36,11 @@ use function is_string;
 class RequirePreviousExceptionPassRule implements Rule
 {
 
-    private Printer $printer;
-
-    private bool $reportEvenIfExceptionIsNotAcceptableByRethrownOne;
-
     public function __construct(
-        Printer $printer,
-        bool $reportEvenIfExceptionIsNotAcceptableByRethrownOne = false
+        private readonly Printer $printer,
+        private readonly bool $reportEvenIfExceptionIsNotAcceptableByRethrownOne = false,
     )
     {
-        $this->printer = $printer;
-        $this->reportEvenIfExceptionIsNotAcceptableByRethrownOne = $reportEvenIfExceptionIsNotAcceptableByRethrownOne;
     }
 
     public function getNodeType(): string
@@ -60,7 +54,7 @@ class RequirePreviousExceptionPassRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $errors = [];
@@ -109,7 +103,7 @@ class RequirePreviousExceptionPassRule implements Rule
         ?string $caughtExceptionVariableName,
         Type $caughtExceptionType,
         CallLike $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $passed = false;
@@ -163,7 +157,7 @@ class RequirePreviousExceptionPassRule implements Rule
      */
     private function getCallLikeParameters(
         CallLike $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         $methodReflection = null;
@@ -197,7 +191,7 @@ class RequirePreviousExceptionPassRule implements Rule
     private function getCaughtExceptionType(
         array $exceptionNames,
         Scope $scope,
-        Type $exceptionTypesCaughtInPreviousCatches
+        Type $exceptionTypesCaughtInPreviousCatches,
     ): Type
     {
         $classes = [];

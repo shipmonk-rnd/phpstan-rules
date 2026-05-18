@@ -22,11 +22,8 @@ use Throwable;
 class ForbidUnusedExceptionRule implements Rule
 {
 
-    private Printer $printer;
-
-    public function __construct(Printer $printer)
+    public function __construct(private readonly Printer $printer)
     {
-        $this->printer = $printer;
     }
 
     public function getNodeType(): string
@@ -40,7 +37,7 @@ class ForbidUnusedExceptionRule implements Rule
      */
     public function processNode(
         Node $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if ($node instanceof MethodCall || $node instanceof StaticCall) {
@@ -60,7 +57,7 @@ class ForbidUnusedExceptionRule implements Rule
      */
     private function processCall(
         CallLike $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (!$this->isException($node, $scope)) {
@@ -82,7 +79,7 @@ class ForbidUnusedExceptionRule implements Rule
      */
     private function processNew(
         New_ $node,
-        Scope $scope
+        Scope $scope,
     ): array
     {
         if (!$this->isException($node, $scope)) {
@@ -101,7 +98,7 @@ class ForbidUnusedExceptionRule implements Rule
 
     private function isException(
         Expr $node,
-        Scope $scope
+        Scope $scope,
     ): bool
     {
         $type = $scope->getType($node);
