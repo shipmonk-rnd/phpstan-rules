@@ -119,8 +119,8 @@ class ForbidArithmeticOperationOnNonNumberRule implements Rule
         }
 
         if (
-            $operator === '%' &&
-            (!$leftType->isInteger()->yes() || !$rightType->isInteger()->yes())
+            $operator === '%'
+            && (!$leftType->isInteger()->yes() || !$rightType->isInteger()->yes())
         ) {
             return $this->buildBinaryErrors($operator, 'non-integer', $leftType, $rightType);
         }

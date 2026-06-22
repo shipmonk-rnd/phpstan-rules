@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2f74332d5e7fa79091dcb89ac9d6331f",
+    "content-hash": "a3a6ae890681f79796bfb6d571fd6cab",
     "packages": [
         {
             "name": "phpstan/phpstan",
@@ -2861,21 +2861,23 @@
         },
         {
             "name": "shipmonk/coding-standard",
-            "version": "0.2.4",
+            "version": "dev-add-generic-custom-sniffs",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shipmonk-rnd/coding-standard.git",
-                "reference": "ca7fa071f5943d87f67e791fe36a691a36d10275"
+                "reference": "556e3d2499dec123904ec09d90e5d1d8a2b36844"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shipmonk-rnd/coding-standard/zipball/ca7fa071f5943d87f67e791fe36a691a36d10275",
-                "reference": "ca7fa071f5943d87f67e791fe36a691a36d10275",
+                "url": "https://api.github.com/repos/shipmonk-rnd/coding-standard/zipball/556e3d2499dec123904ec09d90e5d1d8a2b36844",
+                "reference": "556e3d2499dec123904ec09d90e5d1d8a2b36844",
                 "shasum": ""
             },
             "require": {
+                "ext-tokenizer": "*",
                 "php": "^7.4 || ^8.0",
-                "slevomat/coding-standard": "^8.28.0"
+                "slevomat/coding-standard": "^8.28.0",
+                "squizlabs/php_codesniffer": "^4.0.1"
             },
             "require-dev": {
                 "editorconfig-checker/editorconfig-checker": "^10.6",
@@ -2893,7 +2895,7 @@
             "type": "phpcodesniffer-standard",
             "autoload": {
                 "psr-4": {
-                    "ShipMonk\\CodingStandard\\": "ShipMonkCodingStandard/"
+                    "ShipMonkCodingStandard\\": "ShipMonkCodingStandard/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2903,9 +2905,9 @@
             "description": "PHP Coding Standard used in ShipMonk",
             "support": {
                 "issues": "https://github.com/shipmonk-rnd/coding-standard/issues",
-                "source": "https://github.com/shipmonk-rnd/coding-standard/tree/0.2.4"
+                "source": "https://github.com/shipmonk-rnd/coding-standard/tree/add-generic-custom-sniffs"
             },
-            "time": "2026-03-16T16:23:10+00:00"
+            "time": "2026-06-22T07:30:14+00:00"
         },
         {
             "name": "shipmonk/composer-dependency-analyser",
@@ -3429,7 +3431,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "shipmonk/coding-standard": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
