@@ -107,7 +107,7 @@ class FirstClassCallableTest extends BaseCallableTest {
         allowed_function_not_immediate(throwing_function(...));
     }
 
-    public function testPassedCallbacksA6(): void
+    public function testPassedCallbacksA7(): void
     {
         $this->immediateThrow(
             $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
@@ -115,17 +115,17 @@ class FirstClassCallableTest extends BaseCallableTest {
         );
     }
 
-    public function testPassedCallbacksA7(): void
+    public function testPassedCallbacksA8(): void
     {
         $this->allowThrowInBaseClass(throwing_function(...));
     }
 
-    public function testPassedCallbacksA8(): void
+    public function testPassedCallbacksA9(): void
     {
         $this->allowThrowInInterface(throwing_function(...));
     }
 
-    public function testPassedCallbacksA9(): void
+    public function testPassedCallbacksA10(): void
     {
         $this->denied($this->throws(...)); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
     }
