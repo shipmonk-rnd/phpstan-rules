@@ -188,8 +188,8 @@ class ForbidCheckedExceptionInCallableRule implements Rule
             yield from $this->processCall($scope, $callerType, $methodName, $line, $nodeHash);
         }
 
-        if ($callNode instanceof StaticCall && $callNode->class instanceof Name && $callNode->name instanceof Identifier) {
-            $callerType = $scope->resolveTypeByName($callNode->class);
+        if ($callNode instanceof StaticCall && $callNode->name instanceof Identifier) {
+            $callerType = $this->getStaticCallerType($callNode, $scope);
             $methodName = $callNode->name->toString();
 
             yield from $this->processCall($scope, $callerType, $methodName, $line, $nodeHash);
@@ -430,8 +430,8 @@ class ForbidCheckedExceptionInCallableRule implements Rule
             $callerType = $scope->getType($node->var);
             $methodReflection = $scope->getMethodReflection($callerType, $node->name->name);
 
-        } elseif ($node instanceof StaticCall && $node->name instanceof Identifier && $node->class instanceof Name) {
-            $callerType = $scope->resolveTypeByName($node->class);
+        } elseif ($node instanceof StaticCall && $node->name instanceof Identifier) {
+            $callerType = $this->getStaticCallerType($node, $scope);
             $methodReflection = $scope->getMethodReflection($callerType, $node->name->name);
 
         } elseif ($node instanceof New_ && $node->class instanceof Name) {
@@ -499,6 +499,18 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                 $this->callablesInArguments[$argHash] = $methodReference;
             }
         }
+    }
+
+    private function getStaticCallerType(
+        StaticCall $node,
+        Scope $scope,
+    ): Type
+    {
+        if ($node->class instanceof Name) {
+            return $scope->resolveTypeByName($node->class);
+        }
+
+        return $scope->getType($node->class)->getObjectTypeOrClassStringObjectType();
     }
 
     /**

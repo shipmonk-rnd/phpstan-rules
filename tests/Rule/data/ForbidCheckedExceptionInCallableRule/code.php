@@ -107,7 +107,7 @@ class FirstClassCallableTest extends BaseCallableTest {
         allowed_function_not_immediate(throwing_function(...));
     }
 
-    public function testPassedCallbacksA6(): void
+    public function testPassedCallbacksA7(): void
     {
         $this->immediateThrow(
             $this->throws(...), // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
@@ -115,17 +115,17 @@ class FirstClassCallableTest extends BaseCallableTest {
         );
     }
 
-    public function testPassedCallbacksA7(): void
+    public function testPassedCallbacksA8(): void
     {
         $this->allowThrowInBaseClass(throwing_function(...));
     }
 
-    public function testPassedCallbacksA8(): void
+    public function testPassedCallbacksA9(): void
     {
         $this->allowThrowInInterface(throwing_function(...));
     }
 
-    public function testPassedCallbacksA9(): void
+    public function testPassedCallbacksA10(): void
     {
         $this->denied($this->throws(...)); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
     }
@@ -520,6 +520,107 @@ class ArgumentSwappingTest {
     {
         throw new CheckedException();
     }
+
 }
 
+class StaticCallTest {
 
+    private StaticCallTest $instance;
+
+    private string $notAClassString;
+
+    public function testClassNameImmediate(): void
+    {
+        self::immediateThrow(function () {
+            throw new CheckedException();
+        });
+    }
+
+    public function testClassNameDenied(): void
+    {
+        self::denied(function () {
+            throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!
+        });
+    }
+
+    public function testPropertyFetchImmediate(): void
+    {
+        $this->instance::immediateThrow(function () { // late static binding, the class is not a literal Name
+            throw new CheckedException();
+        });
+    }
+
+    public function testPropertyFetchDenied(): void
+    {
+        $this->instance::denied(function () {
+            throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!
+        });
+    }
+
+    public function testPropertyFetchAllowedByConfig(): void
+    {
+        $this->instance::allowThrow(function () { // allowed by allowedCheckedExceptionCallables, needs the caller type resolved
+            throw new CheckedException();
+        });
+    }
+
+    public function testClassStringVariableImmediate(): void
+    {
+        $className = $this->instance::class;
+        $className::immediateThrow(function () { // the class is a class-string, not an object
+            throw new CheckedException();
+        });
+    }
+
+    public function testUnresolvableClassExpression(): void
+    {
+        $this->notAClassString::denied(function () { // the class cannot be resolved to any type
+            throw new CheckedException(); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in closure!
+        });
+    }
+
+    public function testClassNameFirstClassCallable(): void
+    {
+        self::throws(...); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+    }
+
+    public function testPropertyFetchFirstClassCallable(): void
+    {
+        $this->instance::throws(...); // error: Throwing checked exception ForbidCheckedExceptionInCallableRule\CheckedException in first-class-callable!
+    }
+
+    public function testPropertyFetchFirstClassCallablePassedToImmediate(): void
+    {
+        $this->instance::immediateThrow($this->instance::throws(...));
+    }
+
+    /**
+     * @throws CheckedException
+     */
+    private static function throws(): void
+    {
+        throw new CheckedException();
+    }
+
+    private static function denied(callable $callable): void
+    {
+    }
+
+    /**
+     * @param-immediately-invoked-callable $callable
+     */
+    public static function immediateThrow(callable $callable): void
+    {
+        $callable();
+    }
+
+    public static function allowThrow(callable $callable): void
+    {
+        try {
+            $callable();
+        } catch (\Exception $e) {
+
+        }
+    }
+
+}
