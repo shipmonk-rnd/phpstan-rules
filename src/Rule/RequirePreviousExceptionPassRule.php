@@ -106,27 +106,7 @@ class RequirePreviousExceptionPassRule implements Rule
         Scope $scope,
     ): array
     {
-        $passed = false;
-
-        foreach ($node->getArgs() as $argument) {
-            if (!$argument->value instanceof Variable) {
-                continue; // support only simple variable pass
-            }
-
-            $argumentVariableName = $argument->value->name;
-
-            if (!is_string($argumentVariableName)) {
-                continue;
-            }
-
-            if ($caughtExceptionVariableName === null) {
-                continue;
-            }
-
-            if ($caughtExceptionVariableName === $argumentVariableName) {
-                $passed = true;
-            }
-        }
+        $passed = $caughtExceptionVariableName !== null && $this->isVariablePassed($node, $caughtExceptionVariableName);
 
         if (!$this->reportEvenIfExceptionIsNotAcceptableByRethrownOne) {
             $accepts = false;
@@ -150,6 +130,30 @@ class RequirePreviousExceptionPassRule implements Rule
         }
 
         return [];
+    }
+
+    private function isVariablePassed(
+        CallLike $node,
+        string $variableName,
+    ): bool
+    {
+        if ($node->isFirstClassCallable()) {
+            return false;
+        }
+
+        foreach ($node->getArgs() as $argument) {
+            $value = $argument->value;
+
+            if ($value instanceof Variable && $value->name === $variableName) {
+                return true;
+            }
+
+            if ($value instanceof CallLike && $this->isVariablePassed($value, $variableName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
