@@ -641,6 +641,7 @@ fn (int $key, Item $item, string $unused) => $item->ok(); // unused parameter $u
 ### requirePreviousExceptionPass
 - Detects forgotten exception pass-as-previous when re-throwing
 - Checks if caught exception can be passed as argument to the call (including constructor call) in `throw` node inside the catch block
+- Accepts the caught exception also as an argument of a nested call, e.g. `throw new HttpException(401, 'Locked', MyException::fromPrevious($e))`
 - You may encounter false-positives in some edge-cases, where you do not want to pass exception as previous, feel free to ignore those
 
 ```php

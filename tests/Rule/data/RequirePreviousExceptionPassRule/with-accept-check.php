@@ -70,3 +70,23 @@ try {
 } catch (LogicException|RuntimeException $e) { // Logic can never occur here, so Runtime must be passed
     throw MyException::createForSpecificPrevious(); // error: Exception $e not passed as previous to \RequirePreviousExceptionPassRule\With\MyException::createForSpecificPrevious()
 }
+
+try {
+} catch (RuntimeException $e) {
+    throw new LogicException('Message', 0, MyException::createForAnyPrevious($e));
+}
+
+try {
+} catch (RuntimeException $e) {
+    throw new LogicException('Message', 0, MyException::createForAnyPrevious(new RuntimeException('Inner', 0, $e)));
+}
+
+try {
+} catch (RuntimeException $e) {
+    throw new LogicException('Message', 0, MyException::createWithoutPrevious()); // error: Exception $e not passed as previous to new \LogicException('Message', 0, \RequirePreviousExceptionPassRule\With\MyException::createWithoutPrevious())
+}
+
+try {
+} catch (RuntimeException $e) {
+    throw new LogicException('Message', 0, MyException::createForAnyPrevious(...)); // error: Exception $e not passed as previous to new \LogicException('Message', 0, \RequirePreviousExceptionPassRule\With\MyException::createForAnyPrevious(...))
+}
