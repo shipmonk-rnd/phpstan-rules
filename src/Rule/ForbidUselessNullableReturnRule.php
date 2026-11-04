@@ -3,6 +3,9 @@
 namespace ShipMonk\PHPStan\Rule;
 
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\NullableType;
+use PhpParser\Node\UnionType;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClosureReturnStatementsNode;
 use PHPStan\Node\PropertyHookReturnStatementsNode;
@@ -16,6 +19,10 @@ use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
+use ShipMonk\PHPStan\Visitor\ReturnTypeNodeVisitor;
+use function array_filter;
+use function array_values;
+use function count;
 
 /**
  * @implements Rule<ReturnStatementsNode>
@@ -82,12 +89,64 @@ class ForbidUselessNullableReturnRule implements Rule
 
         if (TypeCombinator::containsNull($declaredType) && !TypeCombinator::containsNull($returnTypeUnion)) {
             $error = RuleErrorBuilder::message("Declared return type {$declaredType->describe($verbosity)} contains null, but it is never returned. Returned types: {$returnTypeUnion->describe($verbosity)}.")
-                ->identifier('shipmonk.uselessNullableReturn')
-                ->build();
-            return [$error];
+                ->identifier('shipmonk.uselessNullableReturn');
+
+            $returnTypeNode = $this->getNativeReturnTypeNode($node);
+
+            if (
+                ($returnTypeNode instanceof NullableType || $returnTypeNode instanceof UnionType)
+                && ($node instanceof ClosureReturnStatementsNode || !$this->hasNullInPhpDocReturnType($scope))
+            ) {
+                $error->fixNode($returnTypeNode, $this->removeNullFromTypeNode(...));
+            }
+
+            return [$error->build()];
         }
 
         return [];
+    }
+
+    private function getNativeReturnTypeNode(ReturnStatementsNode $node): ?Node
+    {
+        if ($node instanceof ClosureReturnStatementsNode) {
+            return $node->getClosureExpr()->returnType;
+        }
+
+        $returnTypeNode = $node->getAttribute(ReturnTypeNodeVisitor::RETURN_TYPE_NODE);
+        return $returnTypeNode instanceof Node ? $returnTypeNode : null;
+    }
+
+    /**
+     * Removing null only from the native type would make it narrower than the PHPDoc type.
+     */
+    private function hasNullInPhpDocReturnType(Scope $scope): bool
+    {
+        $function = $scope->getFunction();
+
+        if ($function === null) {
+            return true;
+        }
+
+        return TypeCombinator::containsNull($function->getOnlyVariant()->getPhpDocReturnType());
+    }
+
+    private function removeNullFromTypeNode(NullableType|UnionType $typeNode): Node
+    {
+        if ($typeNode instanceof NullableType) {
+            return $typeNode->type;
+        }
+
+        $types = array_values(array_filter(
+            $typeNode->types,
+            static fn (Node $type): bool => !$type instanceof Identifier || $type->toLowerString() !== 'null',
+        ));
+
+        if (count($types) === 1) {
+            return $types[0];
+        }
+
+        $typeNode->types = $types;
+        return $typeNode;
     }
 
     private function isOverridable(MethodReflection $methodReflection): bool

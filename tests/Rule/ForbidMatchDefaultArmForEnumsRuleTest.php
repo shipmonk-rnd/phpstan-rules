@@ -21,4 +21,9 @@ class ForbidMatchDefaultArmForEnumsRuleTest extends RuleTestCase
         $this->analyseFile(__DIR__ . '/data/ForbidMatchDefaultArmForEnumsRule/code.php');
     }
 
+    public function testFix(): void
+    {
+        $this->fix(__DIR__ . '/data/ForbidMatchDefaultArmForEnumsRule/fix.php', __DIR__ . '/data/ForbidMatchDefaultArmForEnumsRule/fix.php.fixed');
+    }
+
 }

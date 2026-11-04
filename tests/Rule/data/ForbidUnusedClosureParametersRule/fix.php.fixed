@@ -1,0 +1,11 @@
+<?php declare(strict_types = 1);
+
+namespace ForbidUnusedClosureParametersRuleFix;
+
+$one = fn (int $used) => $used;
+$two = fn (int $used) => $used;
+$three = fn() => 1;
+$four = function (int $used): int {
+    return $used;
+};
+$five = fn (int $unused, int $used) => $used;

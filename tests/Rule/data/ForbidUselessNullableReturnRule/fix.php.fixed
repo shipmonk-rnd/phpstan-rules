@@ -1,0 +1,40 @@
+<?php declare(strict_types = 1);
+
+namespace ForbidUselessNullableReturnRuleFix;
+
+final class ExampleClass
+{
+
+    public function nullable(): int
+    {
+        return 1;
+    }
+
+    public function union(): int|string
+    {
+        return 1;
+    }
+
+    public function unionWithNullFirst(): int
+    {
+        return 1;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function nullInPhpDoc(): ?int
+    {
+        return 1;
+    }
+
+}
+
+function nullableFunction(): int
+{
+    return 1;
+}
+
+$closure = static function (): int {
+    return 1;
+};

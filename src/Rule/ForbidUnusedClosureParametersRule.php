@@ -15,7 +15,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
-use function array_map;
 use function array_slice;
 use function array_values;
 use function count;
@@ -52,12 +51,14 @@ final class ForbidUnusedClosureParametersRule implements Rule
         }
 
         $errors = [];
-        $trailingUnusedParameterNames = $this->getTrailingUnusedParameterNames(array_values($node->params), $referencedVariables);
+        $trailingUnusedParameters = $this->getTrailingUnusedParameters(array_values($node->params), $referencedVariables);
 
         $functionType = $node instanceof ArrowFunction ? 'Arrow function' : 'Closure';
-        foreach ($trailingUnusedParameterNames as $parameterName) {
+        foreach ($trailingUnusedParameters as $parameter) {
+            $parameterName = $this->getParamName($parameter);
             $errors[] = RuleErrorBuilder::message("{$functionType} parameter \${$parameterName} is unused")
                 ->identifier('shipmonk.unusedParameter')
+                ->removeNode($parameter)
                 ->build();
         }
 
@@ -106,9 +107,9 @@ final class ForbidUnusedClosureParametersRule implements Rule
     /**
      * @param list<Param> $params
      * @param array<string, true> $referencedVariables
-     * @return list<string>
+     * @return list<Param>
      */
-    private function getTrailingUnusedParameterNames(
+    private function getTrailingUnusedParameters(
         array $params,
         array $referencedVariables,
     ): array
@@ -127,28 +128,22 @@ final class ForbidUnusedClosureParametersRule implements Rule
             $parameterName = $param->var->name;
 
             if (isset($referencedVariables[$parameterName])) {
-                return $this->extractParamNames(array_slice($params, $i + 1));
+                return array_slice($params, $i + 1);
             }
         }
 
-        return $this->extractParamNames($params);
+        return $params;
     }
 
-    /**
-     * @param array<Param> $params
-     * @return list<string>
-     */
-    private function extractParamNames(array $params): array
+    private function getParamName(Param $param): string
     {
-        return array_values(array_map(static function (Param $param): string {
-            if (!$param->var instanceof Variable) {
-                throw new LogicException('Param variable must be a variable');
-            }
-            if (!is_string($param->var->name)) {
-                throw new LogicException('Param variable name must be a string');
-            }
-            return $param->var->name;
-        }, $params));
+        if (!$param->var instanceof Variable) {
+            throw new LogicException('Param variable must be a variable');
+        }
+        if (!is_string($param->var->name)) {
+            throw new LogicException('Param variable name must be a string');
+        }
+        return $param->var->name;
     }
 
 }

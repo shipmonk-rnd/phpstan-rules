@@ -21,4 +21,9 @@ class ForbidUnusedClosureParametersRuleTest extends RuleTestCase
         $this->analyseFile(__DIR__ . '/data/ForbidUnusedClosureParametersRule/code.php');
     }
 
+    public function testFix(): void
+    {
+        $this->fix(__DIR__ . '/data/ForbidUnusedClosureParametersRule/fix.php', __DIR__ . '/data/ForbidUnusedClosureParametersRule/fix.php.fixed');
+    }
+
 }

@@ -1,0 +1,28 @@
+<?php declare(strict_types = 1);
+
+namespace UselessPrivatePropertyDefaultValueRuleFix;
+
+class ExampleClass
+{
+
+    private int $overwritten;
+
+    private ?string $overwrittenNullable;
+
+    private int $first, $second, $kept = 3;
+
+    private int $conditional = 0;
+
+    public function __construct(bool $flag)
+    {
+        $this->overwritten = 1;
+        $this->overwrittenNullable = 'a';
+        $this->first = 1;
+        $this->second = 2;
+
+        if ($flag) {
+            $this->conditional = 1;
+        }
+    }
+
+}

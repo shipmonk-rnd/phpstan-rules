@@ -301,6 +301,8 @@ conditionalTags:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.forbidUnusedMatchResult.enabled%
     ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor:
         phpstan.parser.richParserNodeVisitor: %shipmonkRules.uselessPrivatePropertyDefaultValue.enabled%
+    ShipMonk\PHPStan\Visitor\ReturnTypeNodeVisitor:
+        phpstan.parser.richParserNodeVisitor: %shipmonkRules.forbidUselessNullableReturn.enabled%
 
 services:
     -
@@ -422,3 +424,5 @@ services:
         class: ShipMonk\PHPStan\Visitor\UnusedMatchVisitor
     -
         class: ShipMonk\PHPStan\Visitor\TopLevelConstructorPropertyFetchMarkingVisitor
+    -
+        class: ShipMonk\PHPStan\Visitor\ReturnTypeNodeVisitor

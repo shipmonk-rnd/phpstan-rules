@@ -1,0 +1,42 @@
+<?php declare(strict_types = 1);
+
+namespace ForbidMatchDefaultArmForEnumsRuleFix;
+
+enum MyEnum {
+    case One;
+    case Two;
+}
+
+function allCasesListed(MyEnum $enum): int
+{
+    return match ($enum) {
+        MyEnum::One => 1,
+        MyEnum::Two => 2,
+    };
+}
+
+function allCasesListedInOneArm(MyEnum $enum): int
+{
+    return match ($enum) {
+        MyEnum::One, MyEnum::Two => 1,
+    };
+}
+
+function someCasesMissing(MyEnum $enum): int
+{
+    return match ($enum) {
+        MyEnum::One => 1,
+        default => 3,
+    };
+}
+
+/**
+ * @param MyEnum::One $enum
+ */
+function casesMissingOnlyInNativeType(MyEnum $enum): int
+{
+    return match ($enum) {
+        MyEnum::One => 1,
+        default => 3,
+    };
+}

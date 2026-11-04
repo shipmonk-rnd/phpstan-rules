@@ -33,4 +33,9 @@ class UselessPrivatePropertyDefaultValueRuleTest extends RuleTestCase
         $this->analyseFile(__DIR__ . '/data/UselessPrivatePropertyDefaultValueRule/code.php');
     }
 
+    public function testFix(): void
+    {
+        $this->fix(__DIR__ . '/data/UselessPrivatePropertyDefaultValueRule/fix.php', __DIR__ . '/data/UselessPrivatePropertyDefaultValueRule/fix.php.fixed');
+    }
+
 }
