@@ -406,7 +406,7 @@ class ForbidCheckedExceptionInCallableRule implements Rule
                     continue;
                 }
 
-                [$callerClass, $methodName] = explode('::', $immediateCallerAndMethod); // @phpstan-ignore offsetAccess.notFound
+                [$callerClass, $methodName] = explode('::', $immediateCallerAndMethod);
 
                 if (
                     $methodName === $calledMethodName

@@ -53,6 +53,8 @@ parameters:
 
 Few rules are enabled, but do nothing unless configured, those are marked with `*`.
 
+Some rules can fix their errors with `vendor/bin/phpstan analyse --fix` (PHPStan 2.3.5+), those are marked with 🔧.
+
 ## Rules:
 
 ### allowComparingOnlyComparableTypes
@@ -422,10 +424,11 @@ $value = '2e0';
 $value++; // would be float(3), denied
 ```
 
-### forbidMatchDefaultArmForEnums
+### forbidMatchDefaultArmForEnums 🔧
 - Denies using default arm in `match()` construct when native enum is passed as subject
 - This rules makes sense only as a complement of [native phpstan rule](https://github.com/phpstan/phpstan-src/blob/1.7.x/src/Rules/Comparison/MatchExpressionRule.php#L94) that guards that all enum cases are handled in match arms
 - As a result, you are forced to add new arm when new enum case is added. That brings up all the places in your codebase that needs new handling.
+- `--fix` removes the default arm only when the other arms list all cases of the native type
 ```php
 match ($enum) {
     MyEnum::Case: 1;
@@ -599,9 +602,10 @@ function example(MyClass $class) {
 }
 ```
 
-### forbidUselessNullableReturn
+### forbidUselessNullableReturn 🔧
 - Denies marking closure/function/method return type as nullable when null is never returned
 - Recommended to be used together with `uselessPrivatePropertyDefaultValue`
+- `--fix` removes null from the native return type, unless the PHPDoc return type contains null
 ```php
 public function example(int $foo): ?int { // null never returned
     if ($foo < 0) {
@@ -630,7 +634,7 @@ match ($foo) { // unused match result
 ```
 
 
-### forbidUnusedClosureParameters
+### forbidUnusedClosureParameters 🔧
 - Reports unused parameters in closures and arrow functions
 - Only reports trailing unused parameters (parameters that are unused and all parameters after them are also unused)
 ```php
@@ -677,7 +681,7 @@ try {
 }
 ```
 
-### uselessPrivatePropertyDefaultValue:
+### uselessPrivatePropertyDefaultValue 🔧
 
 - Detects useless default value of a private property that is always initialized in constructor.
 - Cannot handle conditions or private method calls within constructor.

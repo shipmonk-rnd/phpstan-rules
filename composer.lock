@@ -4,15 +4,15 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f09e902b5d529345137805dbc4a49cdc",
+    "content-hash": "05fd1aade772c62c0da3e2f9f5a8922e",
     "packages": [
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.54",
+            "version": "2.3.x-dev",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/8be50c3992107dc837b17da4d140fbbdf9a5c5bd",
-                "reference": "8be50c3992107dc837b17da4d140fbbdf9a5c5bd",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/5e62a0f0e1804b2e59cb43dc1676d2bb46d6336a",
+                "reference": "5e62a0f0e1804b2e59cb43dc1676d2bb46d6336a",
                 "shasum": ""
             },
             "require": {
@@ -21,6 +21,7 @@
             "conflict": {
                 "phpstan/phpstan-shim": "*"
             },
+            "default-branch": true,
             "bin": [
                 "phpstan",
                 "phpstan.phar"
@@ -34,6 +35,17 @@
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ondřej Mirtes"
+                },
+                {
+                    "name": "Markus Staab"
+                },
+                {
+                    "name": "Vincent Langlet"
+                }
             ],
             "description": "PHPStan - PHP Static Analysis Tool",
             "keywords": [
@@ -57,7 +69,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-29T13:31:09+00:00"
+            "time": "2026-11-04T18:28:55+00:00"
         }
     ],
     "packages-dev": [
@@ -2820,7 +2832,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "phpstan/phpstan": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

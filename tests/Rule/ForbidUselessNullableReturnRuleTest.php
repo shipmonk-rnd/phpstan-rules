@@ -26,4 +26,9 @@ class ForbidUselessNullableReturnRuleTest extends RuleTestCase
         $this->analyseFile(__DIR__ . '/data/ForbidUselessNullableReturnRule/code-hook.php');
     }
 
+    public function testFix(): void
+    {
+        $this->fix(__DIR__ . '/data/ForbidUselessNullableReturnRule/fix.php', __DIR__ . '/data/ForbidUselessNullableReturnRule/fix.php.fixed');
+    }
+
 }

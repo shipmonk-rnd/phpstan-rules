@@ -4,6 +4,8 @@ namespace ShipMonk\PHPStan\Rule;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr;
+use PhpParser\Node\PropertyItem;
+use PhpParser\Node\Stmt\Property;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClassPropertiesNode;
 use PHPStan\Node\Property\PropertyWrite;
@@ -72,10 +74,24 @@ class UselessPrivatePropertyDefaultValueRule implements Rule
             }
 
             if (isset($noDefaultValueNeededProperties[$propertyName])) {
-                $errors[] = RuleErrorBuilder::message("Property {$className}::{$propertyName} has useless default value (overwritten in constructor)")
+                $error = RuleErrorBuilder::message("Property {$className}::{$propertyName} has useless default value (overwritten in constructor)")
                     ->line($property->getStartLine())
-                    ->identifier('shipmonk.uselessPrivatePropertyDefaultValue')
-                    ->build();
+                    ->identifier('shipmonk.uselessPrivatePropertyDefaultValue');
+
+                $originalNode = $property->getOriginalNode();
+
+                if ($originalNode instanceof Property) {
+                    foreach ($originalNode->props as $propertyItem) {
+                        if ($propertyItem->name->toString() === $propertyName) {
+                            $error->fixNode($propertyItem, static function (PropertyItem $item): PropertyItem {
+                                $item->default = null;
+                                return $item;
+                            });
+                        }
+                    }
+                }
+
+                $errors[] = $error->build();
             }
         }
 
