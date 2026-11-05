@@ -4,7 +4,6 @@ namespace ShipMonk\PHPStan\Rule;
 
 use PHPStan\Rules\Rule;
 use ShipMonk\PHPStan\RuleTestCase;
-use function array_merge;
 
 /**
  * @extends RuleTestCase<ForbidUselessNullableReturnRule>
@@ -15,17 +14,6 @@ class ForbidUselessNullableReturnRuleTest extends RuleTestCase
     protected function getRule(): Rule
     {
         return new ForbidUselessNullableReturnRule();
-    }
-
-    /**
-     * @return string[]
-     */
-    public static function getAdditionalConfigFiles(): array
-    {
-        return array_merge(
-            parent::getAdditionalConfigFiles(),
-            [__DIR__ . '/data/ForbidUselessNullableReturnRule/return-type-node-visitor.neon'],
-        );
     }
 
     public function test(): void

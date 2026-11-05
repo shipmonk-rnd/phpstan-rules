@@ -8,6 +8,8 @@ use PhpParser\Node\NullableType;
 use PhpParser\Node\UnionType;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClosureReturnStatementsNode;
+use PHPStan\Node\FunctionReturnStatementsNode;
+use PHPStan\Node\MethodReturnStatementsNode;
 use PHPStan\Node\PropertyHookReturnStatementsNode;
 use PHPStan\Node\ReturnStatementsNode;
 use PHPStan\Reflection\MethodReflection;
@@ -19,7 +21,6 @@ use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
-use ShipMonk\PHPStan\Visitor\ReturnTypeNodeVisitor;
 use function array_filter;
 use function array_values;
 use function count;
@@ -108,12 +109,12 @@ class ForbidUselessNullableReturnRule implements Rule
 
     private function getNativeReturnTypeNode(ReturnStatementsNode $node): ?Node
     {
-        if ($node instanceof ClosureReturnStatementsNode) {
-            return $node->getClosureExpr()->returnType;
-        }
-
-        $returnTypeNode = $node->getAttribute(ReturnTypeNodeVisitor::RETURN_TYPE_NODE);
-        return $returnTypeNode instanceof Node ? $returnTypeNode : null;
+        return match (true) {
+            $node instanceof ClosureReturnStatementsNode => $node->getClosureExpr()->returnType,
+            $node instanceof MethodReturnStatementsNode => $node->getClassMethod()->returnType,
+            $node instanceof FunctionReturnStatementsNode => $node->getFunction()->returnType,
+            default => null,
+        };
     }
 
     /**
